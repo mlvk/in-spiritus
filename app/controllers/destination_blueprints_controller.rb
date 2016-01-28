@@ -1,0 +1,2 @@
+class DestinationBlueprintsController < ApplicationJsonApiResourcesController
+end

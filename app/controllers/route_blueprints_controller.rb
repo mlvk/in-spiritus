@@ -1,0 +1,2 @@
+class RouteBlueprintsController < ApplicationJsonApiResourcesController
+end

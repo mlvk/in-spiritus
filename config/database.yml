@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  username: postgres
+  host: localhost
+  pool: 5
+
+development:
+  <<: *default
+  database: in_spiritus_development
+
+test:
+  <<: *default
+  database: in_spiritus_test
+
+production:
+  <<: *default
+  host: db
+  database: in_spiritus_production

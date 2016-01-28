@@ -1,0 +1,9 @@
+wutang:
+  code: wt-001
+  company: Wu-Tang Corp
+  nickname: Staten
+  active: true
+  delivery_rate: 10
+  credit_rate: 0.5
+  terms: 14
+  price_tier: wholesale

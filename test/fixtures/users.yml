@@ -1,0 +1,5 @@
+methodman:
+  first_name: Method
+  last_name: Man
+  email: methodman@wutang.com
+  authentication_token: admin_token
