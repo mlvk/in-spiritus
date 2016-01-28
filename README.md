@@ -1,4 +1,4 @@
-
+[![Build Status][build-image]][build-url]
 
 ## In Spiritus
 
