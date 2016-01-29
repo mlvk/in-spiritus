@@ -9,7 +9,12 @@ COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
 
 ENV RACK_ENV production
+ENV RAILS_ENV production
 
 RUN bundle install --without development test
 
 COPY . /usr/src/app/
+
+EXPOSE 3000
+
+ENTRYPOINT ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
