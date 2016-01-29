@@ -1,10 +1,14 @@
 machine:
   services:
     - postgresql
+    - docker
 
 deployment:
   hub:
     branch: master
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker build in-spiritus .
+      - docker tag in-spiritus $DOCKER_USER/in-spiritus:$TRAVIS_COMMIT
+      - docker tag in-spiritus $DOCKER_USER/in-spiritus
       - docker push $DOCKER_USER/in-spiritus
