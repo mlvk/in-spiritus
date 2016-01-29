@@ -1,10 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.5'
-gem 'unicorn'
-gem 'unicorn-rails'
 gem 'rake', '10.4.2'
-gem 'spring',        group: :development
 gem 'devise'
 gem 'pg', '0.18.4'
 gem 'pundit'
@@ -14,6 +11,11 @@ gem 'unirest'
 gem 'monadic'
 gem 'json', '~> 1.8.3'
 gem 'okcomputer'
+
+group :production do
+  gem 'unicorn'
+  gem 'unicorn-rails'
+end
 
 group :development do
   gem 'better_errors'
@@ -32,6 +34,7 @@ group :development do
   gem 'pry'
   gem 'pry-byebug'
   gem 'pry-rails'
+  gem 'spring'
 end
 group :development, :test do
   gem 'dotenv-rails'
