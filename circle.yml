@@ -8,7 +8,5 @@ deployment:
     branch: master
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker build -t $CIRCLE_SHA1 .
-      - docker tag $CIRCLE_SHA1 $DOCKER_USER/in-spiritus:$TRAVIS_COMMIT
-      - docker tag $CIRCLE_SHA1 $DOCKER_USER/in-spiritus
-      - docker push $DOCKER_USER/in-spiritus
+      - docker build -t $DOCKER_USER/in-spiritus:$CIRCLE_SHA1 .
+      - docker push $DOCKER_USER/in-spiritus:$CIRCLE_SHA1
