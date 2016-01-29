@@ -2,6 +2,9 @@ sudo: required
 
 language: ruby
 
+rvm:
+  - 2.2.2
+
 services:
   - postgresql
   - docker
