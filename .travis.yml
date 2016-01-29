@@ -1,15 +1,13 @@
-language: ruby
 sudo: required
+
+language: ruby
 
 services:
   - postgresql
   - docker
 
-before_script:
+env:
   - RAILS_ENV=test
-
-install:
-  - bundle install --without development --deployment --jobs=3 --retry=3
 
 script:
   - bundle exec rake db:setup
