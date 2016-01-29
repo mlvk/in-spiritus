@@ -1,24 +1,29 @@
-sudo: required
-
 language: ruby
 
 rvm:
   - 2.2.2
 
-services:
-  - postgresql
-  - docker
+sudo: false
+cache: bundler
 
 env:
   - RAILS_ENV=test
 
+before_install: "rm ${BUNDLE_GEMFILE}.lock"
+
+before_script: "bundle update"
+
 script:
   - bundle exec rake db:setup
-  - rake test
+  - bundle exec rake test
 
 after_success:
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker build in-spiritus .
-  - docker tag in-spiritus "$DOCKER_USERNAME"/in-spiritus:$TRAVIS_COMMIT
-  - docker tag in-spiritus "$DOCKER_USERNAME"/in-spiritus
-  - docker push "$DOCKER_USERNAME"/in-spiritus
+  - sudo docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - sudo docker build in-spiritus .
+  - sudo docker tag in-spiritus "$DOCKER_USERNAME"/in-spiritus:$TRAVIS_COMMIT
+  - sudo docker tag in-spiritus "$DOCKER_USERNAME"/in-spiritus
+  - sudo docker push "$DOCKER_USERNAME"/in-spiritus
+
+services:
+  - postgresql
+  - docker
