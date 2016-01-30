@@ -78,3 +78,4 @@ pickle-email-*.html
 .powenv
 
 #### Custom
+.drone.sec.yml
