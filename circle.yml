@@ -11,3 +11,7 @@ deployment:
       - docker build -t $DOCKER_USER/in-spiritus .
       - docker tag $DOCKER_USER/in-spiritus $DOCKER_USER/in-spiritus:$CIRCLE_SHA1
       - docker push $DOCKER_USER/in-spiritus
+
+notify:
+  webhooks:
+    - url: $REDEPLOY_HOOK_URL
