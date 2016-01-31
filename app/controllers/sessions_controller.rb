@@ -9,7 +9,8 @@ class SessionsController < Devise::SessionsController
       token: self.resource.authentication_token,
       first_name: self.resource.first_name,
       last_name: self.resource.last_name,
-      email: self.resource.email
+      email: self.resource.email,
+      extra: 'test'
     }
 
     render json: data, status: 201
