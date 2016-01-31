@@ -5,7 +5,7 @@ build:
   environment:
     - RAILS_ENV=test
   commands:
-    - bundle install --path /drone/bundle
+    - bundle install --path tmp/bundle
     - until pg_isready -h localhost -U postgres -q; do sleep 1; done
     - rake db:test:prepare
     - rake test
@@ -26,12 +26,12 @@ publish:
       - latest
     when:
       branch: master
-    load: /drone/docker/image.tar
+    load: docker/image.tar
     save:
-      destination: /drone/docker/image.tar
-      tag: latest
+      destination: docker/image.tar
+      tag: $$COMMIT
 
 cache:
   mount:
-    - /drone/docker/image.tar
-    - /drone/bundle
+    - docker/image.tar
+    - tmp/bundle
