@@ -6,6 +6,6 @@ class ClientTest < ActiveSupport::TestCase
   end
 
   test "can view price_tier" do
-    refute_empty @client.price_tier.name, "Should not be empty!!"
+    refute_empty @client.price_tier.name, "Should not be empty!!!"
   end
 end
