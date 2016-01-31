@@ -10,7 +10,7 @@ class SessionsController < Devise::SessionsController
       first_name: self.resource.first_name,
       last_name: self.resource.last_name,
       email: self.resource.email,
-      extra: 'test!'
+      extra: 'test!!'
     }
 
     render json: data, status: 201
