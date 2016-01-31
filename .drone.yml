@@ -26,12 +26,7 @@ publish:
       - latest
     when:
       branch: master
-    load: docker/image.tar
-    save:
-      destination: docker/image.tar
-      tag: $$COMMIT
 
 cache:
   mount:
-    - docker/image.tar
     - tmp/bundle
