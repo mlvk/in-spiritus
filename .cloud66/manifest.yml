@@ -1,0 +1,7 @@
+staging:
+    postgresql:
+        server: external
+
+production:
+    postgresql:
+        server: external
