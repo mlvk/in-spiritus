@@ -15,8 +15,7 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV["DATABASE_NAME"] %>
-  host: <%= ENV["DATABASE_HOST"] %>
-  port: <%= ENV["DATABASE_PORT"] %>
-  username: <%= ENV["DATABASE_USER_NAME"] %>
-  password: <%= ENV["DATABASE_PASSWORD"] %>
+  database: <%= ENV["POSTGRESQL_DATABASE"] %>
+  host: <%= ENV["POSTGRESQL_ADDRESS"] %>
+  username: <%= ENV["POSTGRESQL_USERNAME"] %>
+  password: <%= ENV["POSTGRESQL_PASSWORD"] %>
