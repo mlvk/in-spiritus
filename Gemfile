@@ -12,11 +12,6 @@ gem 'monadic'
 gem 'json', '~> 1.8.3'
 gem 'okcomputer'
 
-group :production do
-  gem 'unicorn'
-  gem 'unicorn-rails'
-end
-
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_21]

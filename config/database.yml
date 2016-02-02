@@ -13,6 +13,13 @@ test:
   <<: *default
   database: in_spiritus_test
 
+staging:
+  <<: *default
+  database: <%= ENV["POSTGRESQL_DATABASE"] %>
+  host: <%= ENV["POSTGRESQL_ADDRESS"] %>
+  username: <%= ENV["POSTGRESQL_USERNAME"] %>
+  password: <%= ENV["POSTGRESQL_PASSWORD"] %>
+
 production:
   <<: *default
   database: <%= ENV["POSTGRESQL_DATABASE"] %>
