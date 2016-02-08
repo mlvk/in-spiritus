@@ -1,4 +1,4 @@
-class ClientItemDesirePolicy
+class AddressPolicy
 
   attr_reader :current_user, :model
 
@@ -8,11 +8,11 @@ class ClientItemDesirePolicy
   end
 
   def index?
-    @current_user.admin?
+    @current_user.admin? or @current_user.driver? or @current_user.accountant?
   end
 
   def show?
-    @current_user.admin?
+    @current_user.admin? or @current_user.driver? or @current_user.accountant?
   end
 
   def create?

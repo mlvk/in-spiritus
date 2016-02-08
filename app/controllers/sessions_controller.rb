@@ -1,4 +1,7 @@
 class SessionsController < Devise::SessionsController
+
+  skip_prepend_before_action :authenticate_user_from_token!, :only => :create
+
   def create
     self.resource = warden.authenticate!(auth_options)
 
@@ -9,8 +12,7 @@ class SessionsController < Devise::SessionsController
       token: self.resource.authentication_token,
       first_name: self.resource.first_name,
       last_name: self.resource.last_name,
-      email: self.resource.email,
-      extra: 'test!!!!'
+      email: self.resource.email
     }
 
     render json: data, status: 201

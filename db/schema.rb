@@ -16,44 +16,34 @@ ActiveRecord::Schema.define(version: 20151217220124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "client_item_desires", force: :cascade do |t|
-    t.integer  "client_id"
-    t.integer  "item_id"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-    t.boolean  "desired",    default: false
-  end
-
-  add_index "client_item_desires", ["client_id"], name: "index_client_item_desires_on_client_id", using: :btree
-  add_index "client_item_desires", ["item_id"], name: "index_client_item_desires_on_item_id", using: :btree
-
-  create_table "client_visit_days", force: :cascade do |t|
-    t.integer  "client_id",                  null: false
-    t.integer  "day",                        null: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-    t.boolean  "enabled",    default: false, null: false
-  end
-
-  add_index "client_visit_days", ["client_id"], name: "index_client_visit_days_on_client_id", using: :btree
-
-  create_table "clients", force: :cascade do |t|
-    t.string   "xero_id",       limit: 255
-    t.string   "nickname",      limit: 255
+  create_table "addresses", force: :cascade do |t|
+    t.string   "address",        limit: 255, null: false
+    t.string   "city",           limit: 255, null: false
+    t.string   "state",          limit: 255, null: false
+    t.string   "zip",            limit: 255, null: false
+    t.decimal  "lat",                        null: false
+    t.decimal  "lon",                        null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "delivery_rate",             default: 0.0,  null: false
-    t.decimal  "credit_rate",               default: 0.0,  null: false
-    t.integer  "terms",                     default: 14
-    t.string   "company",       limit: 255
-    t.string   "code",          limit: 255
-    t.integer  "price_tier_id"
-    t.boolean  "active",                    default: true, null: false
   end
 
-  add_index "clients", ["code"], name: "index_clients_on_code", unique: true, using: :btree
-  add_index "clients", ["price_tier_id"], name: "index_clients_on_price_tier_id", using: :btree
-  add_index "clients", ["xero_id"], name: "index_clients_on_xero_id", unique: true, using: :btree
+  add_index "addresses", ["address"], name: "index_addresses_on_address", unique: true, using: :btree
+
+  create_table "companies", force: :cascade do |t|
+    t.string   "name",       limit: 255, null: false
+    t.integer  "terms",     default: 14, null: false
+    t.decimal  "credit_rate",     default: 0.0
+    t.string   "code",          limit: 255, null: false
+    t.string   "tag",      default: 'customer', null: false
+    t.integer  "price_tier_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "companies", ["code"], name: "index_companies_on_code", unique: true, using: :btree
+  add_index "companies", ["name"], name: "name", unique: true, using: :btree
+  add_index "companies", ["tag"], name: "index_companies_on_tag", using: :btree
+  add_index "companies", ["price_tier_id"], name: "index_companies_on_price_tier_id", using: :btree
 
   create_table "credit_items", force: :cascade do |t|
     t.integer  "credit_id",              null: false
@@ -70,26 +60,24 @@ ActiveRecord::Schema.define(version: 20151217220124) do
 
   create_table "credits", force: :cascade do |t|
     t.string   "xero_id",    limit: 255
-    t.integer  "client_id",              null: false
+    t.integer  "location_id",              null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.date     "date",                   null: false
   end
 
-  add_index "credits", ["client_id"], name: "index_credits_on_client_id", using: :btree
+  add_index "credits", ["location_id"], name: "index_credits_on_location_id", using: :btree
 
-  create_table "custom_orders", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "route_visit_id"
-    t.date     "delivery_date"
-    t.integer  "visit_window_id"
-    t.boolean  "fullfilled"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+  create_table "item_desires", force: :cascade do |t|
+    t.integer  "location_id"
+    t.integer  "item_id"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.boolean  "desired",    default: false
   end
 
-  add_index "custom_orders", ["route_visit_id"], name: "index_custom_orders_on_route_visit_id", using: :btree
-  add_index "custom_orders", ["visit_window_id"], name: "index_custom_orders_on_visit_window_id", using: :btree
+  add_index "item_desires", ["location_id"], name: "index_item_desires_on_location_id", using: :btree
+  add_index "item_desires", ["item_id"], name: "index_item_desires_on_item_id", using: :btree
 
   create_table "item_levels", force: :cascade do |t|
     t.integer  "start",          default: 0, null: false
@@ -99,14 +87,14 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.integer  "day_of_week",                null: false
     t.datetime "taken_at",                   null: false
     t.integer  "item_id",                    null: false
-    t.integer  "client_id",                  null: false
+    t.integer  "location_id",                null: false
     t.integer  "user_id"
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.integer  "route_visit_id"
   end
 
-  add_index "item_levels", ["client_id"], name: "index_item_levels_on_client_id", using: :btree
+  add_index "item_levels", ["location_id"], name: "index_item_levels_on_location_id", using: :btree
   add_index "item_levels", ["day_of_week"], name: "index_item_levels_on_day_of_week", using: :btree
   add_index "item_levels", ["item_id"], name: "index_item_levels_on_item_id", using: :btree
   add_index "item_levels", ["route_visit_id"], name: "index_item_levels_on_route_visit_id", using: :btree
@@ -126,9 +114,7 @@ ActiveRecord::Schema.define(version: 20151217220124) do
 
   create_table "items", force: :cascade do |t|
     t.string   "xero_id",     limit: 255
-    t.string   "sku",         limit: 255
     t.string   "description", limit: 255
-    t.integer  "shelf_life"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "position"
@@ -138,6 +124,23 @@ ActiveRecord::Schema.define(version: 20151217220124) do
 
   add_index "items", ["code"], name: "index_items_on_code", unique: true, using: :btree
   add_index "items", ["xero_id"], name: "index_items_on_xero_id", unique: true, using: :btree
+  add_index "items", ["tag"], name: "index_items_on_tag", using: :btree
+
+  create_table "locations", force: :cascade do |t|
+    t.string   "xero_id",        limit: 255
+    t.integer  "company_id"
+    t.string   "name",           limit: 255, null: false
+    t.string   "code",           limit: 255, null: false
+    t.decimal  "delivery_rate",             default: 0.0
+    t.boolean  "active",                    default: true, null: false
+    t.integer  "address_id"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
+  add_index "locations", ["xero_id"], name: "index_locations_on_xero_id", unique: true, using: :btree
+  add_index "locations", ["address_id"], name: "index_locations_on_address_id", using: :btree
 
   create_table "price_tiers", force: :cascade do |t|
     t.string   "name",        limit: 255, null: false
@@ -198,7 +201,7 @@ ActiveRecord::Schema.define(version: 20151217220124) do
 
   create_table "sales_orders", force: :cascade do |t|
     t.string   "xero_id",        limit: 255
-    t.integer  "client_id",                                  null: false
+    t.integer  "location_id",                                  null: false
     t.integer  "route_visit_id"
     t.date     "delivery_date",                              null: false
     t.boolean  "invoiced",                   default: false, null: false
@@ -209,7 +212,7 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.binary   "signature"
   end
 
-  add_index "sales_orders", ["client_id"], name: "index_sales_orders_on_client_id", using: :btree
+  add_index "sales_orders", ["location_id"], name: "index_sales_orders_on_location_id", using: :btree
   add_index "sales_orders", ["route_visit_id"], name: "index_sales_orders_on_route_visit_id", using: :btree
 
   create_table "users", force: :cascade do |t|
@@ -235,45 +238,51 @@ ActiveRecord::Schema.define(version: 20151217220124) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
-  create_table "visit_windows", force: :cascade do |t|
-    t.string   "address",    limit: 255, null: false
-    t.string   "city",       limit: 255, null: false
-    t.string   "state",      limit: 255, null: false
-    t.string   "zip",        limit: 255, null: false
-    t.decimal  "lat",                    null: false
-    t.decimal  "lon",                    null: false
-    t.text     "notes"
-    t.integer  "client_id",              null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "service",                null: false
-    t.integer  "arrive_at",              null: false
-    t.string   "depart_at",              null: false
+  create_table "visit_days", force: :cascade do |t|
+    t.integer  "location_id",                null: false
+    t.integer  "day",                        null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.boolean  "enabled",    default: false, null: false
   end
 
-  add_index "visit_windows", ["client_id"], name: "index_visit_windows_on_client_id", using: :btree
+  add_index "visit_days", ["location_id"], name: "index_visit_days_on_location_id", using: :btree
+  add_index "visit_days", ["day"], name: "index_visit_days_on_day", using: :btree
 
-  add_foreign_key "client_item_desires", "clients"
-  add_foreign_key "client_item_desires", "items"
-  add_foreign_key "client_visit_days", "clients"
-  add_foreign_key "clients", "price_tiers"
+  create_table "visit_windows", force: :cascade do |t|
+    t.text     "notes"
+    t.integer  "location_id",              null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "service",                  null: false
+    t.integer  "min_arrival",              null: false
+    t.string   "max_arrival",              null: false
+  end
+
+  add_index "visit_windows", ["location_id"], name: "index_visit_windows_on_location_id", using: :btree
+
+  add_foreign_key "companies", "price_tiers"
   add_foreign_key "credit_items", "credits"
   add_foreign_key "credit_items", "items"
-  add_foreign_key "credits", "clients"
-  add_foreign_key "custom_orders", "route_visits"
-  add_foreign_key "custom_orders", "visit_windows"
-  add_foreign_key "item_levels", "clients"
+  add_foreign_key "credits", "locations"
+  add_foreign_key "item_desires", "locations"
+  add_foreign_key "item_desires", "items"
   add_foreign_key "item_levels", "items"
-  add_foreign_key "item_levels", "route_visits"
+  add_foreign_key "item_levels", "locations"
   add_foreign_key "item_levels", "users"
+  add_foreign_key "item_levels", "route_visits"
+  add_foreign_key "item_prices", "items"
   add_foreign_key "item_prices", "price_tiers"
+  add_foreign_key "locations", "companies"
+  add_foreign_key "locations", "addresses"
   add_foreign_key "purchase_orders", "route_visits"
   add_foreign_key "route_plans", "users"
   add_foreign_key "route_visits", "route_plans"
   add_foreign_key "route_visits", "visit_windows"
-  add_foreign_key "sales_order_items", "items"
   add_foreign_key "sales_order_items", "sales_orders"
-  add_foreign_key "sales_orders", "clients"
+  add_foreign_key "sales_order_items", "items"
+  add_foreign_key "sales_orders", "locations"
   add_foreign_key "sales_orders", "route_visits"
-  add_foreign_key "visit_windows", "clients"
+  add_foreign_key "visit_days", "locations"
+  add_foreign_key "visit_windows", "locations"
 end

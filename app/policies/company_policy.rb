@@ -1,4 +1,4 @@
-class CustomOrderPolicy
+class CompanyPolicy
 
   attr_reader :current_user, :model
 
@@ -8,11 +8,11 @@ class CustomOrderPolicy
   end
 
   def index?
-  	@current_user.admin?
+    @current_user.admin? or @current_user.driver? or @current_user.accountant?
   end
 
   def show?
-  	@current_user.admin?
+    @current_user.admin? or @current_user.driver? or @current_user.accountant?
   end
 
   def create?
@@ -20,7 +20,11 @@ class CustomOrderPolicy
   end
 
   def update?
-  	@current_user.admin?
+    @current_user.admin?
+  end
+
+  def destroy?
+    @current_user.admin?
   end
 
   def get_related_resource?

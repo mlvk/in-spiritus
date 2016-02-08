@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
-  enum role: [:user, :vip, :admin, :driver, :accountant]
-  after_initialize :set_default_role, :if => :new_record?
+  enum role: [:pending, :admin, :driver, :accountant]
+  after_initialize :set_default_role!, :if => :new_record?
   before_save :ensure_authentication_token
 
   has_many :route_plans
@@ -9,16 +9,20 @@ class User < ActiveRecord::Base
     "#{self.first_name} #{self.last_name}"
   end
 
-  def set_default_role
-    self.role = :user
+  def set_default_role!
+    self.role = :pending
   end
 
-  def set_admin_role
+  def set_admin_role!
     self.role = :admin
   end
 
-  def set_driver_role
+  def set_driver_role!
     self.role = :driver
+  end
+
+  def set_accountant_role!
+    self.role = :accountant
   end
 
   def ensure_authentication_token

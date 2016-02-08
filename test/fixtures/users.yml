@@ -1,5 +1,26 @@
-methodman:
+# Roles enum
+# [:user, :vip, :admin, :driver, :accountant]
+
+tony_stark:
+  first_name: Tony
+  last_name: Stark
+  email: ts@wutang.com
+  role: <%= User.roles[:admin] %>
+  phone: 212-555-1212
+  authentication_token: admin_token
+
+method_man:
   first_name: Method
   last_name: Man
-  email: methodman@wutang.com
-  authentication_token: admin_token
+  email: mm@wutang.com
+  role: <%= User.roles[:driver] %>
+  phone: 212-555-1212
+  authentication_token: driver_token
+
+inspectah_deck:
+  first_name: Inspectah
+  last_name: Deck
+  email: id@wutang.com
+  role: <%= User.roles[:accountant] %>
+  phone: 212-555-1212
+  authentication_token: accountant_token

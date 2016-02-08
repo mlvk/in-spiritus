@@ -1,35 +1,20 @@
 class SalesOrdersController < ApplicationJsonApiResourcesController
 
-  def ping
-    authorize SalesOrder
-
-    render json: {data:[]}
-  end
-
-  def register_device_apn
-    authorize SalesOrder
-    
-    url = "http://pubsub.pubnub.com/v1/push/sub-key/#{ENV['PN_SUB_KEY']}/devices/#{params['token']}?add=armen&type=apns"
-    response = Unirest.get(url)
-
-    render json: {data:url, status:response}
-  end
-
   def stub_orders
     authorize SalesOrder
 
     delivery_date = Date.parse(params['deliveryDate'])
-    allClients = Client.scheduled_for_delivery_on(delivery_date.cwday)
+    allLocations = Location.scheduled_for_delivery_on(delivery_date.cwday)
 
-    missingClients = allClients.select {|c| !c.has_sales_order_for_date?(delivery_date)}
+    missingLocations = allLocations.select {|location| !location.has_sales_order_for_date?(delivery_date)}
 
-    include_resources = ['sales_order_items', 'sales_order_items.item', 'client']
+    include_resources = ['sales_order_items', 'sales_order_items.item', 'location']
     serializer = JSONAPI::ResourceSerializer.new(SalesOrderResource, include: include_resources)
 
-    resources = missingClients.map { |c|
-      so = SalesOrder.new(client:c, delivery_date:Date.today)
-      c.client_item_desires.each do |cid|
-        so.sales_order_items << SalesOrderItem.new(item:cid.item, quantity:0)
+    resources = missingLocations.map { |location|
+      so = SalesOrder.new(location:location, delivery_date:Date.today)
+      c.item_desires.each do |item_desire|
+        so.sales_order_items << SalesOrderItem.new(item:item_desire.item, quantity:0)
       end
 
       so.save

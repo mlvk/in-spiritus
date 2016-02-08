@@ -1,14 +1,7 @@
 class VisitWindowResource < JSONAPI::Resource
-  attributes  :address,
-              :city,
-              :state,
-              :zip,
-              :lat,
-              :lon,
-              :service,
-              :notes,
-              :arrive_at,
-              :depart_at
+  attributes  :notes,
+              :min_arrival,
+              :max_arrival
 
-  has_one :client
+  has_one :location
 end

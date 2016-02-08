@@ -34,6 +34,9 @@ end
 group :development, :test do
   gem 'dotenv-rails'
   gem 'gist'
+  gem 'zeus'
+  gem 'factory_girl_rails'
+  gem 'faker'
 end
 group :test do
   gem 'database_cleaner'

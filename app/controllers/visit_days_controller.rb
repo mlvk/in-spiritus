@@ -1,31 +1,31 @@
-class ClientsController < ApplicationJsonApiResourcesController
+class VisitDaysController < ApplicationJsonApiResourcesController
   def index
-    authorize Client
+    authorize VisitDay
     super
   end
 
   def show
-    authorize Client
+    authorize VisitDay
     super
   end
 
   def create
-    authorize Client
+    authorize VisitDay
     super
   end
 
   def update
-    authorize Client
+    authorize VisitDay
     super
   end
 
   def get_related_resource
-    authorize Client
+    authorize VisitDay
     super
   end
 
   def get_related_resources
-    authorize Client
+    authorize VisitDay
     super
   end
 end

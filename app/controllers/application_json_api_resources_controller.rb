@@ -6,7 +6,7 @@ class ApplicationJsonApiResourcesController < JSONAPI::ResourceController
 
   protect_from_forgery with: :null_session
 
-  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+  rescue_from Pundit::NotAuthorizedError, with: :pundit_authorization_failed
 
   # This allows us to access the current user from JR resources
   def context
@@ -28,6 +28,8 @@ class ApplicationJsonApiResourcesController < JSONAPI::ResourceController
           @current_user = user
         end
       end
+
+      render_unauthorized! "Valid user required to make that request" if @current_user.nil?
     end
 
     def use_dummy_session
@@ -36,7 +38,14 @@ class ApplicationJsonApiResourcesController < JSONAPI::ResourceController
       env["rack.session.options"][:drop] = true
     end
 
-    def user_not_authorized
-      render json: {}, status: :unauthorized
+    def pundit_authorization_failed(exception)
+      policy = exception.policy.class.to_s.underscore
+      query = exception.query
+      user_email = @current_user.email
+      render_unauthorized! "Unauthorized. #{user_email} tried to run #{query} on the #{policy}"
+    end
+
+    def render_unauthorized!(message)
+      render json: {message:message}, status: :unauthorized
     end
 end

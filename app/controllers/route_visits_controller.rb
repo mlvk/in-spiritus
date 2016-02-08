@@ -48,11 +48,11 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
   private
     def process_route_visit (route_visit_id, visit_data)
       rv = RouteVisit.find(route_visit_id)
-      client = rv.visit_window.client
+      location = rv.visit_window.location
       date = rv.route_plan.date
 
-      create_item_levels(visit_data, client, date)
-      create_credit(visit_data, client, date)
+      create_item_levels(visit_data, location, date)
+      create_credit(visit_data, location, date)
       fullfill_sales_orders(rv.sales_orders, visit_data)
       return route_visit_id
     end
@@ -67,9 +67,9 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
       }
     end
 
-    def create_credit (visit_data, client, date)
+    def create_credit (visit_data, location, date)
       if visit_data['items'].present?
-        credit = Credit.new(client:client, date:date)
+        credit = Credit.new(location:location, date:date)
         visit_data['items'].each {|item_id, item_data|
           item = Item.find(item_id)
 
@@ -77,32 +77,32 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
             credit:credit,
             item:item,
             quantity: item_data['returns'],
-            unit_price: client.price_for_item(item))
+            unit_price: location.price_for_item(item))
         }
 
         credit.save
       end
     end
 
-    def create_item_levels (visit_data, client, date)
+    def create_item_levels (visit_data, location, date)
       Item.all.each {|item|
         data = Maybe(visit_data)[:items][item.id.to_s].fetch({start:0, returns:0, total:0})
-        create_item_level(date, client, item, data)
+        create_item_level(date, location, item, data)
       }
     end
 
-    def create_item_level (date, client, item, data)
+    def create_item_level (date, location, item, data)
       item_level = ItemLevel.new(
         user:current_user,
         start:data[:start],
         returns:data[:returns],
-        client:client,
+        location:location,
         item:item,
         day_of_week:date.cwday,
         taken_at:DateTime.now
       )
 
-      total_delivered = SalesOrderItem.find_by_date_client_item(date, client, item)
+      total_delivered = SalesOrderItem.find_by_date_location_item(date, location, item)
         .reduce(0) {|acc, cur| acc + cur.quantity }
 
       item_level.total = Maybe(data)[:total].fetch(data[:start] + total_delivered - data[:returns])
