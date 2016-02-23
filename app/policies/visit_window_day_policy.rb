@@ -1,4 +1,4 @@
-class SalesOrderItemPolicy
+class VisitWindowDayPolicy
 
   attr_reader :current_user, :model
 
@@ -20,6 +20,10 @@ class SalesOrderItemPolicy
   end
 
   def update?
+  	@current_user.admin?
+  end
+
+  def destroy?
   	@current_user.admin?
   end
 

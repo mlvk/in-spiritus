@@ -1,7 +1,8 @@
 class VisitWindowResource < JSONAPI::Resource
-  attributes  :notes,
-              :min_arrival,
-              :max_arrival
+  attributes  :min,
+              :max,
+              :service
 
   has_one :location
+  has_many :visit_window_days
 end

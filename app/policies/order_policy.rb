@@ -1,4 +1,4 @@
-class SalesOrderPolicy
+class OrderPolicy
 
   attr_reader :current_user, :model
 
@@ -32,6 +32,10 @@ class SalesOrderPolicy
   end
 
   def update?
+  	@current_user.admin?
+  end
+
+  def destroy?
   	@current_user.admin?
   end
 

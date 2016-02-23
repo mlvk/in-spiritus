@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.integer  "item_id"
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
-    t.boolean  "desired",    default: false
+    t.boolean  "enabled",    default: false
   end
 
   add_index "item_desires", ["location_id"], name: "index_item_desires_on_location_id", using: :btree
@@ -119,10 +119,10 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.datetime "updated_at"
     t.integer  "position"
     t.string   "tag",         limit: 255, default: "product", null: false
-    t.string   "code",        limit: 255,                     null: false
+    t.string   "name",        limit: 255,                     null: false
   end
 
-  add_index "items", ["code"], name: "index_items_on_code", unique: true, using: :btree
+  add_index "items", ["name"], name: "index_items_on_name", unique: true, using: :btree
   add_index "items", ["xero_id"], name: "index_items_on_xero_id", unique: true, using: :btree
   add_index "items", ["tag"], name: "index_items_on_tag", using: :btree
 
@@ -148,15 +148,6 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "purchase_orders", force: :cascade do |t|
-    t.string   "xero_id"
-    t.integer  "route_visit_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "purchase_orders", ["route_visit_id"], name: "index_purchase_orders_on_route_visit_id", using: :btree
 
   create_table "route_plans", force: :cascade do |t|
     t.integer  "user_id"
@@ -187,8 +178,8 @@ ActiveRecord::Schema.define(version: 20151217220124) do
   add_index "route_visits", ["route_plan_id"], name: "index_route_visits_on_route_plan_id", using: :btree
   add_index "route_visits", ["visit_window_id"], name: "index_route_visits_on_visit_window_id", using: :btree
 
-  create_table "sales_order_items", force: :cascade do |t|
-    t.integer  "sales_order_id",               null: false
+  create_table "order_items", force: :cascade do |t|
+    t.integer  "order_id",               null: false
     t.integer  "item_id",                      null: false
     t.integer  "quantity",       default: 0,   null: false
     t.decimal  "unit_price",     default: 0.0, null: false
@@ -196,11 +187,12 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.datetime "updated_at"
   end
 
-  add_index "sales_order_items", ["item_id"], name: "index_sales_order_items_on_item_id", using: :btree
-  add_index "sales_order_items", ["sales_order_id"], name: "index_sales_order_items_on_sales_order_id", using: :btree
+  add_index "order_items", ["item_id"], name: "index_order_items_on_item_id", using: :btree
+  add_index "order_items", ["order_id"], name: "index_order_items_on_order_id", using: :btree
 
-  create_table "sales_orders", force: :cascade do |t|
+  create_table "orders", force: :cascade do |t|
     t.string   "xero_id",        limit: 255
+    t.string   "order_type",                   default: "sales-order", null: false
     t.integer  "location_id",                                  null: false
     t.integer  "route_visit_id"
     t.date     "delivery_date",                              null: false
@@ -212,8 +204,8 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.binary   "signature"
   end
 
-  add_index "sales_orders", ["location_id"], name: "index_sales_orders_on_location_id", using: :btree
-  add_index "sales_orders", ["route_visit_id"], name: "index_sales_orders_on_route_visit_id", using: :btree
+  add_index "orders", ["location_id"], name: "index_orders_on_location_id", using: :btree
+  add_index "orders", ["route_visit_id"], name: "index_orders_on_route_visit_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  limit: 255, default: "", null: false
@@ -250,16 +242,25 @@ ActiveRecord::Schema.define(version: 20151217220124) do
   add_index "visit_days", ["day"], name: "index_visit_days_on_day", using: :btree
 
   create_table "visit_windows", force: :cascade do |t|
-    t.text     "notes"
     t.integer  "location_id",              null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "service",                  null: false
-    t.integer  "min_arrival",              null: false
-    t.string   "max_arrival",              null: false
+    t.integer  "min",              null: false
+    t.string   "max",              null: false
   end
 
   add_index "visit_windows", ["location_id"], name: "index_visit_windows_on_location_id", using: :btree
+
+  create_table "visit_window_days", force: :cascade do |t|
+    t.integer  "visit_window_id",              null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "day",                  null: false
+    t.boolean  "enabled",    default: false, null: false
+  end
+
+  add_index "visit_window_days", ["visit_window_id"], name: "index_visit_window_days_on_visit_window_id", using: :btree
 
   add_foreign_key "companies", "price_tiers"
   add_foreign_key "credit_items", "credits"
@@ -275,14 +276,14 @@ ActiveRecord::Schema.define(version: 20151217220124) do
   add_foreign_key "item_prices", "price_tiers"
   add_foreign_key "locations", "companies"
   add_foreign_key "locations", "addresses"
-  add_foreign_key "purchase_orders", "route_visits"
   add_foreign_key "route_plans", "users"
   add_foreign_key "route_visits", "route_plans"
   add_foreign_key "route_visits", "visit_windows"
-  add_foreign_key "sales_order_items", "sales_orders"
-  add_foreign_key "sales_order_items", "items"
-  add_foreign_key "sales_orders", "locations"
-  add_foreign_key "sales_orders", "route_visits"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "items"
+  add_foreign_key "orders", "locations"
+  add_foreign_key "orders", "route_visits"
   add_foreign_key "visit_days", "locations"
   add_foreign_key "visit_windows", "locations"
+  add_foreign_key "visit_window_days", "visit_windows"
 end

@@ -53,12 +53,12 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
 
       create_item_levels(visit_data, location, date)
       create_credit(visit_data, location, date)
-      fullfill_sales_orders(rv.sales_orders, visit_data)
+      fullfill_orders(rv.orders, visit_data)
       return route_visit_id
     end
 
-    def fullfill_sales_orders (sales_orders, visit_data)
-      sales_orders.each {|so|
+    def fullfill_orders (orders, visit_data)
+      orders.each {|so|
         signature = Maybe(visit_data)[:salesOrders][so.id.to_s][:signature]
         so.signature = signature if signature.present?
 
@@ -102,7 +102,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
         taken_at:DateTime.now
       )
 
-      total_delivered = SalesOrderItem.find_by_date_location_item(date, location, item)
+      total_delivered = OrderItem.find_by_date_location_item(date, location, item)
         .reduce(0) {|acc, cur| acc + cur.quantity }
 
       item_level.total = Maybe(data)[:total].fetch(data[:start] + total_delivered - data[:returns])

@@ -10,7 +10,6 @@ class RouteVisitResource < JSONAPI::Resource
   has_one :route_plan
   has_one :visit_window
 
-  has_many :sales_orders
-  has_many :purchase_orders
+  has_many :orders
   has_many :item_levels
 end

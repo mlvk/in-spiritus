@@ -1,10 +1,22 @@
 #### Users
-admin = User.create(first_name:'Tony', last_name:'Starks', email:'ts@wutang.com', authentication_token:'debug_token', password:'password')
+admin = User.create(first_name:'Tony', last_name:'Starks', email:'admin@wutang.com', authentication_token:'admin_token', password:'password')
 admin.set_admin_role!
 admin.save
 #
 #### Price Tiers
-wholesale_price_tier = PriceTier.create(name:'Retail')
+distributor_price_tier = PriceTier.create(name:'Distributor')
+wholesale_price_tier = PriceTier.create(name:'Wholesale')
+retail_price_tier = PriceTier.create(name:'Retail')
+
+#### Items
+Item.create(name:'Sunseed Chorizo', description: 'Tasty collard wrap', position: 1)
+Item.create(name:'Pepita Pesto Wrap', description: 'Tasty collard wrap', position: 2)
+Item.create(name:'Perfectly Pad Thai', description: 'Quinoa Salad', position: 3)
+Item.create(name:'Kinky Quinoa', description: 'Quinoa Salad', position: 4)
+Item.create(name:'French Lentils', description: 'French lentil salad', position: 5)
+Item.create(name:'Almond Turmeric', description: 'Almond turmeric food bar', position: 6)
+Item.create(name:'Almond Cacao', description: 'Almond cacao food bar', position: 7)
+Item.create(name:'Hail to Kale', description: 'Kale Salad', position: 8)
 
 #### Companies
 wutang = Company.create(
@@ -15,34 +27,37 @@ wutang = Company.create(
   price_tier: wholesale_price_tier)
 
 #### Locations
-location = Location.create(
+Location.create(
   code: 'wt-001',
   name: 'Staten',
   active: true,
-  delivery_rate: 10)
-#
-# naughty_by_nature = Client.create(
-#   code: 'nbn-001',
-#   company: 'Naught By Nature',
-#   nickname: 'Brooklyn',
-#   active: true,
-#   delivery_rate: 5,
-#   credit_rate: 0.5,
-#   terms: 7,
-#   price_tier: wholesale_price_tier)
+  delivery_rate: 10,
+  company: wutang)
 
-#### Items
-ssc = Item.create(
-  code: 'Sunseed Chorizo',
-  description: 'Tasty collard wrap',
-  position: 1)
+Location.create(
+  code: 'wt-002',
+  name: 'Brooklyn',
+  active: true,
+  delivery_rate: 10,
+  company: wutang)
 
-pp = Item.create(
-  code:'Pepita Pesto Wrap',
-  description: 'Tasty collard wrap',
-  position: 1)
+Location.create(
+  code: 'wt-003',
+  name: 'Manhattan',
+  active: true,
+  delivery_rate: 15,
+  company: wutang)
 
-kk = Item.create(
-  code:'Kinky Quinoa',
-  description: 'Quinoa Salad',
-  position: 1)
+Location.all.each do |location|
+  Item.all.each do |item|
+    ItemDesire.create(item:item, location:location, enabled:true)
+  end
+end
+
+tomorrow = Date.today + 1
+Location.all.each do |location|
+  order = Order.create(location:location, delivery_date:tomorrow)
+  Item.all.each do |item|
+    OrderItem.create(order:order, item:item)
+  end
+end

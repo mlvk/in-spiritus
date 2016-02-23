@@ -1,8 +1,8 @@
 class ItemResource < JSONAPI::Resource
-  attributes :code,
+  attributes :name,
              :description,
              :tag,
              :position
 
-  has_many :sales_order_items
+  has_many :order_items
 end

@@ -1,5 +1,5 @@
 class ItemDesireResource < JSONAPI::Resource
-  attributes :desired
+  attributes :enabled
   has_one :location
   has_one :item
 end
