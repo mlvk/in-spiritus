@@ -1,10 +1,10 @@
 class AddressResource < JSONAPI::Resource
-  attributes  :address,
+  attributes  :street,
               :city,
               :state,
               :zip,
               :lat,
-              :lon
+              :lng
 
   has_many :locations
 end

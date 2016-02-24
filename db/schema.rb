@@ -17,17 +17,17 @@ ActiveRecord::Schema.define(version: 20151217220124) do
   enable_extension "plpgsql"
 
   create_table "addresses", force: :cascade do |t|
-    t.string   "address",        limit: 255, null: false
+    t.string   "street",        limit: 255, null: false
     t.string   "city",           limit: 255, null: false
     t.string   "state",          limit: 255, null: false
     t.string   "zip",            limit: 255, null: false
     t.decimal  "lat",                        null: false
-    t.decimal  "lon",                        null: false
+    t.decimal  "lng",                        null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "addresses", ["address"], name: "index_addresses_on_address", unique: true, using: :btree
+  add_index "addresses", ["street"], name: "index_addresses_on_street", unique: true, using: :btree
 
   create_table "companies", force: :cascade do |t|
     t.string   "name",       limit: 255, null: false

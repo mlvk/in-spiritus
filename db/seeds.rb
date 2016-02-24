@@ -19,34 +19,73 @@ Item.create(name:'Almond Cacao', description: 'Almond cacao food bar', position:
 Item.create(name:'Hail to Kale', description: 'Kale Salad', position: 8)
 
 #### Companies
-wutang = Company.create(
-  name: 'Wu-Tang Corp',
-  code: 'wt',
+# wutang = Company.create(
+#   name: 'Wu-Tang Corp',
+#   code: 'wt',
+#   credit_rate: 0.5,
+#   terms: 14,
+#   price_tier: wholesale_price_tier)
+
+naturewell = Company.create(
+  name: 'Nature Well',
+  code: 'nw',
   credit_rate: 0.5,
   terms: 14,
   price_tier: wholesale_price_tier)
 
 #### Locations
-Location.create(
-  code: 'wt-001',
-  name: 'Staten',
-  active: true,
-  delivery_rate: 10,
-  company: wutang)
+# Location.create(
+#   code: 'wt-001',
+#   name: 'Staten',
+#   active: true,
+#   delivery_rate: 10,
+#   company: wutang)
+#
+# Location.create(
+#   code: 'wt-002',
+#   name: 'Brooklyn',
+#   active: true,
+#   delivery_rate: 10,
+#   company: wutang)
+#
+# Location.create(
+#   code: 'wt-003',
+#   name: 'Manhattan',
+#   active: true,
+#   delivery_rate: 15,
+#   company: wutang)
+
+addr1 = Address.create(
+  street: '4011 Sunset Blvd',
+  city: 'los angeles',
+  state: 'ca',
+  zip: '90026',
+  lat: 34.0928448,
+  lng: -118.2826394)
+
+addr2 = Address.create(
+  street: '3824 sunset blvd',
+  city: 'los angeles',
+  state: 'ca',
+  zip: '90026',
+  lat: 34.0912512,
+  lng: -118.2817353)
 
 Location.create(
-  code: 'wt-002',
-  name: 'Brooklyn',
+  code: 'nw-001',
+  name: 'Silverlake',
   active: true,
   delivery_rate: 10,
-  company: wutang)
+  company: naturewell,
+  address: addr1)
 
 Location.create(
-  code: 'wt-003',
-  name: 'Manhattan',
+  code: 'nw-002',
+  name: 'Silverlake 2',
   active: true,
-  delivery_rate: 15,
-  company: wutang)
+  delivery_rate: 10,
+  company: naturewell,
+  address: addr2)
 
 Location.all.each do |location|
   Item.all.each do |item|
