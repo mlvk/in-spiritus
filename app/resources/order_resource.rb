@@ -3,7 +3,8 @@ class OrderResource < JSONAPI::Resource
              :invoiced,
              :fullfilled,
              :voided,
-             :signature
+             :signature,
+             :order_type
 
   filter :delivery_date
 

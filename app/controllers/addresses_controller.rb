@@ -1,37 +1,37 @@
-class ItemLevelsController < ApplicationJsonApiResourcesController
+class AddressesController < ApplicationJsonApiResourcesController
 
   def index
-    authorize ItemLevel
+    authorize Address
     super
   end
 
   def show
-    authorize ItemLevel
+    authorize Address
     super
   end
 
   def create
-    authorize ItemLevel
+    authorize Address
     super
   end
 
   def update
-    authorize ItemLevel
+    authorize Address
     super
   end
 
   def destroy
-    authorize ItemLevel
+    authorize Address
     super
   end
 
   def get_related_resource
-    authorize ItemLevel
+    authorize Address
     super
   end
 
   def get_related_resources
-    authorize ItemLevel
+    authorize Address
     super
   end
 end

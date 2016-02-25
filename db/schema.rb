@@ -27,8 +27,6 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.datetime "updated_at"
   end
 
-  add_index "addresses", ["street"], name: "index_addresses_on_street", unique: true, using: :btree
-
   create_table "companies", force: :cascade do |t|
     t.string   "name",       limit: 255, null: false
     t.integer  "terms",     default: 14, null: false
