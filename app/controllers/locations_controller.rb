@@ -19,6 +19,11 @@ class LocationsController < ApplicationJsonApiResourcesController
     super
   end
 
+  def destroy
+    authorize Location
+    super
+  end
+
   def get_related_resource
     authorize Location
     super

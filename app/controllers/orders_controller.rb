@@ -13,7 +13,7 @@ class OrdersController < ApplicationJsonApiResourcesController
 
     resources = missingLocations.map { |location|
       order = Order.new(location:location, delivery_date:delivery_date)
-      location.item_desires.each do |item_desire|
+      location.item_desires.where(enabled:true).each do |item_desire|
         order.order_items << OrderItem.new(item:item_desire.item, quantity:0)
       end
 

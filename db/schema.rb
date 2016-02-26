@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.string   "name",       limit: 255, null: false
     t.integer  "terms",     default: 14, null: false
     t.decimal  "credit_rate",     default: 0.0
-    t.string   "code",          limit: 255, null: false
+    t.string   "code",          limit: 255
     t.string   "tag",      default: 'customer', null: false
     t.integer  "price_tier_id"
     t.datetime "created_at"
