@@ -2,11 +2,6 @@
 admin = User.create(first_name:'Tony', last_name:'Starks', email:'admin@wutang.com', authentication_token:'admin_token', password:'password')
 admin.set_admin_role!
 admin.save
-#
-#### Price Tiers
-distributor_price_tier = PriceTier.create(name:'Distributor')
-wholesale_price_tier = PriceTier.create(name:'Wholesale')
-retail_price_tier = PriceTier.create(name:'Retail')
 
 #### Items
 Item.create(name:'Sunseed Chorizo', description: 'Tasty collard wrap', position: 1)
@@ -17,6 +12,18 @@ Item.create(name:'French Lentils', description: 'French lentil salad', position:
 Item.create(name:'Almond Turmeric', description: 'Almond turmeric food bar', position: 6)
 Item.create(name:'Almond Cacao', description: 'Almond cacao food bar', position: 7)
 Item.create(name:'Hail to Kale', description: 'Kale Salad', position: 8)
+
+#### Price Tiers
+distributor_price_tier = PriceTier.create(name:'Distributor')
+wholesale_price_tier = PriceTier.create(name:'Wholesale')
+retail_price_tier = PriceTier.create(name:'Retail')
+
+#### Item Prices
+PriceTier.all.each do |pt|
+  Item.all.each do |item|
+    ItemPrice.create({price_tier:pt, item:item, price:rand(1..10)})
+  end
+end
 
 #### Companies
 # wutang = Company.create(
@@ -93,10 +100,30 @@ Location.all.each do |location|
   end
 end
 
+Location.all.each do |location|
+  (0..6).each do |day|
+    VisitDay.create(day:day, location:location)
+  end
+
+  vw = VisitWindow.create(location:location, service:10, min: 480, max:720)
+
+  (0..6).each do |day|
+    VisitWindowDay.create(day:day, visit_window:vw)
+  end
+end
+
+yesterday = Date.today - 1
+Location.all.each do |location|
+  order = Order.create(location:location, delivery_date:yesterday, fullfilled:true)
+  Item.all.each do |item|
+    OrderItem.create(order:order, item:item, quantity:rand(0..10))
+  end
+end
+
 tomorrow = Date.today + 1
 Location.all.each do |location|
   order = Order.create(location:location, delivery_date:tomorrow)
   Item.all.each do |item|
-    OrderItem.create(order:order, item:item)
+    OrderItem.create(order:order, item:item, quantity:rand(0..10))
   end
 end
