@@ -11,6 +11,7 @@ gem 'unirest'
 gem 'monadic'
 gem 'json', '~> 1.8.3'
 gem 'okcomputer'
+gem 'aasm'
 
 group :development do
   gem 'better_errors'

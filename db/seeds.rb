@@ -26,12 +26,6 @@ PriceTier.all.each do |pt|
 end
 
 #### Companies
-# wutang = Company.create(
-#   name: 'Wu-Tang Corp',
-#   code: 'wt',
-#   credit_rate: 0.5,
-#   terms: 14,
-#   price_tier: wholesale_price_tier)
 
 naturewell = Company.create(
   name: 'Nature Well',
@@ -114,7 +108,7 @@ end
 
 yesterday = Date.today - 1
 Location.all.each do |location|
-  order = Order.create(location:location, delivery_date:yesterday, fullfilled:true)
+  order = Order.create(location:location, delivery_date:yesterday)
   Item.all.each do |item|
     OrderItem.create(order:order, item:item, quantity:rand(0..10))
   end
