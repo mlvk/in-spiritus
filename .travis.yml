@@ -1,0 +1,17 @@
+sudo: required
+
+language: ruby
+
+rvm:
+  - 2.3.0
+
+services:
+  - postgresql
+  - redis
+
+env:
+  - RAILS_ENV=test
+
+script:
+  - bundle exec rake db:setup
+  - rake test
