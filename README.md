@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/brancusi/in-spiritus.svg?branch=master)](https://travis-ci.org/brancusi/in-spiritus)
-
 ## In Spiritus
 
 ### Setup
