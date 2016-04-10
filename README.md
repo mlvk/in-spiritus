@@ -18,7 +18,7 @@ This project integrates with the following systems:
 1. Tidy schema: `rake db:schema:dump`
 
 ### Domain Model Diagram
-[[https://github.com/brancusi/in-spiritus/blob/master/img/erd.png|alt=erd]]
+[https://github.com/brancusi/in-spiritus/blob/master/img/erd.png|alt=erd]
 
 ### Setup Xero
 1. Generate keys:
