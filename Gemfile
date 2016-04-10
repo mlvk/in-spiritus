@@ -23,16 +23,8 @@ gem 'clockwork'
 gem 'sidekiq-unique-jobs'
 
 group :development do
-  gem 'better_errors'
-  gem 'binding_of_caller', :platforms=>[:mri_21]
-  gem 'guard-bundler'
-  gem 'guard-rails'
-  gem 'rb-fchange', :require=>false
-  gem 'rb-fsevent', :require=>false
-  gem 'rb-inotify', :require=>false
   gem 'hirb'
   gem 'awesome_print'
-  gem 'interactive_editor'
   gem 'spring'
 end
 
