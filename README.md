@@ -1,5 +1,12 @@
 [![Build Status](https://travis-ci.org/brancusi/in-spiritus.svg?branch=master)](https://travis-ci.org/brancusi/in-spiritus)
 ## In Spiritus
+An attempt to simplify order and distribution management for startup food companies.
+
+This project integrates with the following systems:
+
+1. [Xero](https://www.xero.com)
+1. [Routific](https://routific.com)
+1. [Stripe](https://stripe.com/) - Future
 
 ### Setup
 1. Run `rake secret` for each slot where needed in the secrets file
@@ -9,6 +16,9 @@
 ## Development
 1. Generate new domain model uml: `rake erd`
 1. Tidy schema: `rake db:schema:dump`
+
+### Domain Model Diagram
+[[https://github.com/brancusi/in-spiritus/blob/master/img/erd.png|alt=erd]]
 
 ### Setup Xero
 1. Generate keys:
