@@ -37,7 +37,7 @@
   1. __POSTGRESQL_PASSWORD__ : *required*
 
 ### Start services
-Start Redis: `redis-server /usr/local/etc/redis.conf`
-Start Clockwork: `bundle exec clockwork clock.rb`
-Start Sidekiq: `bundle exec sidekiq`
-Start Rails: `rails s`
+1. Start Redis: `redis-server /usr/local/etc/redis.conf`
+1. Start Clockwork: `bundle exec clockwork clock.rb`
+1. Start Sidekiq: `bundle exec sidekiq`
+1. Start Rails: `rails s`
