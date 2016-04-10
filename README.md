@@ -20,8 +20,8 @@
     openssl pkcs12 -export -out public_privatekey.pfx -inkey privatekey.pem -in publickey.cer
     pbcopy < publickey.cer
     ```
-1. Create a demo account via the xero interface (Create demo account)[https://my.xero.com/!xkcD/Dashboard]
-1. Goto the xero dev console (Xero Dev - Applications)[https://app.xero.com/Application/List]
+1. Create a demo account via the xero interface [Create demo account](https://my.xero.com/!xkcD/Dashboard)
+1. Goto the xero dev console [Xero Dev - Applications](https://app.xero.com/Application/List)
 1. Create a new private application.
 1. Select the demo account
 1. Paste in the public key
