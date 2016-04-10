@@ -1,0 +1,2 @@
+class FulfillmentPolicy < StandardPolicy
+end

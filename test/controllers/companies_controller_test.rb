@@ -35,14 +35,18 @@ class CompaniesControllerTest < ActionController::TestCase
 
   # Show tests
   test "admin can view a company" do
+    company = create(:company)
+
     sign_in_as_admin
 
-    get(:show, {id:Company.first.id})
+    get(:show, {id:company.id})
 
     assert_response :success
   end
 
   test "drivers can view a company" do
+    company = create(:company)
+
     sign_in_as_driver
 
     get(:show, {id:Company.first.id})
@@ -50,6 +54,8 @@ class CompaniesControllerTest < ActionController::TestCase
   end
 
   test "accountants can view a company" do
+    company = create(:company)
+
     sign_in_as_accountant
 
     get(:show, {id:Company.first.id})
@@ -57,6 +63,8 @@ class CompaniesControllerTest < ActionController::TestCase
   end
 
   test "anonymous users can not view a company" do
+    company = create(:company)
+
     get(:show, {id:Company.first.id})
     assert_response :unauthorized
   end

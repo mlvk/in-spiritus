@@ -4,14 +4,14 @@ admin.set_admin_role!
 admin.save
 
 #### Items
-Item.create(name:'Sunseed Chorizo', description: 'Tasty collard wrap', position: 1)
-Item.create(name:'Pepita Pesto Wrap', description: 'Tasty collard wrap', position: 2)
-Item.create(name:'Perfectly Pad Thai', description: 'Quinoa Salad', position: 3)
-Item.create(name:'Kinky Quinoa', description: 'Quinoa Salad', position: 4)
-Item.create(name:'French Lentils', description: 'French lentil salad', position: 5)
-Item.create(name:'Almond Turmeric', description: 'Almond turmeric food bar', position: 6)
-Item.create(name:'Almond Cacao', description: 'Almond cacao food bar', position: 7)
-Item.create(name:'Hail to Kale', description: 'Kale Salad', position: 8)
+Item.create(name:'Sunseed Chorizo', description: 'Tasty collard wrap', position: 1, is_sold:true, is_purchased:false)
+Item.create(name:'Pepita Pesto Wrap', description: 'Tasty collard wrap', position: 2, is_sold:true, is_purchased:false)
+Item.create(name:'Perfectly Pad Thai', description: 'Quinoa Salad', position: 3, is_sold:true, is_purchased:false)
+Item.create(name:'Kinky Quinoa', description: 'Quinoa Salad', position: 4, is_sold:true, is_purchased:false)
+Item.create(name:'French Lentils', description: 'French lentil salad', position: 5, is_sold:true, is_purchased:false)
+Item.create(name:'Almond Turmeric', description: 'Almond turmeric food bar', position: 6, is_sold:true, is_purchased:false)
+Item.create(name:'Almond Cacao', description: 'Almond cacao food bar', position: 7, is_sold:true, is_purchased:false)
+Item.create(name:'Hail to Kale', description: 'Kale Salad', position: 8, is_sold:true, is_purchased:false)
 
 #### Price Tiers
 distributor_price_tier = PriceTier.create(name:'Distributor')
@@ -30,7 +30,6 @@ end
 naturewell = Company.create(
   name: 'Nature Well',
   code: 'nw',
-  credit_rate: 0.5,
   terms: 14,
   price_tier: wholesale_price_tier)
 
@@ -110,7 +109,7 @@ yesterday = Date.today - 1
 Location.all.each do |location|
   order = Order.create(location:location, delivery_date:yesterday)
   Item.all.each do |item|
-    OrderItem.create(order:order, item:item, quantity:rand(0..10))
+    OrderItem.create(order:order, item:item, quantity:rand(0..10), unit_price:rand(0..10))
   end
 end
 
@@ -118,6 +117,6 @@ tomorrow = Date.today + 1
 Location.all.each do |location|
   order = Order.create(location:location, delivery_date:tomorrow)
   Item.all.each do |item|
-    OrderItem.create(order:order, item:item, quantity:rand(0..10))
+    OrderItem.create(order:order, item:item, quantity:rand(0..10), unit_price:rand(0..10))
   end
 end

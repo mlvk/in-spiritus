@@ -1,17 +1,10 @@
 class Order < ActiveRecord::Base
   include AASM
 
-  after_create :generate_invoice_number
-
-  belongs_to :location
-  has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
-  belongs_to :route_visit
-
   # State machine settings
-  enum order_state: [ :pending, :fulfilled, :synced, :voided ]
-  enum notifications_state: [ :unprocessed, :processed ]
+  enum xero_state: [ :pending, :fulfilled, :synced, :voided ]
 
-  aasm :order, :column => :order_state, :skip_validation_on_save => true, :no_direct_assignment => true do
+  aasm :order, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :fulfilled
     state :synced
@@ -31,6 +24,7 @@ class Order < ActiveRecord::Base
     end
   end
 
+  enum notifications_state: [ :unprocessed, :processed ]
   aasm :notifications, :column => :notifications_state, :skip_validation_on_save => true, :no_direct_assignment => true do
     state :unprocessed, :initial => true
     state :processed
@@ -39,6 +33,13 @@ class Order < ActiveRecord::Base
       transitions :from => :unprocessed, :to => :processed
     end
   end
+
+  after_create :generate_invoice_number
+
+  belongs_to :location
+  has_one :fulfillment, dependent: :destroy, autosave: true
+  has_one :pod, :dependent => :destroy, autosave: true
+  has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
 
   private
     def generate_invoice_number

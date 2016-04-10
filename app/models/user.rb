@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   before_save :ensure_authentication_token
 
   has_many :route_plans
+  has_many :stocks
+  has_many :pods
 
   def name
     "#{self.first_name} #{self.last_name}"
@@ -31,17 +33,16 @@ class User < ActiveRecord::Base
     end
   end
 
-  private
-
-    def generate_authentication_token
-      loop do
-        token = Devise.friendly_token
-        break token unless User.where(authentication_token: token).first
-      end
-    end
-
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+
+  private
+  def generate_authentication_token
+   loop do
+     token = Devise.friendly_token
+     break token unless User.where(authentication_token: token).first
+   end
+  end
 end

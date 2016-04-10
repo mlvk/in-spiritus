@@ -12,33 +12,46 @@ gem 'monadic'
 gem 'json', '~> 1.8.3'
 gem 'okcomputer'
 gem 'aasm'
+gem 'xeroizer', :git => 'git://github.com/waynerobinson/xeroizer.git'
+gem 'redis'
+gem 'httplog'
+
+# Job scheduling
+gem 'sidekiq'
+gem 'sinatra', :require => nil
+gem 'clockwork'
+gem 'sidekiq-unique-jobs'
 
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller', :platforms=>[:mri_21]
   gem 'guard-bundler'
   gem 'guard-rails'
-  gem 'quiet_assets'
-  gem 'rails_layout'
   gem 'rb-fchange', :require=>false
   gem 'rb-fsevent', :require=>false
   gem 'rb-inotify', :require=>false
   gem 'hirb'
   gem 'awesome_print'
   gem 'interactive_editor'
-  gem 'rack-mini-profiler'
-  gem 'pry'
-  gem 'pry-byebug'
-  gem 'pry-rails'
   gem 'spring'
 end
+
 group :development, :test do
   gem 'dotenv-rails'
   gem 'gist'
   gem 'zeus'
+  gem 'pry'
+  gem 'pry-byebug'
+  gem 'pry-rails'
+  gem 'rails-erd'
+end
+
+group :test do
   gem 'factory_girl_rails'
   gem 'faker'
-end
-group :test do
-  gem 'database_cleaner'
+  gem 'vcr'
+  gem 'webmock'
+  gem 'fakeredis'
+  gem 'factory_girl'
+  gem 'spy'
 end

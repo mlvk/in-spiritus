@@ -9,6 +9,7 @@ class LocationResource < JSONAPI::Resource
   has_many :visit_windows
   has_many :item_desires
   has_many :visit_days
+  has_many :item_credit_rates
 
   filter :active
 end

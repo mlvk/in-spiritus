@@ -1,0 +1,27 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/Items
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+          <Id>90eb6ae2-6e69-4ceb-b6ee-6554b2596606</Id>
+          <Status>OK</Status>
+          <Items>
+            <Item>
+              <ItemID>b3d9696b-13f3-455a-aac9-c5b26e9b71ea</ItemID>
+              <Code>Sunseed Chorizo</Code>
+              <Description>No description</Description>
+              <IsSold>true</IsSold>
+              <IsPurchased>true</IsPurchased>
+            </Item>
+          </Items>
+        </Response>"
+    http_version:
+  recorded_at: Mon, 07 Mar 2016 22:26:39 GMT
+recorded_with: VCR 3.0.1

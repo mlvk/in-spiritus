@@ -4,5 +4,4 @@ class UserResource < JSONAPI::Resource
              :last_name,
              :phone,
              :role
-             
 end

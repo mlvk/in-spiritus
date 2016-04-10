@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/Items?where=Code==%22Sunseed%20Chorizo%22
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+          <Id>2ad9bbc0-cc7c-43c9-8771-ab8bc0281693</Id>
+          <Status>OK</Status>
+        </Response>"
+    http_version:
+  recorded_at: Mon, 07 Mar 2016 22:20:09 GMT
+- request:
+    method: put
+    uri: https://api.xero.com/api.xro/2.0/Items?summarizeErrors=false
+    body:
+      encoding: US-ASCII
+      string: xml=%3CItems%3E%0A%20%20%3CItem%3E%0A%20%20%20%20%3CCode%3ESunseed%20Chorizo%3C%2FCode%3E%0A%20%20%3C%2FItem%3E%0A%3C%2FItems%3E%0A
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+          <Id>8ce3f567-7c37-402c-97bf-e8edfe7089ef</Id>
+          <Status>OK</Status>
+          <Items>
+            <Item status=\"OK\">
+              <ItemID>b3d9696b-13f3-455a-aac9-c5b26e9b71ea</ItemID>
+              <Code>Sunseed Chorizo</Code>
+              <Description>No description</Description>
+              <IsSold>true</IsSold>
+              <IsPurchased>true</IsPurchased>
+            </Item>
+          </Items>
+        </Response>"
+    http_version:
+  recorded_at: Mon, 07 Mar 2016 22:20:10 GMT
+recorded_with: VCR 3.0.1

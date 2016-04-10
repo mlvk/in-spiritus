@@ -39,4 +39,9 @@ Rails.application.configure do
 
   config.active_support.test_order = :random
 
+  VCR.configure do |c|
+    c.cassette_library_dir = 'vcr_cassettes'
+    c.hook_into :webmock
+  end
+
 end

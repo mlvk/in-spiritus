@@ -1,16 +1,24 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
 
   jsonapi_resources :addresses
   jsonapi_resources :companies
+  jsonapi_resources :credit_notes
+  jsonapi_resources :credit_note_items
+  jsonapi_resources :fulfillments
   jsonapi_resources :items
   jsonapi_resources :item_desires
-  jsonapi_resources :item_levels
   jsonapi_resources :item_prices
+  jsonapi_resources :item_credit_rates
   jsonapi_resources :locations
   jsonapi_resources :price_tiers
+  jsonapi_resources :stocks
+  jsonapi_resources :stock_levels
   jsonapi_resources :route_plans
   jsonapi_resources :route_visits
   jsonapi_resources :route_visits
+  jsonapi_resources :pods
   jsonapi_resources :orders
   jsonapi_resources :order_items
   jsonapi_resources :users
@@ -22,5 +30,9 @@ Rails.application.routes.draw do
 
   # Custom action endpoints
   post 'orders/stub_orders', to: 'orders#stub_orders'
-  post 'process_route_visits', to: 'route_visits#process_visits'
+
+  mount Sidekiq::Web => '/sidekiq'
+
+  # @TODO: Think it's safe to remove this and associated methods
+  # post 'process_route_visits', to: 'route_visits#process_visits'
 end

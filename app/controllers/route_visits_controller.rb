@@ -62,7 +62,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
         signature = Maybe(visit_data)[:salesOrders][so.id.to_s][:signature]
         so.signature = signature if signature.present?
 
-        so.fullfilled = true
+        so.fulfilled = true
         so.save
       }
     end

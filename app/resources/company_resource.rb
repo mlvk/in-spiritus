@@ -1,9 +1,9 @@
 class CompanyResource < JSONAPI::Resource
   attributes  :code,
-              :credit_rate,
               :name,
               :tag,
-              :terms
+              :terms,
+              :xero_state
 
   has_one  :price_tier
   has_many :locations

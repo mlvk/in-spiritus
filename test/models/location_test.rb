@@ -2,10 +2,10 @@ require 'test_helper'
 
 class LocationTest < ActiveSupport::TestCase
   def setup
-    @location = locations(:wu_staten)
+    @location = create(:location)
   end
 
   test "can view price_tier" do
-    refute_empty @location.address.address, "Should not be empty!!!"
+    refute_empty @location.address.street, "Should not be empty!!!"
   end
 end

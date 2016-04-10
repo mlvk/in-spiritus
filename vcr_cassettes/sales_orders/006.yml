@@ -1,0 +1,126 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/Invoices
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+          "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+            <Id>ef14bd2f-6758-490d-bc38-d771062a48b9</Id>
+            <Status>OK</Status>
+            <Invoices>
+              <Invoice>
+                <Contact>
+                  <ContactID>f53c0137-9ff7-46a9-b7a5-2c079e1017ad</ContactID>
+                  <Name>NW001 - Nature Well - Silverlake</Name>
+                </Contact>
+                <Date>2016-03-01T00:00:00</Date>
+                <DueDate>2016-03-15T00:00:00</DueDate>
+                <Status>AUTHORISED</Status>
+                <LineAmountTypes>Exclusive</LineAmountTypes>
+                <SubTotal>25.00</SubTotal>
+                <TotalTax>0.00</TotalTax>
+                <Total>25.00</Total>
+                <UpdatedDateUTC>2016-03-11T23:10:51.14</UpdatedDateUTC>
+                <CurrencyCode>USD</CurrencyCode>
+                <Type>ACCREC</Type>
+                <InvoiceID>updated-remote-invoice-id</InvoiceID>
+                <InvoiceNumber>updated-remote-invoice-number</InvoiceNumber>
+                <AmountDue>25.00</AmountDue>
+                <AmountPaid>0.00</AmountPaid>
+                <AmountCredited>0.00</AmountCredited>
+                <SentToContact>true</SentToContact>
+                <CurrencyRate>1.000000</CurrencyRate>
+                <HasAttachments>false</HasAttachments>
+              </Invoice>
+            </Invoices>
+          </Response>"
+    http_version:
+  recorded_at: Fri, 11 Mar 2016 23:10:50 GMT
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/Invoices/updated-remote-invoice-id
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+          <Id>7184ceca-f390-480a-8984-406c8af1c235</Id>
+          <Status>OK</Status>
+          <ProviderName>MLVK - Staging</ProviderName>
+          <DateTimeUTC>2016-03-14T00:09:50.8090815Z</DateTimeUTC>
+          <Invoices>
+            <Invoice>
+              <Contact>
+                <ContactID>f53c0137-9ff7-46a9-b7a5-2c079e1017ad</ContactID>
+                <ContactStatus>ACTIVE</ContactStatus>
+                <Name>NW001 - Nature Well - Silverlake</Name>
+                <Addresses>
+                  <Address>
+                    <AddressType>POBOX</AddressType>
+                  </Address>
+                  <Address>
+                    <AddressType>STREET</AddressType>
+                  </Address>
+                </Addresses>
+                <Phones>
+                  <Phone>
+                    <PhoneType>DEFAULT</PhoneType>
+                  </Phone>
+                  <Phone>
+                    <PhoneType>MOBILE</PhoneType>
+                  </Phone>
+                  <Phone>
+                    <PhoneType>FAX</PhoneType>
+                  </Phone>
+                  <Phone>
+                    <PhoneType>DDI</PhoneType>
+                  </Phone>
+                </Phones>
+                <UpdatedDateUTC>2016-03-10T18:24:53.993</UpdatedDateUTC>
+                <IsSupplier>false</IsSupplier>
+                <IsCustomer>true</IsCustomer>
+              </Contact>
+              <Date>2016-03-01T00:00:00</Date>
+              <DueDate>2016-03-15T00:00:00</DueDate>
+              <BrandingThemeID>324587a9-7eed-46c0-ad64-fa941a1b5b3e</BrandingThemeID>
+              <Status>AUTHORISED</Status>
+              <LineAmountTypes>Exclusive</LineAmountTypes>
+              <LineItems>
+                <LineItem>
+                  <ItemCode>Sunseed Chorizo</ItemCode>
+                  <Description>No description</Description>
+                  <UnitAmount>5.00</UnitAmount>
+                  <TaxType>NONE</TaxType>
+                  <TaxAmount>0.00</TaxAmount>
+                  <LineAmount>30.00</LineAmount>
+                  <AccountCode>400</AccountCode>
+                  <Quantity>6.0000</Quantity>
+                  <LineItemID>45027871-55df-4b25-b01a-ca26af4a9fff</LineItemID>
+                </LineItem>
+              </LineItems>
+              <SubTotal>30.00</SubTotal>
+              <TotalTax>0.00</TotalTax>
+              <Total>30.00</Total>
+              <UpdatedDateUTC>2016-03-14T00:09:40.997</UpdatedDateUTC>
+              <CurrencyCode>USD</CurrencyCode>
+              <Type>ACCREC</Type>
+              <InvoiceID>updated-remote-invoice-id</InvoiceID>
+              <InvoiceNumber>updated-remote-invoice-number</InvoiceNumber>
+              <AmountDue>30.00</AmountDue>
+              <AmountPaid>0.00</AmountPaid>
+              <SentToContact>true</SentToContact>
+              <CurrencyRate>1.000000</CurrencyRate>
+              <HasAttachments>false</HasAttachments>
+            </Invoice>
+          </Invoices>
+        </Response>"
+    http_version:
+  recorded_at: Mon, 14 Mar 2016 00:09:49 GMT
+recorded_with: VCR 3.0.1

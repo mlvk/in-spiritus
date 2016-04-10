@@ -3,7 +3,7 @@ module Helpers
 
     # Builds jr style hash for functional tests.
     # Models should be passed in as symbols
-    # This will attempt to build the jr resource and factory firl build a model
+    # This will attempt to build the jr resource and factory girl build a model
     # Then deletes the links and relationships in the hash so it can be posted
     def build_jr_hash(model)
       clazz = eval("#{model.to_s.capitalize}Resource")

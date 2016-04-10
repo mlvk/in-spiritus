@@ -1,0 +1,41 @@
+# Request  - Search for xero invoice by invoice number
+# Response - Matched invoice
+
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/CreditNotes?where=CreditNoteNumber==%22voided-credit-note-number%22
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+          <Id>6b636e11-dbd4-4de2-99d5-1df7822d401f</Id>
+          <Status>OK</Status>
+          <CreditNotes>
+            <CreditNote>
+              <Contact>
+                <ContactID>f53c0137-9ff7-46a9-b7a5-2c079e1017ad</ContactID>
+                <Name>NW001 - Nature Well - Silverlake</Name>
+              </Contact>
+              <Date>2016-03-01T00:00:00</Date>
+              <DueDate>2016-03-15T00:00:00</DueDate>
+              <Status>VOIDED</Status>
+              <LineAmountTypes>Exclusive</LineAmountTypes>
+              <SubTotal>25.00</SubTotal>
+              <TotalTax>0.00</TotalTax>
+              <Total>25.00</Total>
+              <UpdatedDateUTC>2016-03-11T22:20:17.83</UpdatedDateUTC>
+              <CurrencyCode>USD</CurrencyCode>
+              <Type>ACCRECCREDIT</Type>
+              <CreditNoteID>voided-credit-note-id</CreditNoteID>
+              <CreditNoteNumber>voided-credit-note-number</CreditNoteNumber>
+            </CreditNote>
+          </CreditNotes>
+        </Response>"
+    http_version:
+  recorded_at: Fri, 11 Mar 2016 22:21:52 GMT
+recorded_with: VCR 3.0.1

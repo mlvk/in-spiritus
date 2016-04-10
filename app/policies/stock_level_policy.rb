@@ -1,0 +1,2 @@
+class StockLevelPolicy < StandardPolicy
+end

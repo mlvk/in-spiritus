@@ -2,7 +2,8 @@ class ItemResource < JSONAPI::Resource
   attributes :name,
              :description,
              :tag,
-             :position
+             :position,
+             :xero_state
 
   has_many :order_items
 end
