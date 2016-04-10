@@ -46,4 +46,5 @@ group :test do
   gem 'fakeredis'
   gem 'factory_girl'
   gem 'spy'
+  gem 'codeclimate-test-reporter'
 end

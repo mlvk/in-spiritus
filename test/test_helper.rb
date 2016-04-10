@@ -1,5 +1,8 @@
 ENV['RAILS_ENV'] ||= 'test'
 
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
+
 require File.expand_path('../../config/environment', __FILE__)
 require File.expand_path('../helpers/auth_helpers', __FILE__)
 require File.expand_path('../helpers/request_helpers', __FILE__)
