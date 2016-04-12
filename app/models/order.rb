@@ -37,8 +37,7 @@ class Order < ActiveRecord::Base
   after_create :generate_invoice_number
 
   belongs_to :location
-  has_one :fulfillment, dependent: :destroy, autosave: true
-  has_one :pod, :dependent => :destroy, autosave: true
+  has_one :fulfillment, dependent: :nullify, autosave: true
   has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
 
   private

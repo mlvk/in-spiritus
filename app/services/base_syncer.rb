@@ -113,13 +113,13 @@ class BaseSyncer
     end
 
     def prepare_record(model)
-        record = _find_or_create_record(model)
-        pre_flight_check(record, model)
+      record = _find_or_create_record(model)
+      pre_flight_check(record, model)
 
-        if should_save_record?(record, model)
-          update_record(record, model)
-          return record
-        end
+      if should_save_record?(record, model)
+        update_record(record, model)
+        return record
+      end
     end
 
     def process_records(records)
