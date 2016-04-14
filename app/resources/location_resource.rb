@@ -6,10 +6,14 @@ class LocationResource < JSONAPI::Resource
 
   has_one  :company
   has_one  :address
+
   has_many :visit_windows
-  has_many :item_desires
   has_many :visit_days
+  has_many :item_desires
   has_many :item_credit_rates
+  has_many :credit_notes
+  has_many :orders
+  has_many :stocks
 
   filter :active
 end

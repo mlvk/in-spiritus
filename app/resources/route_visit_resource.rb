@@ -5,5 +5,6 @@ class RouteVisitResource < JSONAPI::Resource
 
   has_one :route_plan
   has_one :visit_window
+  
   has_many  :fulfillments
 end

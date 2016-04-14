@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/waynerobinson/xeroizer.git
+  remote: https://github.com/waynerobinson/xeroizer
   revision: 11c241018f6fd8c05cf571358669d8b584a05699
   specs:
     xeroizer (2.16.4)

@@ -6,4 +6,9 @@ class ItemResource < JSONAPI::Resource
              :xero_state
 
   has_many :order_items
+  has_many :credit_note_items
+  has_many :item_desires
+  has_many :item_price
+  has_many :item_credit_rates
+  has_many :stocks
 end

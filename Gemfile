@@ -12,7 +12,7 @@ gem 'monadic'
 gem 'json', '~> 1.8.3'
 gem 'okcomputer'
 gem 'aasm'
-gem 'xeroizer', :git => 'git://github.com/waynerobinson/xeroizer.git'
+gem 'xeroizer', :git => 'https://github.com/waynerobinson/xeroizer'
 gem 'redis'
 gem 'httplog'
 

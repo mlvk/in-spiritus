@@ -1,5 +1,5 @@
 class ItemCreditRateResource < JSONAPI::Resource
-  attributes :price
+  attributes :rate
   has_one :location
   has_one :item
 end
