@@ -40,6 +40,10 @@ class Order < ActiveRecord::Base
   has_one :fulfillment, dependent: :nullify, autosave: true
   has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
 
+  def fulfillment_id=(_value)
+     # TODO: Remove once it's fixed
+  end
+  
   private
     def generate_invoice_number
       self.order_number = "INV-#{delivery_date.strftime('%y%m%d')}-#{id}"

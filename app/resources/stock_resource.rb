@@ -4,5 +4,6 @@ class StockResource < JSONAPI::Resource
 
   has_many :stock_levels
   has_one  :location
+  has_one  :fulfillment
   has_one  :user
 end

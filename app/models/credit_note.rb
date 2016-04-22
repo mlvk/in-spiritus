@@ -41,6 +41,10 @@ class CreditNote < ActiveRecord::Base
   has_one :fulfillment, dependent: :nullify, autosave: true
   has_many :credit_note_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
 
+  def fulfillment_id=(_value)
+     # TODO: Remove once it's fixed
+  end
+
   private
     def generate_credit_note_number
       if self.credit_note_number.nil?

@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.integer  "credit_note_id"
     t.integer  "pod_id"
     t.integer  "fulfillment_state"
+    t.datetime "submitted_at"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
   end

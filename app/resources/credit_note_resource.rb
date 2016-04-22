@@ -8,4 +8,5 @@ class CreditNoteResource < JSONAPI::Resource
 
   has_many :credit_note_items
   has_one  :location
+  has_one  :fulfillment
 end

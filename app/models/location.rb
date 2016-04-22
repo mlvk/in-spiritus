@@ -1,9 +1,10 @@
 class Location < ActiveRecord::Base
 	belongs_to :company
 	belongs_to :address
-	has_many :orders, :dependent => :destroy, autosave: true
-	has_many :credit_notes, :dependent => :destroy, autosave: true
-	has_many :stocks, :dependent => :destroy, autosave: true
+
+	has_many :orders
+	has_many :credit_notes
+	has_many :stocks
 
 	has_many :visit_windows, :dependent => :destroy, autosave: true
 
