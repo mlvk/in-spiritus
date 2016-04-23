@@ -4,9 +4,9 @@ class OrderResource < JSONAPI::Resource
              :xero_state,
              :order_type
 
-  filter :delivery_date
+  filter     :delivery_date
 
-  has_many :order_items
-  has_one  :location
-  has_one  :fulfillment
+  has_many   :order_items
+  has_one    :location
+  has_one    :fulfillment
 end

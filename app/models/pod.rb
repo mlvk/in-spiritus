@@ -5,5 +5,9 @@ class Pod < ActiveRecord::Base
   def fulfillment_id=(_value)
      # TODO: Remove once it's fixed
   end
-  
+
+  def fulfillment_id
+    fulfillment.id
+  end
+
 end

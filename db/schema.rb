@@ -48,7 +48,8 @@ ActiveRecord::Schema.define(version: 20151217220124) do
 
   create_table "credit_note_items", force: :cascade do |t|
     t.integer  "credit_note_id",               null: false
-    t.integer  "item_id",                      null: false
+    t.integer  "item_id"
+    t.string   "description"
     t.decimal  "quantity",       default: 0.0, null: false
     t.decimal  "unit_price",     default: 0.0, null: false
     t.datetime "created_at"
@@ -188,10 +189,10 @@ ActiveRecord::Schema.define(version: 20151217220124) do
   add_index "orders", ["xero_state"], name: "index_orders_on_xero_state", using: :btree
 
   create_table "pods", force: :cascade do |t|
-    t.binary   "signature",              null: false
+    t.binary   "signature"
     t.string   "name",       limit: 255
     t.integer  "user_id"
-    t.datetime "signed_at",              null: false
+    t.datetime "signed_at"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
@@ -229,18 +230,21 @@ ActiveRecord::Schema.define(version: 20151217220124) do
   add_index "route_visits", ["visit_window_id"], name: "index_route_visits_on_visit_window_id", using: :btree
 
   create_table "stock_levels", force: :cascade do |t|
-    t.integer  "quantity",   default: 0, null: false
+    t.integer  "starting",   default: 0, null: false
+    t.integer  "returns",    default: 0, null: false
     t.integer  "item_id",                null: false
+    t.integer  "stock_id",               null: false
+    t.integer  "tracking_state"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
-    t.integer  "stock_id",               null: false
   end
 
   add_index "stock_levels", ["item_id"], name: "index_stock_levels_on_item_id", using: :btree
+  add_index "stock_levels", ["stock_id"], name: "index_stock_levels_on_stock_id", using: :btree
 
   create_table "stocks", force: :cascade do |t|
-    t.integer  "day_of_week",    null: false
-    t.datetime "taken_at",       null: false
+    t.integer  "day_of_week"
+    t.datetime "taken_at"
     t.integer  "location_id",    null: false
     t.integer  "user_id"
     t.datetime "created_at",     null: false

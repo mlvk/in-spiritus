@@ -1,6 +1,8 @@
 class CreditNote < ActiveRecord::Base
   include AASM
 
+  after_create :generate_credit_note_number
+
   # State machine settings
   enum xero_state: [ :pending, :submitted, :synced, :voided ]
   enum notifications_state: [ :unprocessed, :processed ]
@@ -34,8 +36,6 @@ class CreditNote < ActiveRecord::Base
     end
   end
 
-  after_create :generate_credit_note_number
-
   belongs_to :location
 
   has_one :fulfillment, dependent: :nullify, autosave: true
@@ -43,6 +43,10 @@ class CreditNote < ActiveRecord::Base
 
   def fulfillment_id=(_value)
      # TODO: Remove once it's fixed
+  end
+
+  def fulfillment_id
+    fulfillment.id
   end
 
   private

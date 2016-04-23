@@ -43,7 +43,11 @@ class Order < ActiveRecord::Base
   def fulfillment_id=(_value)
      # TODO: Remove once it's fixed
   end
-  
+
+  def fulfillment_id
+    fulfillment.id
+  end
+
   private
     def generate_invoice_number
       self.order_number = "INV-#{delivery_date.strftime('%y%m%d')}-#{id}"

@@ -4,9 +4,9 @@ class CreditNoteResource < JSONAPI::Resource
              :xero_state,
              :notifications_state
 
-  filter :date
+  filter     :date
 
-  has_many :credit_note_items
-  has_one  :location
-  has_one  :fulfillment
+  has_many   :credit_note_items
+  has_one    :location
+  has_one    :fulfillment
 end

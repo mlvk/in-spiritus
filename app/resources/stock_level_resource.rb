@@ -1,6 +1,8 @@
 class StockLevelResource < JSONAPI::Resource
-  attributes :quantity
+  attributes :starting,
+             :returns,
+             :tracking_state
 
-  has_one :stock
-  has_one :item
+  has_one    :stock
+  has_one    :item
 end

@@ -3,7 +3,7 @@ class PodResource < JSONAPI::Resource
              :name,
              :signed_at
 
-  has_one :user
-  has_one :fulfillment
+  has_one    :user
+  has_one    :fulfillment
 
 end
