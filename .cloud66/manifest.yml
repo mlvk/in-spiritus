@@ -1,8 +1,10 @@
 staging:
     postgresql:
-        server: internal
+        server:
+          same_as: rails
     redis:
-        server: internal
+        server:
+          same_as: rails
 
 production:
     postgresql:
