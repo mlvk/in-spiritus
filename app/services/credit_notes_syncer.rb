@@ -35,7 +35,10 @@ class CreditNotesSyncer < BaseSyncer
       record.build_contact(contact_id:model.location.company.xero_id, name:model.location.company.name)
 
       record.line_items.clear
-      model.credit_note_items.each do | credit_note_item |
+      model
+        .credit_note_items
+        .select {|cni| cni.has_credit?}
+        .each do | credit_note_item |
         create_record_line_item(record, credit_note_item)
       end
     end
@@ -53,7 +56,13 @@ class CreditNotesSyncer < BaseSyncer
     end
 
     def find_models
-      CreditNote.where(xero_state: CreditNote.xero_states[:submitted])
+      CreditNote
+        .where(xero_state: CreditNote.xero_states[:submitted])
+        .joins(:credit_note_items)
+        .where('credit_note_items.quantity > ?', 0)
+        .where('credit_note_items.unit_price > ?', 0)
+        .distinct
+        .select{|cn| cn.has_credit?}
     end
 
     def update_model(model, record)

@@ -50,6 +50,6 @@ This project integrates with the following systems:
 
 ### Start services
 1. Start Redis: `redis-server /usr/local/etc/redis.conf`
-1. Start Clockwork: `bundle exec clockwork clock.rb`
 1. Start Sidekiq: `bundle exec sidekiq`
+1. Start Clockwork: `bundle exec clockwork clock.rb`
 1. Start Rails: `rails s`

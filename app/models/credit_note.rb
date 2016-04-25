@@ -7,7 +7,7 @@ class CreditNote < ActiveRecord::Base
   enum xero_state: [ :pending, :submitted, :synced, :voided ]
   enum notifications_state: [ :unprocessed, :processed ]
 
-  aasm :credit_note, :column => :xero_state, :skip_validation_on_save => true, :no_direct_assignment => true do
+  aasm :credit_note, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :submitted
     state :synced
@@ -27,7 +27,7 @@ class CreditNote < ActiveRecord::Base
     end
   end
 
-  aasm :notifications, :column => :notifications_state, :skip_validation_on_save => true, :no_direct_assignment => true do
+  aasm :notifications, :column => :notifications_state, :skip_validation_on_save => true do
     state :unprocessed, :initial => true
     state :processed
 
@@ -47,6 +47,10 @@ class CreditNote < ActiveRecord::Base
 
   def fulfillment_id
     fulfillment.id
+  end
+
+  def has_credit?
+    credit_note_items.any? { |cni| cni.has_credit? }
   end
 
   private

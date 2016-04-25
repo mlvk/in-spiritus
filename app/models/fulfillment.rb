@@ -41,25 +41,29 @@ class Fulfillment < ActiveRecord::Base
   def build_stock
     if stock.nil?
       self.stock = Stock.create(location:location)
-      item_desires.each do |item_desire|
-        StockLevel.create(
-          item:item_desire.item,
-          stock:self.stock)
-      end
+      item_desires
+        .select {|item_desire| item_desire.enabled}
+        .each do |item_desire|
+          StockLevel.create(
+            item:item_desire.item,
+            stock:self.stock)
+          end
     end
   end
 
   def build_credit_note
     if credit_note.nil?
       self.credit_note = CreditNote.create(location:location, date:order.delivery_date)
-      item_desires.each do |item_desire|
-        credit_rate = Maybe(item_credit_rates.where(item:item_desire.item).first)[:rate].fetch(0.5)
-        price = Maybe(item_prices.where(item:item_desire.item).first)[:price].fetch(0.0)
-        CreditNoteItem.create(
-          item:item_desire.item,
-          unit_price:price * credit_rate,
-          credit_note:self.credit_note)
-      end
+      item_desires
+        .select {|item_desire| item_desire.enabled}
+        .each do |item_desire|
+          credit_rate = Maybe(item_credit_rates.where(item:item_desire.item).first)[:rate].fetch(0.5)
+          price = Maybe(item_prices.where(item:item_desire.item).first)[:price].fetch(0.0)
+          CreditNoteItem.create(
+            item:item_desire.item,
+            unit_price:price * credit_rate,
+            credit_note:self.credit_note)
+        end
     end
   end
 

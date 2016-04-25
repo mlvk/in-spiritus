@@ -6,7 +6,7 @@ admin.save
 #### Items
 Item.create(name:'Sunseed Chorizo', description: 'Tasty collard wrap', position: 1, is_sold:true, is_purchased:false)
 Item.create(name:'Pepita Pesto Wrap', description: 'Tasty collard wrap', position: 2, is_sold:true, is_purchased:false)
-Item.create(name:'Perfectly Pad Thai', description: 'Quinoa Salad', position: 3, is_sold:true, is_purchased:false)
+Item.create(name:'Perfectly Pad Thai', description: 'Perfectly Pad Thai', position: 3, is_sold:true, is_purchased:false)
 Item.create(name:'Kinky Quinoa', description: 'Quinoa Salad', position: 4, is_sold:true, is_purchased:false)
 Item.create(name:'French Lentils', description: 'French lentil salad', position: 5, is_sold:true, is_purchased:false)
 Item.create(name:'Almond Turmeric', description: 'Almond turmeric food bar', position: 6, is_sold:true, is_purchased:false)
