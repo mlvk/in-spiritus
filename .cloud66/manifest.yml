@@ -1,11 +1,3 @@
-staging:
-    postgresql:
-        server:
-          same_as: rails
-    redis:
-        server:
-          same_as: rails
-
 production:
     postgresql:
         server: external
