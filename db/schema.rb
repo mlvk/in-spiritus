@@ -182,11 +182,12 @@ ActiveRecord::Schema.define(version: 20151217220124) do
     t.datetime "updated_at"
   end
 
-  add_index "orders", ["location_id"], name: "index_orders_on_location_id", using: :btree
-  add_index "orders", ["notifications_state"], name: "index_orders_on_notifications_state", using: :btree
-  add_index "orders", ["order_number"], name: "index_orders_on_order_number", unique: true, using: :btree
   add_index "orders", ["xero_id"], name: "index_orders_on_xero_id", unique: true, using: :btree
+  add_index "orders", ["order_number"], name: "index_orders_on_order_number", unique: true, using: :btree
   add_index "orders", ["xero_state"], name: "index_orders_on_xero_state", using: :btree
+  add_index "orders", ["notifications_state"], name: "index_orders_on_notifications_state", using: :btree
+  add_index "orders", ["order_type"], name: "index_orders_on_order_type", using: :btree
+  add_index "orders", ["location_id"], name: "index_orders_on_location_id", using: :btree
 
   create_table "pods", force: :cascade do |t|
     t.binary   "signature"
