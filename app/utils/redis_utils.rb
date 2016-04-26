@@ -1,6 +1,6 @@
 module RedisUtils
 	def redis
-		@redis_client ||= Redis.new
+		@redis_client ||= Redis.new(:host => ENV['REDIS_URL'])
   end
 
 	def redis_local_key(instance)
