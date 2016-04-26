@@ -122,23 +122,29 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
   end
 
   test "should remove order item if missing from remote record and local model is synced?" do
-    Item.create(name:'Sunseed Chorizo')
+    # Item.create(name:'Sunseed Chorizo')
+    #
+    # company = Company.create(name:'Nature Well')
+    # location = Location.create(name:'Silverlake', code:'NW001', company:company)
+    # order = Order.create(order_type:'sales-order', location:location, delivery_date:Date.parse('2016-03-01'))
+    # order.order_number = 'remote-invoice-with-removed-order-item-number'
+    # order.xero_id = 'remote-invoice-with-removed-order-item-id'
+    # order.save
+    #
+    # Item.all.each do |item|
+    #   OrderItem.create(item:item, quantity:5, unit_price:5, order:order)
+    # end
+    #
+    # order.mark_fulfilled!
+    # order.mark_synced!
 
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
-    order = Order.create(order_type:'sales-order', location:location, delivery_date:Date.parse('2016-03-01'))
-    order.order_number = 'remote-invoice-with-removed-order-item-number'
-    order.xero_id = 'remote-invoice-with-removed-order-item-id'
-    order.save
+    order = create(:order_with_order_items)
 
-    Item.all.each do |item|
-      OrderItem.create(item:item, quantity:5, unit_price:5, order:order)
-    end
+    assert_equal(order.order_items.count, 5)
 
-    order.mark_fulfilled!
-    order.mark_synced!
+    binding.pry
 
-    VCR.use_cassette('sales_orders/007') do
+    VCR.use_cassette('sales_orders/007', :erb => { :invoice_id => order.xero_id, :invoice_number => order.order_number }) do
       SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
     end
 

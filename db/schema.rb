@@ -157,6 +157,8 @@ ActiveRecord::Schema.define(version: 20151217220124) do
 
   add_index "locations", ["address_id"], name: "index_locations_on_address_id", using: :btree
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
+  add_index "locations", ["name"], name: "index_locations_on_name", using: :btree
+  add_index "locations", ["code"], name: "index_locations_on_code", unique: true, using: :btree
 
   create_table "order_items", force: :cascade do |t|
     t.integer  "order_id",                 null: false

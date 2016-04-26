@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :location do
-    name 'Some Name'
-    code 'eb001'
+    name { Faker::Address.city }
+    code { Faker::Code.ean }
     company
     address
 

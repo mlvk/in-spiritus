@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :company do
-    code Faker::Company.suffix
-    name Faker::Company.name
+    name { Faker::Company.name }
+    code { Faker::Code.ean }
     terms 7
   end
 end

@@ -27,7 +27,7 @@ class Order < ActiveRecord::Base
   end
 
   enum notifications_state: [ :unprocessed, :processed ]
-  aasm :notifications, :column => :notifications_state, :skip_validation_on_save => true, :no_direct_assignment => true do
+  aasm :notifications, :column => :notifications_state, :skip_validation_on_save => true do
     state :unprocessed, :initial => true
     state :processed
 

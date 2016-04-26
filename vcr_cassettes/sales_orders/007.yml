@@ -100,8 +100,11 @@ http_interactions:
               <UpdatedDateUTC>2016-03-14T00:09:40.997</UpdatedDateUTC>
               <CurrencyCode>USD</CurrencyCode>
               <Type>ACCREC</Type>
-              <InvoiceID>remote-invoice-with-removed-order-item-id</InvoiceID>
-              <InvoiceNumber>remote-invoice-with-removed-order-item-number</InvoiceNumber>
+
+
+              <InvoiceID><%= invoice_id %></InvoiceID>
+              <InvoiceNumber><%= invoice_number %></InvoiceNumber>
+              
               <AmountDue>30.00</AmountDue>
               <AmountPaid>0.00</AmountPaid>
               <SentToContact>true</SentToContact>
