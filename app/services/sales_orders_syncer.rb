@@ -63,11 +63,13 @@ class SalesOrdersSyncer < BaseSyncer
 
       if model.synced?
         record.line_items.each do |line_item|
-          item = Item.find_by name: line_item.item_code
-          order_item = model.order_items.find_by(item:item) || create_model_order_item(model, line_item)
-          order_item.quantity = line_item.quantity
-          order_item.unit_price = line_item.unit_amount
-          order_item.save
+          item = Item.find_by(name: line_item.item_code)
+          if item.present?
+            order_item = model.order_items.find_by(item:item) || create_model_order_item(model, item)
+            order_item.quantity = line_item.quantity
+            order_item.unit_price = line_item.unit_amount
+            order_item.save
+          end
         end
 
         # Clear missing order_items
@@ -93,8 +95,7 @@ class SalesOrdersSyncer < BaseSyncer
           account_code: '400')
       end
 
-      def create_model_order_item(model, line_item)
-        item = Item.find_by name: line_item.item_code
+      def create_model_order_item(model, item)
         OrderItem.create(item:item, order:model)
       end
 end

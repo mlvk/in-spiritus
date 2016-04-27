@@ -28,8 +28,8 @@ http_interactions:
                 <UpdatedDateUTC>2016-03-11T23:10:51.14</UpdatedDateUTC>
                 <CurrencyCode>USD</CurrencyCode>
                 <Type>ACCREC</Type>
-                <InvoiceID>remote-invoice-with-removed-order-item-id</InvoiceID>
-                <InvoiceNumber>remote-invoice-with-removed-order-item-number</InvoiceNumber>
+                <InvoiceID><%= invoice_id %></InvoiceID>
+                <InvoiceNumber><%= invoice_number %></InvoiceNumber>
                 <AmountDue>25.00</AmountDue>
                 <AmountPaid>0.00</AmountPaid>
                 <AmountCredited>0.00</AmountCredited>
@@ -43,7 +43,7 @@ http_interactions:
   recorded_at: Fri, 11 Mar 2016 23:10:50 GMT
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Invoices/remote-invoice-with-removed-order-item-id
+    uri: https://api.xero.com/api.xro/2.0/Invoices/<%= invoice_id %>
   response:
     status:
       code: 200
@@ -101,10 +101,9 @@ http_interactions:
               <CurrencyCode>USD</CurrencyCode>
               <Type>ACCREC</Type>
 
-
               <InvoiceID><%= invoice_id %></InvoiceID>
               <InvoiceNumber><%= invoice_number %></InvoiceNumber>
-              
+
               <AmountDue>30.00</AmountDue>
               <AmountPaid>0.00</AmountPaid>
               <SentToContact>true</SentToContact>

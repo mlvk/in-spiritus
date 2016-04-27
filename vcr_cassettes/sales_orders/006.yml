@@ -1,3 +1,16 @@
+# GET: invoices/
+#   Returns: Single invoice partial
+# Get: invoices/invoice_id
+#   Returns: Single invoice full
+
+# Required Props
+# yaml_props = {
+#   invoice_id: order.xero_id,
+#   invoice_number: order.order_number,
+#   item_code: order.order_items.first.item.name,
+#   item_quantity: 4
+# }
+
 ---
 http_interactions:
 - request:
@@ -28,8 +41,8 @@ http_interactions:
                 <UpdatedDateUTC>2016-03-11T23:10:51.14</UpdatedDateUTC>
                 <CurrencyCode>USD</CurrencyCode>
                 <Type>ACCREC</Type>
-                <InvoiceID>updated-remote-invoice-id</InvoiceID>
-                <InvoiceNumber>updated-remote-invoice-number</InvoiceNumber>
+                <InvoiceID><%= invoice_id %></InvoiceID>
+                <InvoiceNumber><%= invoice_number %></InvoiceNumber>
                 <AmountDue>25.00</AmountDue>
                 <AmountPaid>0.00</AmountPaid>
                 <AmountCredited>0.00</AmountCredited>
@@ -43,7 +56,7 @@ http_interactions:
   recorded_at: Fri, 11 Mar 2016 23:10:50 GMT
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Invoices/updated-remote-invoice-id
+    uri: https://api.xero.com/api.xro/2.0/Invoices/<%= invoice_id %>
   response:
     status:
       code: 200
@@ -94,14 +107,14 @@ http_interactions:
               <LineAmountTypes>Exclusive</LineAmountTypes>
               <LineItems>
                 <LineItem>
-                  <ItemCode>Sunseed Chorizo</ItemCode>
+                  <ItemCode><%= item_code %></ItemCode>
                   <Description>No description</Description>
                   <UnitAmount>5.00</UnitAmount>
                   <TaxType>NONE</TaxType>
                   <TaxAmount>0.00</TaxAmount>
                   <LineAmount>30.00</LineAmount>
                   <AccountCode>400</AccountCode>
-                  <Quantity>6.0000</Quantity>
+                  <Quantity><%= item_quantity %></Quantity>
                   <LineItemID>45027871-55df-4b25-b01a-ca26af4a9fff</LineItemID>
                 </LineItem>
               </LineItems>
@@ -111,8 +124,8 @@ http_interactions:
               <UpdatedDateUTC>2016-03-14T00:09:40.997</UpdatedDateUTC>
               <CurrencyCode>USD</CurrencyCode>
               <Type>ACCREC</Type>
-              <InvoiceID>updated-remote-invoice-id</InvoiceID>
-              <InvoiceNumber>updated-remote-invoice-number</InvoiceNumber>
+              <InvoiceID><%= invoice_id %></InvoiceID>
+              <InvoiceNumber><%= invoice_number %></InvoiceNumber>
               <AmountDue>30.00</AmountDue>
               <AmountPaid>0.00</AmountPaid>
               <SentToContact>true</SentToContact>

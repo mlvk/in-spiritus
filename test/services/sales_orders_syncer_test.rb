@@ -94,61 +94,32 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     assert order.voided?, 'Order was not voided when remote syncing'
   end
 
-  test "should update a local order when remote local are out of sync and local model is in state synced" do
+  test "should update a local order when remote and local are out of sync, and local model is in state synced" do
 
-    Item.create(name:'Sunseed Chorizo')
+    order = create(:sales_order_with_items, :synced, order_items_count: 1)
 
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
-    order = Order.create(order_type:'sales-order', location:location, delivery_date:Date.parse('2016-03-01'))
-    order.order_number = 'updated-remote-invoice-number'
-    order.xero_id = 'updated-remote-invoice-id'
-    order.save
+    yaml_props = {
+      invoice_id: order.xero_id,
+      invoice_number: order.order_number,
+      item_code: order.order_items.first.item.name,
+      item_quantity: 4
+    }
 
-    Item.all.each do |item|
-      OrderItem.create(item:item, quantity:5, unit_price:5, order:order)
-    end
-
-    order.mark_fulfilled!
-    order.mark_synced!
-
-    VCR.use_cassette('sales_orders/006') do
+    VCR.use_cassette('sales_orders/006', erb: yaml_props) do
       SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
     end
 
-    order.reload
-
-    assert order.order_items.all? {|order_item| order_item.quantity == 6}, 'Order item quantities did not match'
+    assert order.order_items.all? {|order_item| order_item.quantity == 4}, 'Order item quantities did not match'
   end
 
   test "should remove order item if missing from remote record and local model is synced?" do
-    # Item.create(name:'Sunseed Chorizo')
-    #
-    # company = Company.create(name:'Nature Well')
-    # location = Location.create(name:'Silverlake', code:'NW001', company:company)
-    # order = Order.create(order_type:'sales-order', location:location, delivery_date:Date.parse('2016-03-01'))
-    # order.order_number = 'remote-invoice-with-removed-order-item-number'
-    # order.xero_id = 'remote-invoice-with-removed-order-item-id'
-    # order.save
-    #
-    # Item.all.each do |item|
-    #   OrderItem.create(item:item, quantity:5, unit_price:5, order:order)
-    # end
-    #
-    # order.mark_fulfilled!
-    # order.mark_synced!
+    order = create(:sales_order_with_items, :synced, order_items_count: 5)
 
-    order = create(:order_with_order_items)
-
-    assert_equal(order.order_items.count, 5)
-
-    binding.pry
+    assert_equal(order.order_items.count, 5, "Wrong number of order items created")
 
     VCR.use_cassette('sales_orders/007', :erb => { :invoice_id => order.xero_id, :invoice_number => order.order_number }) do
       SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
     end
-
-    order.reload
 
     assert order.order_items.empty?, 'Order items found when expected none'
   end
