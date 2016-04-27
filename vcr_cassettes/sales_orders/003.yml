@@ -7,7 +7,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Invoices?where=InvoiceNumber==%22valid-new-invoice%22
+    uri: https://api.xero.com/api.xro/2.0/Invoices?where=InvoiceNumber==%22<%= invoice_number %>%22
   response:
     status:
       code: 200
@@ -92,8 +92,8 @@ http_interactions:
               <UpdatedDateUTC>2016-03-11T23:10:51.14</UpdatedDateUTC>
               <CurrencyCode>USD</CurrencyCode>
               <Type>ACCREC</Type>
-              <InvoiceID>af1a0348-0762-401d-a08a-61272e2c5e55</InvoiceID>
-              <InvoiceNumber>valid-new-invoice</InvoiceNumber>
+              <InvoiceID><%= response_invoice_id %></InvoiceID>
+              <InvoiceNumber><%= invoice_number %></InvoiceNumber>
               <AmountDue>25.00</AmountDue>
               <AmountPaid>0.00</AmountPaid>
               <SentToContact>true</SentToContact>

@@ -23,7 +23,18 @@ class SalesOrdersSyncer < BaseSyncer
     end
 
     def should_save_record? (record, model)
-      !model.voided?
+      model.fulfilled?
+    end
+
+    def should_update_model?(model, record)
+      case record.status
+      when 'DELETED'
+        false
+      when 'VOIDED'
+        false
+      else
+        true
+      end
     end
 
     def update_record(record, model)
@@ -61,7 +72,6 @@ class SalesOrdersSyncer < BaseSyncer
     def update_model(model, record)
       model.xero_id = record.invoice_id
 
-      if model.synced?
         record.line_items.each do |line_item|
           item = Item.find_by(name: line_item.item_code)
           if item.present?
@@ -77,7 +87,6 @@ class SalesOrdersSyncer < BaseSyncer
           has_match = record.line_items.any? {|line_item| line_item.item_code == order_item.item.name}
           order_item.destroy if !has_match
         end
-      end
 
       model.save
 
@@ -85,17 +94,17 @@ class SalesOrdersSyncer < BaseSyncer
     end
 
     private
-      def create_record_line_item(record, order_item)
-        record.add_line_item(
-          item_code:order_item.item.name,
-          description:order_item.item.description,
-          quantity:order_item.quantity,
-          unit_amount:order_item.unit_price,
-          tax_type:'NONE',
-          account_code: '400')
-      end
+    def create_record_line_item(record, order_item)
+      record.add_line_item(
+        item_code:order_item.item.name,
+        description:order_item.item.description,
+        quantity:order_item.quantity,
+        unit_amount:order_item.unit_price,
+        tax_type:'NONE',
+        account_code: '400')
+    end
 
-      def create_model_order_item(model, item)
-        OrderItem.create(item:item, order:model)
-      end
+    def create_model_order_item(model, item)
+      OrderItem.create(item:item, order:model)
+    end
 end

@@ -55,8 +55,13 @@ class BaseSyncer
       # Do nothing
     end
 
-    # OPTIONAL - Check if this record should be deleted
+    # OPTIONAL - Check if this record should be included in the batch save
     def should_save_record?(record, model)
+      true
+    end
+
+    # OPTIONAL - Check if this model should be updated
+    def should_update_model?(model, record)
       true
     end
 
@@ -98,7 +103,6 @@ class BaseSyncer
 
     def process_local(models)
       records = models.map(&method(:prepare_record)).compact
-
       if records.present?
         if save_records(records)
           begin
@@ -128,7 +132,9 @@ class BaseSyncer
           model = find_model(record)
           if model.present?
             pre_flight_check(record, model)
-            update_model(model, record)
+            if should_update_model?(model, record)
+              update_model(model, record)
+            end
             record
           else
             nil

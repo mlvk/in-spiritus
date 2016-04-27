@@ -47,4 +47,6 @@ group :test do
   gem 'factory_girl'
   gem 'spy'
   gem 'codeclimate-test-reporter'
+  gem 'maxitest'
+  gem 'm', '~> 1.4.2'
 end

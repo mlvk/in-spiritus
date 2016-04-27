@@ -28,8 +28,8 @@ http_interactions:
               <UpdatedDateUTC>2016-03-11T23:10:51.14</UpdatedDateUTC>
               <CurrencyCode>USD</CurrencyCode>
               <Type>ACCREC</Type>
-              <InvoiceID>remote-voided-invoice-id</InvoiceID>
-              <InvoiceNumber>remote-voided-invoice-number</InvoiceNumber>
+              <InvoiceID><%= invoice_id %></InvoiceID>
+              <InvoiceNumber><%= invoice_number %></InvoiceNumber>
               <AmountDue>25.00</AmountDue>
               <AmountPaid>0.00</AmountPaid>
               <AmountCredited>0.00</AmountCredited>

@@ -1,5 +1,5 @@
 ENV['RAILS_ENV'] ||= 'test'
-
+require "maxitest/autorun"
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 

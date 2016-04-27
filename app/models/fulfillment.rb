@@ -31,7 +31,6 @@ class Fulfillment < ActiveRecord::Base
 
   private
   def create_linked_resources
-    binding.pry
     build_stock
     build_credit_note
     build_pod

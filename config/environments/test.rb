@@ -1,3 +1,13 @@
+class ISLogger
+  def logger
+    @logger ||= Logger.new('log/vcr.log', 'daily')
+  end
+
+  def puts(msg)
+    logger.info msg
+  end
+end
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -43,6 +53,7 @@ Rails.application.configure do
     c.cassette_library_dir = 'vcr_cassettes'
     c.hook_into :webmock
     c.ignore_hosts 'codeclimate.com'
+    c.debug_logger = ISLogger.new
   end
 
 end

@@ -4,24 +4,14 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
 
   # Local sync testing
   test "Remote deleted invoices should update to deleted locally" do
+    order = create(:sales_order_with_items, :fulfilled)
 
-    Item.create(name:'Sunseed Chorizo')
+    yaml_props = {
+      invoice_number: order.order_number
+    }
 
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
-    order = Order.create(order_type:'sales-order', location:location, delivery_date:Date.parse('2016-03-01'))
-    order.order_number = 'voided-invoice'
-    order.save
-
-    Item.all.each do |item|
-      OrderItem.create(item:item, quantity:5, unit_price:5, order:order)
-    end
-
-    order.mark_fulfilled!
-
-    result = nil
-    VCR.use_cassette('sales_orders/002') do
-      result = SalesOrdersSyncer.new.sync_local
+    VCR.use_cassette('sales_orders/002', erb: yaml_props) do
+      SalesOrdersSyncer.new.sync_local
     end
 
     order.reload
@@ -30,30 +20,20 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
   end
 
   test "Valid local sales orders should be created in xero" do
+    order = create(:sales_order_with_items, :fulfilled)
 
-    Item.create(name:'Sunseed Chorizo', xero_id:'b3d9696b-13f3-455a-aac9-c5b26e9b71ea')
+    yaml_props = {
+      response_invoice_id: 'new_xero_id',
+      invoice_number: order.order_number
+    }
 
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
-    order = Order.create(order_type:'sales-order', location:location, delivery_date:Date.parse('2016-03-01'))
-    order.order_number = 'valid-new-invoice'
-    order.save
-
-    Item.all.each do |item|
-      OrderItem.create(item:item, quantity:5, unit_price:5, order:order)
-    end
-
-    refute order.fulfilled?
-    order.mark_fulfilled!
-    assert order.fulfilled?
-
-    VCR.use_cassette('sales_orders/003') do
+    VCR.use_cassette('sales_orders/003', erb: yaml_props) do
       SalesOrdersSyncer.new.sync_local
     end
 
     order.reload
 
-    assert order.xero_id.present?, 'Xero id not present'
+    assert_equal(order.xero_id, yaml_props[:response_invoice_id], "Xero id didn't match")
     assert order.synced?, 'order was not marked as synced'
   end
 
@@ -69,23 +49,14 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
   end
 
   test "should void a local order when remote is voided" do
+    order = create(:sales_order_with_items, :synced)
 
-    Item.create(name:'Sunseed Chorizo')
+    yaml_props = {
+      invoice_id: order.xero_id,
+      invoice_number: order.order_number
+    }
 
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
-    order = Order.create(order_type:'sales-order', location:location, delivery_date:Date.parse('2016-03-01'))
-    order.order_number = 'remote-voided-invoice-number'
-    order.xero_id = 'remote-voided-invoice-id'
-    order.save
-
-    Item.all.each do |item|
-      OrderItem.create(item:item, quantity:5, unit_price:5, order:order)
-    end
-
-    order.mark_fulfilled!
-
-    VCR.use_cassette('sales_orders/005') do
+    VCR.use_cassette('sales_orders/005', erb: yaml_props) do
       SalesOrdersSyncer.new.sync_remote
     end
 
@@ -95,7 +66,6 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
   end
 
   test "should update a local order when remote and local are out of sync, and local model is in state synced" do
-
     order = create(:sales_order_with_items, :synced, order_items_count: 1)
 
     yaml_props = {
@@ -115,13 +85,43 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
   test "should remove order item if missing from remote record and local model is synced?" do
     order = create(:sales_order_with_items, :synced, order_items_count: 5)
 
+    yaml_props = {
+      invoice_id: order.xero_id,
+      invoice_number: order.order_number
+    }
+
     assert_equal(order.order_items.count, 5, "Wrong number of order items created")
 
-    VCR.use_cassette('sales_orders/007', :erb => { :invoice_id => order.xero_id, :invoice_number => order.order_number }) do
+    VCR.use_cassette('sales_orders/007', :erb => yaml_props) do
       SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
     end
 
     assert order.order_items.empty?, 'Order items found when expected none'
   end
 
+  test "should always honor xero's order_item attrs even when creating new record remotely" do
+    order = create(:sales_order_with_items, :synced, order_items_count: 1)
+
+    order.order_items.each do |order_item|
+      order_item.quantity = 10
+      order_item.save
+    end
+
+    order.mark_fulfilled!
+
+    yaml_props = {
+      invoice_id: order.xero_id,
+      invoice_number: order.order_number,
+      order_items: order.order_items,
+      forced_xero_quantity: 15
+    }
+
+    VCR.use_cassette('sales_orders/008', :erb => yaml_props) do
+      SalesOrdersSyncer.new.sync_local
+    end
+
+    order.reload
+
+    assert order.order_items.all? {|order_item| order_item.quantity == yaml_props[:forced_xero_quantity]}, 'Order item quantities did not match'
+  end
 end

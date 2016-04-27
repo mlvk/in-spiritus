@@ -102,8 +102,13 @@ GEM
       rails (>= 4.0)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
+    m (1.4.2)
+      method_source (>= 0.6.7)
+      rake (>= 0.9.2.2)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
+    maxitest (1.5.7)
+      minitest (>= 5.0.0, < 5.9.0)
     method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile2 (2.0.0)
@@ -233,6 +238,8 @@ DEPENDENCIES
   httplog
   json (~> 1.8.3)
   jsonapi-resources
+  m (~> 1.4.2)
+  maxitest
   monadic
   okcomputer
   pg (= 0.18.4)
