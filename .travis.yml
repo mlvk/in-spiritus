@@ -1,14 +1,17 @@
 sudo: false
 language: ruby
 cache: bundler
-
 rvm:
-  - 2.3.0
-
+- 2.3.0
 services:
-  - postgresql
-  - redis
-
+- postgresql
+- redis
 script:
-  - bundle exec rake db:setup
-  - rake test
+- bundle exec rake db:setup
+- rake test
+deploy:
+  provider: cloud66
+  redeployment_hook:
+    secure: pTTfZ7Yzfo2F0W29ZErTWo5UYUhOvfuwz1P2WzpB6cWUtoCnk1Tv5nW4EHnUsnYt2/Uzfki6j7WwoZo6RP7pER0sW6ScwJqkHbwdZO5RD9XoLDe2MEvsMWTq16GQQSZ/S1DRxrNmvDN13abgNSTJv/L6bzelWWtnT0gPqN1imN0tcdlzG0pEzVA7LhlIm0OKtn8D9tMieDq0hi0AXDgKc1EVKxPxw8gEfep636GIVz4WPSJJXlGZgBfwsMzCBChDWZtiypF/JiRGd5YrRqMsDz34GOX8AVd38L95jBq0cWoJLABRoPlwvuzxVFlB6l8NnqkKaBCESuGA2rvNIL4m7PmFWBA2GmhRZkhP8/GccUdjmBYzQpYPK/XJ8hy+HUZ/fxtSPOsWMV89+nrCidUA7L9GhrVP9WpYgkVkHhKNA6Es3sG9pocIzwQZCHtBLS0NFXJ/wqnhsPWn6+I8ZUu3ZVpwUoOqmwQC46I0bfeZ/DYumO/YoxJeZtxPOIvP+lnsM82InJobznyOXQAMyFAiSUK++Yn0lj/5VsxpNWy2IJaBT5xpfoo1Ai7bXUnS4q1AJ593KBeSWdqYsmRZ7iYSBJBQayuhel00aRJzMyHcgXMbXODYujaV6TqIXIm2OqUCdQ4kEhLrZugSX23KDOJTlE7g/fg0Dsu4LrldNKIYRag=
+  on:
+    repo: brancusi/in-spiritus
