@@ -15,6 +15,8 @@ gem 'aasm'
 gem 'xeroizer', :git => 'https://github.com/waynerobinson/xeroizer'
 gem 'redis'
 gem 'httplog'
+gem 'aws-sdk'
+gem 'firebase'
 
 # Job scheduling
 gem 'sidekiq'
@@ -22,10 +24,19 @@ gem 'sinatra', :require => nil
 gem 'clockwork'
 gem 'sidekiq-unique-jobs'
 
+# Printing
+gem 'prawn'
+
+# Mail
+gem 'mailgun-ruby', require: 'mailgun'
+
 group :development do
   gem 'hirb'
   gem 'awesome_print'
   gem 'spring'
+  gem 'guard'
+  gem 'guard-livereload'
+  gem 'rack-livereload'
 end
 
 group :development, :test do

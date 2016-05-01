@@ -29,10 +29,10 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { sessions: 'sessions' }
 
   # Custom action endpoints
-  post 'orders/stub_orders', to: 'orders#stub_orders'
+  post 'orders/stub_orders'
+  post 'orders/generate_pdf'
+
+  get 'testing/pdf'
 
   mount Sidekiq::Web => '/sidekiq'
-
-  # @TODO: Think it's safe to remove this and associated methods
-  # post 'process_route_visits', to: 'route_visits#process_visits'
 end

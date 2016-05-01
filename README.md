@@ -38,15 +38,21 @@ This project integrates with the following systems:
 1. Select the demo account
 1. Paste in the public key
 1. Add in the following env vars to the stack
-  1. __XERO_API_KEY__ : *required*
-  1. __XERO_SECRET__ : *required*
-  1. __XERO_PRIVATE_KEY__ : *required* `pbcopy < privatekey.pem`
-  1. __REDIS_URL__ : *required*
-  1. __SECRET_KEY_BASE__ : *required*
-  1. __POSTGRESQL_DATABASE__ : *required*
-  1. __POSTGRESQL_ADDRESS__ : *required*
-  1. __POSTGRESQL_USERNAME__ : *required*
-  1. __POSTGRESQL_PASSWORD__ : *required*
+  1. __XERO_API_KEY__           : *required*
+  1. __XERO_SECRET__            : *required*
+  1. __XERO_PRIVATE_KEY__       : *required* `pbcopy < privatekey.pem`
+  1. __REDIS_URL__              : *required*
+  1. __SECRET_KEY_BASE__        : *required*
+  1. __POSTGRESQL_DATABASE__    : *required*
+  1. __POSTGRESQL_ADDRESS__     : *required*
+  1. __POSTGRESQL_USERNAME__    : *required*
+  1. __POSTGRESQL_PASSWORD__    : *required*
+  1. __AWS_ACCESS_KEY_ID__      : *required*
+  1. __AWS_SECRET_ACCESS_KEY__  : *required*
+  1. __AWS_REGION__             : *required*
+  1. __PDF_BUCKET__             : *required*
+  1. __MAIL_GUN_API_KEY__       : *required*
+  1. __MAIL_GUN_DOMAIN__        : *required*
 
 ### Start services
 1. Start Redis: `redis-server /usr/local/etc/redis.conf`

@@ -1,4 +1,6 @@
 class OrdersController < ApplicationJsonApiResourcesController
+  include AwsUtils
+  include PdfUtils
 
   def stub_orders
     authorize Order
@@ -22,6 +24,18 @@ class OrdersController < ApplicationJsonApiResourcesController
     }
 
     render json: serializer.serialize_to_hash(resources)
+  end
+
+  def generate_pdf
+    orders = Order.where(order_number: params['orders'])
+
+    orders.each do |order|
+      authorize order
+    end
+
+    url = generate_and_upload_orders_pdf orders
+
+    render json: {url:url}
   end
 
   def index

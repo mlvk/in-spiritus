@@ -1,13 +1,4 @@
-# A sample Guardfile
-# More info at https://github.com/guard/guard#readme
-
-guard :bundler do
-  watch('Gemfile')
-  # Uncomment next line if your Gemfile contains the `gemspec' command.
-  # watch(/^.+\.gemspec/)
-end
-
-guard 'rails' do
-  watch('Gemfile.lock')
-  watch(%r{^(config|lib)/.*})
+guard 'livereload' do
+  watch('app/workers/generate_pdf_worker.rb')
+  watch(%r{^app/prawn/.+\.rb})
 end

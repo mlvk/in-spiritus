@@ -15,4 +15,5 @@ module Clockwork
   every(1.hour, SyncRemoteSalesOrdersWorker)
   every(1.hour, SyncRemoteCreditNotesWorker)
 
+  every(5.seconds, ProcessStockLevelsWorker)
 end

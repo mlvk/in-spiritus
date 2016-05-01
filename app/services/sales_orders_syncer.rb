@@ -23,7 +23,7 @@ class SalesOrdersSyncer < BaseSyncer
     end
 
     def should_save_record? (record, model)
-      model.fulfilled?
+      model.submitted?
     end
 
     def should_update_model?(model, record)
@@ -66,27 +66,27 @@ class SalesOrdersSyncer < BaseSyncer
     end
 
     def find_models
-      Order.where(xero_state: Order.xero_states[:fulfilled])
+      Order.where(xero_state: Order.xero_states[:submitted])
     end
 
     def update_model(model, record)
       model.xero_id = record.invoice_id
 
-        record.line_items.each do |line_item|
-          item = Item.find_by(name: line_item.item_code)
-          if item.present?
-            order_item = model.order_items.find_by(item:item) || create_model_order_item(model, item)
-            order_item.quantity = line_item.quantity
-            order_item.unit_price = line_item.unit_amount
-            order_item.save
-          end
+      record.line_items.each do |line_item|
+        item = Item.find_by(name: line_item.item_code)
+        if item.present?
+          order_item = model.order_items.find_by(item:item) || create_model_order_item(model, item)
+          order_item.quantity = line_item.quantity
+          order_item.unit_price = line_item.unit_amount
+          order_item.save
         end
+      end
 
-        # Clear missing order_items
-        model.order_items.each do |order_item|
-          has_match = record.line_items.any? {|line_item| line_item.item_code == order_item.item.name}
-          order_item.destroy if !has_match
-        end
+      # Clear missing order_items
+      model.order_items.each do |order_item|
+        has_match = record.line_items.any? {|line_item| line_item.item_code == order_item.item.name}
+        order_item.destroy if !has_match
+      end
 
       model.save
 
@@ -95,13 +95,15 @@ class SalesOrdersSyncer < BaseSyncer
 
     private
     def create_record_line_item(record, order_item)
-      record.add_line_item(
-        item_code:order_item.item.name,
-        description:order_item.item.description,
-        quantity:order_item.quantity,
-        unit_amount:order_item.unit_price,
-        tax_type:'NONE',
-        account_code: '400')
+      if order_item.has_quantity?
+        record.add_line_item(
+          item_code:order_item.item.name,
+          description:order_item.item.description,
+          quantity:order_item.quantity,
+          unit_amount:order_item.unit_price,
+          tax_type:'NONE',
+          account_code: '400')
+      end
     end
 
     def create_model_order_item(model, item)

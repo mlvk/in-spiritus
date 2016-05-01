@@ -52,6 +52,6 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  config.slack_distribution_channel = "R34SFSYh73PQbYMwv3ffqpR3"
+  config.middleware.insert_after ActionDispatch::Static, Rack::LiveReload
 
 end

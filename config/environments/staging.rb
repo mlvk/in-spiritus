@@ -96,6 +96,4 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-
-  config.slack_distribution_channel = "Pwx3cVNrpS9lFjV6RUTyZzVx"
 end
