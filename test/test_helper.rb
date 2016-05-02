@@ -11,6 +11,8 @@ require File.expand_path('../helpers/resource_helpers', __FILE__)
 require 'rails/test_help'
 require 'spy/integration'
 
+p Rails.env
+
 class ActiveSupport::TestCase
   include FactoryGirl::Syntax::Methods
 
