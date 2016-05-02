@@ -54,7 +54,7 @@ group :test do
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'vcr'
-  gem 'webmock'
+  gem 'webmock', '~> 1.24.2'
   gem 'fakeredis'
   gem 'factory_girl'
   gem 'spy'
