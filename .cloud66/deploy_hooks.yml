@@ -1,20 +1,23 @@
 production:
   after_symlink:
-    - command: sudo chown nginx:app_writers $STACK_PATH/tmp && sudo chmod 775 $STACK_PATH/tmp && sudo chmod g+s $STACK_PATH/tmp
+    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp
+      execute: true
       target: rails
       run_on: all_servers
       sudo: true
 
 staging:
   after_symlink:
-    - command: sudo chown nginx:app_writers $STACK_PATH/tmp && sudo chmod 775 $STACK_PATH/tmp && sudo chmod g+s $STACK_PATH/tmp
+    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp
+      execute: true
       target: rails
       run_on: all_servers
       sudo: true
 
 development:
   after_symlink:
-    - command: sudo chown nginx:app_writers $STACK_PATH/tmp && sudo chmod 775 $STACK_PATH/tmp && sudo chmod g+s $STACK_PATH/tmp
+    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp
+      execute: true
       target: rails
       run_on: all_servers
       sudo: true
