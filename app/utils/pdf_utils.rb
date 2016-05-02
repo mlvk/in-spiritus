@@ -20,7 +20,7 @@ module PdfUtils
   def generate_temp_orders_pdf(orders)
     pdf = Pdf::Invoice.new :orders => orders
 
-    local_url = "public/#{SecureRandom.hex}.pdf"
+    local_url = "tmp/#{SecureRandom.hex}.pdf"
 
     pdf.render_file local_url
 
@@ -30,7 +30,7 @@ module PdfUtils
 	def generate_temp_credit_notes_pdf(credit_notes)
     pdf = Pdf::CreditNote.new :credit_notes => credit_notes
 
-    local_url = "public/#{SecureRandom.hex}.pdf"
+    local_url = "tmp/#{SecureRandom.hex}.pdf"
 
     pdf.render_file local_url
 
