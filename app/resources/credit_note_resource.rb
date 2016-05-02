@@ -1,8 +1,7 @@
 class CreditNoteResource < JSONAPI::Resource
   attributes :date,
              :credit_note_number,
-             :xero_state,
-             :notifications_state
+             :xero_state
 
   filter     :date
 

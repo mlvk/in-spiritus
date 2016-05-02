@@ -91,9 +91,7 @@ Location.all.each do |location|
   Item.all.each do |item|
     ItemDesire.create(item:item, location:location, enabled:true)
   end
-end
 
-Location.all.each do |location|
   (0..6).each do |day|
     VisitDay.create(day:day, location:location)
   end
@@ -103,18 +101,16 @@ Location.all.each do |location|
   (0..6).each do |day|
     VisitWindowDay.create(day:day, visit_window:vw)
   end
-end
 
-yesterday = Date.today - 1
-Location.all.each do |location|
+  NotificationRule.create(first_name:'Aram', email:'az@mlvegankitchen.com', location:location)
+
+  yesterday = Date.today - 1
   order = Order.create(location:location, delivery_date:yesterday)
   Item.all.each do |item|
     OrderItem.create(order:order, item:item, quantity:rand(0..10), unit_price:rand(0..10))
   end
-end
 
-tomorrow = Date.today + 1
-Location.all.each do |location|
+  tomorrow = Date.today + 1
   order = Order.create(location:location, delivery_date:tomorrow)
   Item.all.each do |item|
     OrderItem.create(order:order, item:item, quantity:rand(0..10), unit_price:rand(0..10))

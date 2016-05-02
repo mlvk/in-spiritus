@@ -6,6 +6,8 @@ class Location < ActiveRecord::Base
 	has_many :credit_notes
 	has_many :stocks
 
+	has_many :notification_rules
+
 	has_many :visit_windows, :dependent => :destroy, autosave: true
 
 	has_many :visit_days, :dependent => :destroy, autosave: true

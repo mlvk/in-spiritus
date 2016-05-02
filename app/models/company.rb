@@ -1,8 +1,6 @@
 class Company < ActiveRecord::Base
   include AASM
 
-  # State machine
-  enum xero_state: [ :pending, :synced ]
   aasm :xero_syncable, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :synced
@@ -17,6 +15,9 @@ class Company < ActiveRecord::Base
       transitions :from => :synced, :to => :synced
     end
   end
+
+  # State machine
+  enum xero_state: [ :pending, :synced ]
 
   validates :name, :code, uniqueness: { case_sensitive: false }
 

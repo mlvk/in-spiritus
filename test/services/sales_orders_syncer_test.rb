@@ -4,7 +4,7 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
 
   # Local sync testing
   test "Remote deleted invoices should update to deleted locally" do
-    order = create(:sales_order_with_items, :fulfilled)
+    order = create(:sales_order_with_items, :submitted)
 
     yaml_props = {
       invoice_number: order.order_number
@@ -20,7 +20,7 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
   end
 
   test "Valid local sales orders should be created in xero" do
-    order = create(:sales_order_with_items, :fulfilled)
+    order = create(:sales_order_with_items, :submitted)
 
     yaml_props = {
       response_invoice_id: 'new_xero_id',
@@ -107,7 +107,7 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
       order_item.save
     end
 
-    order.mark_fulfilled!
+    order.mark_submitted!
 
     yaml_props = {
       invoice_id: order.xero_id,

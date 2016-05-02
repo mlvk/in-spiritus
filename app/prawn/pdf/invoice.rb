@@ -3,7 +3,7 @@ module Pdf
     include Prawn::View
 
     def guide_y(y = cursor)
-      stroke_axis(:at => [0, y], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF', :negative_axes_length => 50)
+      stroke_axis(:at => [0, y], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
     end
 
     def initialize(orders: [])
@@ -12,6 +12,7 @@ module Pdf
           :normal => "app/assets/fonts/OpenSans-Regular.ttf",
           :bold => "app/assets/fonts/OpenSans-Bold.ttf",
           :bold_italic => "app/assets/fonts/OpenSans-BoldItalic.ttf",
+          :italic => "app/assets/fonts/OpenSans-Italic.ttf"
        }
       )
 
@@ -27,6 +28,7 @@ module Pdf
     def build_invoice(order)
       header(720, order)
       body(560, order)
+      pod(order)
       footer
     end
 
@@ -149,6 +151,42 @@ module Pdf
        formatted_text_box [{ text: val.to_s, size: 11}], :align => :right, :valign => :center
       end
 
+    end
+
+    def pod(order)
+      y = cursor - 20
+      x = 170
+      signature = Maybe(order).fulfillment.pod.signature._
+
+      if signature.present?
+        img = StringIO.new(Base64.decode64(signature['data:image/png;base64,'.length .. -1]))
+
+        bounding_box([x, y], :width => 200, :height => 50) do
+          formatted_text_box [{ text: 'Received', size: 23}], :align => :left, :valign => :bottom
+        end
+
+        y = cursor
+        bounding_box([x, y], :width => 200, :height => 50) do
+         image img, :height => 50, :position => :center, :vposition => :bottom
+
+         stroke_color "FF5500"
+         self.line_width = 2
+         self.join_style = :miter
+         stroke_bounds
+       end
+
+       y = cursor - 5
+       bounding_box([x, y], :width => 200, :height => 15) do
+         formatted_text_box [{ text: '01/12/16 - 10:42am', size: 11, styles: [:italic, :bold]}], :align => :left, :valign => :top
+       end
+
+       y = cursor
+       bounding_box([x, y], :width => 200, :height => 15) do
+         formatted_text_box [{ text: 'Received by Aram Zadikian', size: 11, styles: [:italic]}], :align => :left, :valign => :top
+       end
+
+       image "app/assets/images/stamp_icon.png", :at => [x + 175, y+50], :width => 50
+      end
     end
 
     def footer

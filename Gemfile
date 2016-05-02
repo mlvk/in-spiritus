@@ -34,9 +34,10 @@ group :development do
   gem 'hirb'
   gem 'awesome_print'
   gem 'spring'
+  gem 'rack-livereload'
   gem 'guard'
   gem 'guard-livereload'
-  gem 'rack-livereload'
+  gem 'guard-minitest'
 end
 
 group :development, :test do

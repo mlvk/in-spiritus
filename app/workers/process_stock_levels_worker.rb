@@ -5,7 +5,7 @@ class ProcessStockLevelsWorker
 
   def perform
     StockLevel
-      .where(tracking_state:StockLevel.tracking_states[:tracked])
+      .tracked
       .each do |stock_level|
 
         key = "locations/#{stock_level.stock.location.code}/#{stock_level.item.name}"

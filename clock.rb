@@ -7,8 +7,9 @@ module Clockwork
 
   every(5.seconds, SyncLocalItemsWorker)
   every(5.seconds, SyncLocalCompaniesWorker)
-  every(5.seconds, SyncLocalSalesOrdersWorker)
-  every(5.seconds, SyncLocalCreditNotesWorker)
+  # every(5.seconds, SyncLocalSalesOrdersWorker)
+  # every(5.seconds, SyncLocalCreditNotesWorker)
+  every(5.seconds, ProcessFulfillmentsWorker)
 
   every(1.hour, SyncRemoteItemsWorker)
   every(1.hour, SyncRemoteCompaniesWorker)

@@ -16,7 +16,7 @@ This project integrates with the following systems:
 1. Install and start postgres
 1. Run `db:reset`
 
-## Development
+## Misc
 1. Generate new domain model uml: `rake erd`
 1. Tidy schema: `rake db:schema:dump`
 
@@ -59,3 +59,7 @@ This project integrates with the following systems:
 1. Start Sidekiq: `bundle exec sidekiq`
 1. Start Clockwork: `bundle exec clockwork clock.rb`
 1. Start Rails: `rails s`
+
+### Development
+1. Start zeus: `zeus start`
+1. Start guard: `bundle exec guard`

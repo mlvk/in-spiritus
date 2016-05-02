@@ -5,4 +5,8 @@ class CreditNoteItem < ActiveRecord::Base
   def has_credit?
     (quantity * unit_price) > 0.0
   end
+
+  def total
+    quantity * unit_price
+  end
 end

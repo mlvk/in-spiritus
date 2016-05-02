@@ -7,8 +7,8 @@ FactoryGirl.define do
       xero_state { Order.xero_states[:pending] }
     end
 
-    trait :fulfilled do
-      xero_state { Order.xero_states[:fulfilled] }
+    trait :submitted do
+      xero_state { Order.xero_states[:submitted] }
     end
 
     trait :synced do

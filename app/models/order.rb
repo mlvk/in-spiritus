@@ -3,9 +3,6 @@ class Order < ActiveRecord::Base
 
   after_create :generate_order_number
 
-  # State machine settings
-  enum xero_state: [ :pending, :submitted, :synced, :voided ]
-
   aasm :order, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :submitted
@@ -30,15 +27,8 @@ class Order < ActiveRecord::Base
     end
   end
 
-  enum notifications_state: [ :unprocessed, :processed ]
-  aasm :notifications, :column => :notifications_state, :skip_validation_on_save => true do
-    state :unprocessed, :initial => true
-    state :processed
-
-    event :process do
-      transitions :from => :unprocessed, :to => :processed
-    end
-  end
+  # State machine settings
+  enum xero_state: [ :pending, :submitted, :synced, :voided ]
 
   belongs_to :location
   has_one :fulfillment, dependent: :nullify, autosave: true

@@ -3,17 +3,36 @@ class Fulfillment < ActiveRecord::Base
 
   include AASM
 
-  # State machine settings
-  enum fulfillment_state: [ :pending, :fulfilled ]
-
-  aasm :fulfillment, :column => :fulfillment_state, :skip_validation_on_save => true do
+  aasm :fulfillment, :column => :delivery_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :fulfilled
+    state :processed
 
     event :mark_fulfilled do
       transitions :from => :pending, :to => :fulfilled
     end
+
+    event :mark_processed do
+      transitions :from => :fulfilled, :to => :processed
+    end
   end
+
+  aasm :notification, :column => :notification_state, :skip_validation_on_save => true, :no_direct_assignment => true do
+    state :awaiting_notification, :initial => true
+    state :notified
+
+    event :mark_awaiting_notification do
+      transitions :from => :notified, :to => :awaiting_notification
+    end
+
+    event :mark_notified do
+      transitions :from => :awaiting_notification, :to => :notified
+    end
+  end
+
+  # State machine settings
+  enum delivery_state: [ :pending, :fulfilled ]
+  enum notification_state: [ :awaiting_notification, :notified ]
 
   belongs_to :route_visit
   belongs_to :order

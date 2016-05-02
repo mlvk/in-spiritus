@@ -1,8 +1,6 @@
 class RouteVisit < ActiveRecord::Base
 	include AASM
 
-	# State machine settings
-	enum route_visit_state: [ :pending, :fulfilled ]
 	aasm :route_visit, :column => :route_visit_state, :skip_validation_on_save => true do
 		state :pending, :initial => true
 		state :fulfilled
@@ -11,6 +9,8 @@ class RouteVisit < ActiveRecord::Base
 			transitions :from => :pending, :to => :fulfilled
 		end
 	end
+
+	enum route_visit_state: [ :pending, :fulfilled ]
 
 	belongs_to :route_plan
 	belongs_to :visit_window

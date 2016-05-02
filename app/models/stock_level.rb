@@ -4,9 +4,6 @@ class StockLevel < ActiveRecord::Base
   validates :starting, :returns, :item, presence: true
   validates :starting, :returns, numericality: true
 
-  # State machine settings
-  enum tracking_state: [ :pending, :tracked, :processed ]
-
   aasm :stock_level, :column => :tracking_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :tracked
@@ -24,6 +21,8 @@ class StockLevel < ActiveRecord::Base
       transitions :from => :tracked, :to => :processed
     end
   end
+
+  enum tracking_state: [ :pending, :tracked, :processed ]
 
   belongs_to :stock
   belongs_to :item

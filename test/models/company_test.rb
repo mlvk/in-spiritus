@@ -5,6 +5,7 @@ class CompanyTest < ActiveSupport::TestCase
 
   end
 
+
   # test "can view price_tier" do
   #   refute_empty @location.address.address, "Should not be empty!!!"
   # end

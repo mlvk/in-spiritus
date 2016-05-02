@@ -1,7 +1,6 @@
 class Item < ActiveRecord::Base
 	include AASM
 
-	enum xero_state: [ :pending, :synced ]
 	aasm :item, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :synced
@@ -16,6 +15,8 @@ class Item < ActiveRecord::Base
       transitions :from => :synced, :to => :synced
     end
   end
+
+	enum xero_state: [ :pending, :synced ]
 
 	validates :name, presence: true
 

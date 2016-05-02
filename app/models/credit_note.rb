@@ -3,10 +3,6 @@ class CreditNote < ActiveRecord::Base
 
   after_create :generate_credit_note_number
 
-  # State machine settings
-  enum xero_state: [ :pending, :submitted, :synced, :voided ]
-  enum notifications_state: [ :unprocessed, :processed ]
-
   aasm :credit_note, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :submitted
@@ -27,14 +23,7 @@ class CreditNote < ActiveRecord::Base
     end
   end
 
-  aasm :notifications, :column => :notifications_state, :skip_validation_on_save => true do
-    state :unprocessed, :initial => true
-    state :processed
-
-    event :process do
-      transitions :from => :unprocessed, :to => :processed
-    end
-  end
+  enum xero_state: [ :pending, :submitted, :synced, :voided ]
 
   belongs_to :location
 
@@ -51,6 +40,10 @@ class CreditNote < ActiveRecord::Base
 
   def has_credit?
     credit_note_items.any? { |cni| cni.has_credit? }
+  end
+
+  def total
+    credit_note_items.inject(0) {|acc, cur| acc = acc + cur.total }
   end
 
   private
