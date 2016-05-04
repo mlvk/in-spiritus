@@ -18,4 +18,9 @@ class ItemPricesController < ApplicationJsonApiResourcesController
     authorize ItemPrice
     super
   end
+
+  def get_related_resources
+    authorize ItemPrice
+    super
+  end
 end

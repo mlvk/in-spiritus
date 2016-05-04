@@ -1,6 +1,5 @@
 class LocationResource < JSONAPI::Resource
   attributes  :name,
-              :code,
               :delivery_rate,
               :active
 

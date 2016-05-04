@@ -21,7 +21,7 @@ class Location < ActiveRecord::Base
 	end
 
 	def full_name
-		"#{code} - #{name}"
+		"#{id} - #{name}"
 	end
 
 end

@@ -29,17 +29,15 @@ ActiveRecord::Schema.define(version: 20160501213502) do
 
   create_table "companies", force: :cascade do |t|
     t.string   "xero_id",       limit: 255
-    t.integer  "xero_state"
+    t.integer  "xero_state",                  default: 0,         null: false
     t.string   "name",          limit: 255,                      null: false
     t.integer  "terms",                     default: 14,         null: false
-    t.string   "code",          limit: 255
     t.string   "tag",                       default: "customer", null: false
     t.integer  "price_tier_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "companies", ["code"], name: "index_companies_on_code", unique: true, using: :btree
   add_index "companies", ["name"], name: "name", unique: true, using: :btree
   add_index "companies", ["price_tier_id"], name: "index_companies_on_price_tier_id", using: :btree
   add_index "companies", ["tag"], name: "index_companies_on_tag", using: :btree
@@ -61,7 +59,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
 
   create_table "credit_notes", force: :cascade do |t|
     t.string   "xero_id",            limit: 255
-    t.integer  "xero_state"
+    t.integer  "xero_state",                  default: 0,         null: false
     t.string   "credit_note_number", limit: 255
     t.date     "date",                           null: false
     t.integer  "location_id",                    null: false
@@ -80,8 +78,8 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.integer  "stock_id"
     t.integer  "credit_note_id"
     t.integer  "pod_id"
-    t.integer  "delivery_state"
-    t.integer  "notification_state"
+    t.integer  "delivery_state",                  default: 0,         null: false
+    t.integer  "notification_state",                  default: 0,         null: false
     t.datetime "submitted_at"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
@@ -129,7 +127,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
 
   create_table "items", force: :cascade do |t|
     t.string   "xero_id",      limit: 255
-    t.integer  "xero_state"
+    t.integer  "xero_state",                  default: 0,         null: false
     t.string   "name",         limit: 255,                        null: false
     t.string   "description",  limit: 255
     t.integer  "position"
@@ -149,19 +147,17 @@ ActiveRecord::Schema.define(version: 20160501213502) do
 
   create_table "locations", force: :cascade do |t|
     t.integer  "company_id",                               null: false
-    t.string   "name",          limit: 255,                null: false
-    t.string   "code",          limit: 255,                null: false
+    t.string   "name",          limit: 255
     t.decimal  "delivery_rate",             default: 0.0
     t.boolean  "active",                    default: true, null: false
     t.integer  "address_id"
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "locations", ["address_id"], name: "index_locations_on_address_id", using: :btree
-  add_index "locations", ["code"], name: "index_locations_on_code", unique: true, using: :btree
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
-  add_index "locations", ["name"], name: "index_locations_on_name", using: :btree
+  add_index "locations", ["active"], name: "index_locations_on_active", using: :btree
 
   create_table "notification_rules", force: :cascade do |t|
     t.string   "first_name",          limit: 255
@@ -191,7 +187,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   create_table "orders", force: :cascade do |t|
     t.string   "xero_id",       limit: 255
     t.string   "order_number",  limit: 255
-    t.integer  "xero_state"
+    t.integer  "xero_state",                  default: 0,         null: false
     t.string   "order_type",                default: "sales-order", null: false
     t.integer  "location_id",                                       null: false
     t.date     "delivery_date",                                     null: false
@@ -251,7 +247,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.integer  "returns",        default: 0, null: false
     t.integer  "item_id",                    null: false
     t.integer  "stock_id",                   null: false
-    t.integer  "tracking_state"
+    t.integer  "tracking_state",                  default: 0,         null: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
   end
@@ -320,11 +316,11 @@ ActiveRecord::Schema.define(version: 20160501213502) do
 
   create_table "visit_windows", force: :cascade do |t|
     t.integer  "location_id", null: false
+    t.integer  "min",         null: false
+    t.integer  "max",         null: false
+    t.integer  "service",     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "service",     null: false
-    t.integer  "min",         null: false
-    t.string   "max",         null: false
   end
 
   add_index "visit_windows", ["location_id"], name: "index_visit_windows_on_location_id", using: :btree

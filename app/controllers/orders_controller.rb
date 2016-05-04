@@ -16,7 +16,8 @@ class OrdersController < ApplicationJsonApiResourcesController
     resources = missingLocations.map { |location|
       order = Order.new(location:location, delivery_date:delivery_date)
       location.item_desires.where(enabled:true).each do |item_desire|
-        order.order_items << OrderItem.new(item:item_desire.item, quantity:0)
+        item_price = location.company.price_for_item(item_desire.item)
+        order.order_items << OrderItem.new(item:item_desire.item, quantity:0, unit_price:item_price)
       end
 
       order.save

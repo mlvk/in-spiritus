@@ -11,4 +11,8 @@ class ItemResource < JSONAPI::Resource
   has_many :item_price
   has_many :item_credit_rates
   has_many :stocks
+
+  before_save do
+    @model.xero_state = Item.xero_states[:pending]
+  end
 end

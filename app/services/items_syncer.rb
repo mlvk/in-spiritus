@@ -31,7 +31,7 @@ class ItemsSyncer < BaseSyncer
     end
 
     def find_models
-      Item.where(xero_state: Item.xero_states[:pending])
+      Item.pending
     end
 
     def update_model(model, record)

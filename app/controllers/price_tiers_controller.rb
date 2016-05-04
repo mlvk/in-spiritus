@@ -18,4 +18,9 @@ class PriceTiersController < ApplicationJsonApiResourcesController
     authorize PriceTier
     super
   end
+
+  def get_related_resources
+    authorize PriceTier
+    super
+  end
 end

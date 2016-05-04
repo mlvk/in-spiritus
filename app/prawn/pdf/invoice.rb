@@ -54,7 +54,7 @@ module Pdf
         end
 
         bounding_box([col2, y], :width => 300, :height => 20) do
-         name = "#{order.location.code.upcase} - #{order.location.company.name} - #{order.location.name}"
+         name = "#{order.location.company.name} - #{order.location.name} - #{order.location.id}"
          formatted_text_box [{ text: name, size: 12, styles: [:bold, :italic] }], :valign => :bottom
         end
 

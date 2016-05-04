@@ -1,7 +1,7 @@
 class Company < ActiveRecord::Base
   include AASM
 
-  aasm :xero_syncable, :column => :xero_state, :skip_validation_on_save => true do
+  aasm :company, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
     state :synced
 
@@ -19,7 +19,7 @@ class Company < ActiveRecord::Base
   # State machine
   enum xero_state: [ :pending, :synced ]
 
-  validates :name, :code, uniqueness: { case_sensitive: false }
+  validates :name, uniqueness: { case_sensitive: false }
 
   has_many :locations, :dependent => :destroy, autosave: true
 

@@ -30,7 +30,7 @@ class CompaniesSyncer < BaseSyncer
     end
 
     def find_models
-      Company.where(xero_state: Company.xero_states[:pending])
+      Company.pending
     end
 
     def update_model(model, record)

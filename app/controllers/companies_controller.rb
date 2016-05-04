@@ -1,4 +1,5 @@
 class CompaniesController < ApplicationJsonApiResourcesController
+
   def index
     authorize Company
     super

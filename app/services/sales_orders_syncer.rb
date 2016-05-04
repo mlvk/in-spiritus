@@ -66,7 +66,7 @@ class SalesOrdersSyncer < BaseSyncer
     end
 
     def find_models
-      Order.where(xero_state: Order.xero_states[:submitted])
+      Order.submitted
     end
 
     def update_model(model, record)

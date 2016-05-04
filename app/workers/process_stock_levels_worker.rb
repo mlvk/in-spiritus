@@ -8,7 +8,7 @@ class ProcessStockLevelsWorker
       .tracked
       .each do |stock_level|
 
-        key = "locations/#{stock_level.stock.location.code}/#{stock_level.item.name}"
+        key = "locations/#{stock_level.stock.location.id}/#{stock_level.item.name}"
 
         data = {
           key => {
