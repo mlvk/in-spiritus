@@ -8,7 +8,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     Item.create(name:'Sunseed Chorizo')
 
     company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
+    location = Location.create(name:'Silverlake', company:company)
     credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
     credit_note.credit_note_number = 'voided-credit-note-number'
     credit_note.save
@@ -33,7 +33,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     Item.create(name:'Sunseed Chorizo')
 
     company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
+    location = Location.create(name:'Silverlake', company:company)
     credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
     credit_note.credit_note_number = 'valid-new-credit-note'
     credit_note.save
@@ -70,7 +70,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     Item.create(name:'Sunseed Chorizo')
 
     company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
+    location = Location.create(name:'Silverlake', company:company)
     credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
     credit_note.credit_note_number = 'updated-remote-credit-number'
     credit_note.xero_id = 'updated-remote-credit-note-id'
@@ -97,7 +97,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     Item.create(name:'Sunseed Chorizo')
 
     company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
+    location = Location.create(name:'Silverlake', company:company)
     credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
     credit_note.credit_note_number = 'remote-credit-order-with-removed-order-item-number'
     credit_note.xero_id = 'remote-credit-order-with-removed-order-item-id'
@@ -124,7 +124,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     Item.create(name:'Sunseed Chorizo')
 
     company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
+    location = Location.create(name:'Silverlake', company:company)
     credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
 
     credit_note.mark_submitted!
@@ -146,7 +146,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     Item.create(name:'Sunseed Chorizo')
 
     company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
+    location = Location.create(name:'Silverlake', company:company)
     credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
 
     credit_note.mark_submitted!
@@ -167,7 +167,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     Item.create(name:'Sunseed Chorizo')
 
     company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', code:'NW001', company:company)
+    location = Location.create(name:'Silverlake', company:company)
     credit_note = CreditNote.create(
       credit_note_number: 'local-credit-note-with-invalid-items-id',
       location:location,

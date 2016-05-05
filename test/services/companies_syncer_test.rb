@@ -14,7 +14,7 @@ class CompaniesSyncerTest < ActiveSupport::TestCase
     assert company.xero_id.present?
   end
 
-  test "Should sync local model (add xero_id) when matching code found" do
+  test "Should sync local model (add xero_id) when matching name found" do
     company = Company.create(name:'Nature Well')
 
     VCR.use_cassette('contacts/002') do
