@@ -12,11 +12,11 @@ Location.all.each do |location|
     VisitDay.create(day:day, location:location, enabled:true)
   end
 
-  location.visit_windows.each do |vw|
-    (0..6).each do |day|
-      VisitWindowDay.create(day:day, visit_window:vw)
-    end
-  end
-
   NotificationRule.create(first_name:'Aram', email:'az@mlvegankitchen.com', location:location)
+end
+
+VisitWindow.all.each do |vw|
+  (0..6).each do |day|
+    VisitWindowDay.create(day:day, visit_window:vw)
+  end
 end

@@ -66,7 +66,7 @@ namespace :restore do
   end
 
   task :visit_windows => :environment do
-    fields = "id,location_id,min,max,service"
+    fields = "id,address_id,min,max,service"
     csv = "'#{csv_dir}/visit_windows.csv'"
     sql = "COPY visit_windows(#{fields}) FROM #{csv} WITH csv HEADER"
     ActiveRecord::Base.connection.execute(sql)

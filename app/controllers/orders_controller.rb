@@ -6,7 +6,7 @@ class OrdersController < ApplicationJsonApiResourcesController
     authorize Order
 
     delivery_date = Date.parse(params['deliveryDate'])
-    allLocations = Location.scheduled_for_delivery_on?(delivery_date.cwday)
+    allLocations = Location.with_valid_address.scheduled_for_delivery_on?(delivery_date.cwday)
 
     missingLocations = allLocations.select {|location| !location.has_sales_order_for_date?(delivery_date)}
 

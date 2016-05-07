@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_index "credit_notes", ["xero_state"], name: "index_credit_notes_on_xero_state", using: :btree
 
   create_table "fulfillments", force: :cascade do |t|
-    t.integer  "route_visit_id"
+    t.integer  "route_visit_id",         null: false
     t.integer  "order_id"
     t.integer  "stock_id"
     t.integer  "credit_note_id"
@@ -230,17 +230,19 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_index "route_plans", ["user_id"], name: "index_route_plans_on_user_id", using: :btree
 
   create_table "route_visits", force: :cascade do |t|
-    t.integer  "route_plan_id",   null: false
+    t.integer  "address_id",    null: false
+    t.integer  "route_plan_id"
+    t.date     "date",          null: false
+    t.integer  "position"
     t.integer  "arrive_at"
     t.string   "depart_at"
-    t.integer  "position",        null: false
-    t.integer  "visit_window_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "route_visits", ["route_plan_id"], name: "index_route_visits_on_route_plan_id", using: :btree
-  add_index "route_visits", ["visit_window_id"], name: "index_route_visits_on_visit_window_id", using: :btree
+  add_index "route_visits", ["address_id"], name: "index_route_visits_on_address_id", using: :btree
+  add_index "route_visits", ["date"], name: "index_route_visits_on_date", using: :btree
 
   create_table "stock_levels", force: :cascade do |t|
     t.integer  "starting",       default: 0, null: false
@@ -315,7 +317,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_index "visit_window_days", ["visit_window_id"], name: "index_visit_window_days_on_visit_window_id", using: :btree
 
   create_table "visit_windows", force: :cascade do |t|
-    t.integer  "location_id", null: false
+    t.integer  "address_id",  null: false
     t.integer  "min",         null: false
     t.integer  "max",         null: false
     t.integer  "service",     null: false
@@ -323,7 +325,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.datetime "updated_at"
   end
 
-  add_index "visit_windows", ["location_id"], name: "index_visit_windows_on_location_id", using: :btree
+  add_index "visit_windows", ["address_id"], name: "index_visit_windows_on_address_id", using: :btree
 
   add_foreign_key "companies", "price_tiers"
   add_foreign_key "credit_note_items", "credit_notes"
@@ -349,12 +351,12 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_foreign_key "pods", "users"
   add_foreign_key "route_plans", "users"
   add_foreign_key "route_visits", "route_plans"
-  add_foreign_key "route_visits", "visit_windows"
+  add_foreign_key "route_visits", "addresses"
   add_foreign_key "stock_levels", "items"
   add_foreign_key "stock_levels", "stocks"
   add_foreign_key "stocks", "locations"
   add_foreign_key "stocks", "users"
   add_foreign_key "visit_days", "locations"
   add_foreign_key "visit_window_days", "visit_windows"
-  add_foreign_key "visit_windows", "locations"
+  add_foreign_key "visit_windows", "addresses"
 end

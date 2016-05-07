@@ -95,7 +95,7 @@ class CreditNotesSyncer < BaseSyncer
           item_code:credit_note_item.item.name,
           description:credit_note_item.item.description,
           quantity:credit_note_item.quantity,
-          unit_amount:credit_note_item.unit_price,
+          unit_amount:credit_note_item.unit_price.round(2),
           tax_type:'NONE',
           account_code: '400')
       end

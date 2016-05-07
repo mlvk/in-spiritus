@@ -8,7 +8,7 @@ class Location < ActiveRecord::Base
 
 	has_many :notification_rules
 
-	has_many :visit_windows, :dependent => :destroy, autosave: true
+	# has_many :visit_windows, :dependent => :destroy, autosave: true
 
 	has_many :visit_days, :dependent => :destroy, autosave: true
 	has_many :item_desires, :dependent => :destroy, autosave: true
@@ -19,6 +19,12 @@ class Location < ActiveRecord::Base
 	def has_sales_order_for_date? (delivery_date)
 		orders.where(delivery_date:delivery_date, order_type:'sales-order').present?
 	end
+
+	def has_valid_address?
+		address.present?
+	end
+
+	scope :with_valid_address, -> { where("address_id IS NOT NULL") }
 
 	def full_name
 		"#{id} - #{name}"

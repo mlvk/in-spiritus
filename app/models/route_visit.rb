@@ -13,6 +13,7 @@ class RouteVisit < ActiveRecord::Base
 	enum route_visit_state: [ :pending, :fulfilled ]
 
 	belongs_to :route_plan
-	belongs_to :visit_window
+	belongs_to :address
+	has_one :visit_windows, through: :address
 	has_many :fulfillments, :dependent => :destroy, autosave: true
 end
