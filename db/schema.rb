@@ -233,7 +233,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.integer  "address_id",    null: false
     t.integer  "route_plan_id"
     t.date     "date",          null: false
-    t.integer  "position"
+    t.decimal  "position",      default: 0.0, null: false
     t.integer  "arrive_at"
     t.string   "depart_at"
     t.datetime "created_at"
