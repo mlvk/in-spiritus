@@ -5,16 +5,15 @@ require './config/environment'
 module Clockwork
   handler {|job| job.perform_async}
 
-  every(5.seconds, SyncLocalItemsWorker)
-  every(5.seconds, SyncLocalCompaniesWorker)
-  # every(5.seconds, SyncLocalSalesOrdersWorker)
-  # every(5.seconds, SyncLocalCreditNotesWorker)
-  every(5.seconds, ProcessFulfillmentsWorker)
+  every(10.seconds, SyncLocalItemsWorker)
+  every(10.seconds, SyncLocalCompaniesWorker)
+  every(10.seconds, SyncLocalSalesOrdersWorker)
+  every(10.seconds, SyncLocalCreditNotesWorker)
+  every(10.seconds, ProcessRouteVisitWorker)
+  every(10.seconds, ProcessStockLevelsWorker)
 
   every(1.hour, SyncRemoteItemsWorker)
   every(1.hour, SyncRemoteCompaniesWorker)
   every(1.hour, SyncRemoteSalesOrdersWorker)
   every(1.hour, SyncRemoteCreditNotesWorker)
-
-  every(5.seconds, ProcessStockLevelsWorker)
 end

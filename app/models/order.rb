@@ -60,8 +60,8 @@ class Order < ActiveRecord::Base
   end
 
   def stale_route_visit?
-    if route_visit.present?
-      if route_visit.date != delivery_date
+    if Maybe(fulfillment).route_visit.present?
+      if fulfillment.route_visit.date != delivery_date
         true
       else
         false
@@ -72,9 +72,9 @@ class Order < ActiveRecord::Base
   end
 
   def update_fulfillment_structure
-    if route_visit.present?
+    if Maybe(fulfillment).route_visit.present?
       if stale_route_visit?
-        fulfillment.route_visit = find_or_create_by(date:delivery_date, address:address)
+        fulfillment.route_visit = RouteVisit.find_or_create_by(date:delivery_date, address:address)
         fulfillment.save
         # save
       end
@@ -86,7 +86,6 @@ class Order < ActiveRecord::Base
   def create_fulfillment_structure
     new_route_visit = RouteVisit.find_or_create_by(date:delivery_date, address:address)
     fulfillment = Fulfillment.create(route_visit:new_route_visit, order:self)
-    fulfillment.save
     # self.update_columns(fulfillment_id:fulfillment.id)
     # save
   end

@@ -1,0 +1,2 @@
+class RoutePlanBlueprintSlotPolicy < StandardPolicy
+end

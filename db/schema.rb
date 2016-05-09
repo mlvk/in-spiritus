@@ -218,20 +218,35 @@ ActiveRecord::Schema.define(version: 20160501213502) do
 
   create_table "route_plans", force: :cascade do |t|
     t.integer  "user_id"
-    t.string   "name"
     t.date     "date"
-    t.boolean  "template"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "route_plans", ["name"], name: "index_route_plans_on_name", unique: true, using: :btree
-  add_index "route_plans", ["template"], name: "index_route_plans_on_template", using: :btree
   add_index "route_plans", ["user_id"], name: "index_route_plans_on_user_id", using: :btree
+  add_index "route_plans", ["date"], name: "index_route_plans_on_date", using: :btree
+
+  create_table "route_plan_blueprints", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "route_plan_blueprints", ["name"], name: "index_route_plan_blueprints_on_name", unique: true, using: :btree
+
+  create_table "route_plan_blueprint_slots", force: :cascade do |t|
+    t.integer  "route_plan_blueprint_id",    null: false
+    t.integer  "address_id",                 null: false
+    t.decimal  "position",                   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "route_visits", force: :cascade do |t|
     t.integer  "address_id",    null: false
     t.integer  "route_plan_id"
+    t.integer  "route_visit_state",                  default: 0,         null: false
     t.date     "date",          null: false
     t.decimal  "position",      default: 0.0, null: false
     t.integer  "arrive_at"
@@ -243,6 +258,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_index "route_visits", ["route_plan_id"], name: "index_route_visits_on_route_plan_id", using: :btree
   add_index "route_visits", ["address_id"], name: "index_route_visits_on_address_id", using: :btree
   add_index "route_visits", ["date"], name: "index_route_visits_on_date", using: :btree
+  add_index "route_visits", ["route_visit_state"], name: "index_route_visits_on_route_visit_state", using: :btree
 
   create_table "stock_levels", force: :cascade do |t|
     t.integer  "starting",       default: 0, null: false
@@ -292,8 +308,8 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["role"], name: "index_users_on_role", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
-  add_index "users", ["role"], name: "index_users_on_role", unique: true, using: :btree
 
   create_table "visit_days", force: :cascade do |t|
     t.integer  "location_id",                 null: false
@@ -359,4 +375,8 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_foreign_key "visit_days", "locations"
   add_foreign_key "visit_window_days", "visit_windows"
   add_foreign_key "visit_windows", "addresses"
+
+  add_foreign_key "route_plan_blueprints", "users"
+  add_foreign_key "route_plan_blueprint_slots", "addresses"
+  add_foreign_key "route_plan_blueprint_slots", "route_plan_blueprints"
 end

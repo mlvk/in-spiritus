@@ -27,9 +27,12 @@ module Pdf
 
     def build_invoice(order)
       header(720, order)
-      body(560, order)
-      pod(order)
+      body(590, order)
+
+      start_new_page if cursor < 175
+
       footer
+      pod(order)
     end
 
     def header(start_y, order)
@@ -76,9 +79,9 @@ module Pdf
       move_down 5
       order.order_items
         .select{|oi| oi.has_quantity?}
-        .each do |order_item|
-          order_row order_item
-      end
+        .each_with_index do |order_item, index|
+          order_row(order_item, index)
+        end
 
       total(order.total)
     end
@@ -87,11 +90,15 @@ module Pdf
       y = cursor
       height = 12
 
-      bounding_box([0, y], :width => 30, :height => height) do
+      bounding_box([-10, y], :width => 30, :height => height) do
+       formatted_text_box [{ text: "#", styles: [:bold], size: 9 }], :align => :right
+      end
+
+      bounding_box([20, y], :width => 30, :height => height) do
        formatted_text_box [{ text: "QTY", styles: [:bold], size: 9 }], :align => :right
       end
 
-      bounding_box([40, y], :width => 60, :height => height) do
+      bounding_box([60, y], :width => 60, :height => height) do
        formatted_text_box [{ text: "PRODUCT", styles: [:bold], size: 9 }], :align => :left
       end
 
@@ -104,24 +111,29 @@ module Pdf
       end
     end
 
-    def order_row(order_item)
+    def order_row(order_item, index)
       y = cursor
-      height = 20
+      height = 17
 
       self.line_width = 0.5
       # dash(8, :space => 20, :phase => 5)
       transparent(0.5) { stroke_horizontal_line 0, 540, :at => y + 2 }
 
-      bounding_box([0, y], :width => 30, :height => height) do
+      bounding_box([-10, y], :width => 30, :height => height) do
+       formatted_text_box [{ text: "#{index + 1}:", size: 8, styles: [:italic]}], :align => :right, :valign => :center
+      end
+
+      bounding_box([20, y], :width => 30, :height => height) do
        formatted_text_box [{ text: order_item.quantity.to_i.to_s, size: 11}], :align => :right, :valign => :center
       end
 
-      bounding_box([40, y], :width => 100, :height => height) do
+      bounding_box([60, y], :width => 100, :height => height) do
        formatted_text_box [{ text: order_item.item.name, size: 9}], :align => :left, :valign => :center
       end
 
-      bounding_box([150, y], :width => 290, :height => height) do
-       formatted_text_box [{ text: order_item.item.description, size: 9}], :align => :left, :valign => :center
+      bounding_box([170, y], :width => 290, :height => height) do
+        desc = order_item.item.description.truncate(61)
+        formatted_text_box [{ text: desc, size: 9}], :align => :left, :valign => :center
       end
 
       bounding_box([450, y], :width => 35, :height => height) do
@@ -133,6 +145,8 @@ module Pdf
       end
 
       move_down 4
+
+      start_new_page if cursor < 20
     end
 
     def total(val)
@@ -154,20 +168,22 @@ module Pdf
     end
 
     def pod(order)
-      y = cursor - 20
-      x = 170
+      size = 30
+      y = 210
+      x = 540/2-(size*4)/2
+
       signature = Maybe(order).fulfillment.pod.signature._
 
       if signature.present?
         img = StringIO.new(Base64.decode64(signature['data:image/png;base64,'.length .. -1]))
 
-        bounding_box([x, y], :width => 200, :height => 50) do
-          formatted_text_box [{ text: 'Received', size: 23}], :align => :left, :valign => :bottom
+        bounding_box([x, y], :width => size*4, :height => size) do
+          formatted_text_box [{ text: 'Received', size: size/3}], :align => :left, :valign => :bottom
         end
 
         y = cursor
-        bounding_box([x, y], :width => 200, :height => 50) do
-         image img, :height => 50, :position => :center, :vposition => :bottom
+        bounding_box([x, y], :width => size*4, :height => size) do
+         image img, :height => size, :position => :center, :vposition => :bottom
 
          stroke_color "FF5500"
          self.line_width = 2
@@ -176,16 +192,13 @@ module Pdf
        end
 
        y = cursor - 5
-       bounding_box([x, y], :width => 200, :height => 15) do
-         formatted_text_box [{ text: '01/12/16 - 10:42am', size: 11, styles: [:italic, :bold]}], :align => :left, :valign => :top
+       bounding_box([x, y], :width => size*4, :height => size/3) do
+         name = Maybe(order).fulfillment.pod.name.fetch('')
+         date = '01/12/16 - 10:42am'
+         formatted_text_box [{ text: "#{date} - #{name}", size: size/4.5, styles: [:italic, :bold]}], :align => :left, :valign => :top
        end
 
-       y = cursor
-       bounding_box([x, y], :width => 200, :height => 15) do
-         formatted_text_box [{ text: 'Received by Aram Zadikian', size: 11, styles: [:italic]}], :align => :left, :valign => :top
-       end
-
-       image "app/assets/images/stamp_icon.png", :at => [x + 175, y+50], :width => 50
+       image "app/assets/images/stamp_icon.png", :at => [x + size*3.5, y+size], :width => size/2
       end
     end
 

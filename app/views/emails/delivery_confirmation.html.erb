@@ -223,7 +223,7 @@
 														<tr>
 															<td style="font-family: Helvetica, arial, sans-serif; font-size: 16px; color: #666666; text-align:center; line-height: 30px;">
 																<p style="text-align: center;">
-																	Hello <%= rule.first_name %>, your order for <strong><%= f.order.delivery_date.strftime('%A, %d/%m/%y') %></strong> was successfully delivered.
+																	Hello <%= rule.first_name %>, your order for <strong><%= fulfillment.order.delivery_date.strftime('%A, %d/%m/%y') %></strong> was successfully delivered.
 																</p>
 																<p style="text-align: center;">
 																	Attached are the associated documents.

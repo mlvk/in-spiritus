@@ -1,0 +1,2 @@
+class RoutePlanBlueprintPolicy < StandardPolicy
+end

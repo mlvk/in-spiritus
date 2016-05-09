@@ -3,6 +3,6 @@ class TestingController < ActionController::Base
 
   def pdf
     # @url = generate_and_upload_credit_notes_pdf [CreditNote.first]
-    @url = generate_and_upload_orders_pdf [Order.find(2)]
+    @url = generate_and_upload_orders_pdf [Order.find(63)]
   end
 end

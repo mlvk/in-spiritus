@@ -4,13 +4,18 @@ class RouteVisit < ActiveRecord::Base
 	aasm :route_visit, :column => :route_visit_state, :skip_validation_on_save => true do
 		state :pending, :initial => true
 		state :fulfilled
+		state :processed
 
 		event :mark_fulfilled do
 			transitions :from => :pending, :to => :fulfilled
 		end
+
+		event :mark_processed do
+			transitions :from => :fulfilled, :to => :processed
+		end
 	end
 
-	enum route_visit_state: [ :pending, :fulfilled ]
+	enum route_visit_state: [ :pending, :fulfilled, :processed ]
 
 	belongs_to 	:route_plan
 	belongs_to 	:address
