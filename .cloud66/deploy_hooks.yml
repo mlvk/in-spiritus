@@ -1,6 +1,6 @@
 production:
   after_rails:
-    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp
+    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp && chown nginx:app_writers $STACK_PATH/tmp/pdfs && chmod 775 $STACK_PATH/tmp/pdfs && chmod g+s $STACK_PATH/tmp/pdfs
       execute: true
       target: rails
       run_on: all_servers
@@ -8,7 +8,7 @@ production:
 
 staging:
   after_rails:
-    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp
+    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp && chown nginx:app_writers $STACK_PATH/tmp/pdfs && chmod 775 $STACK_PATH/tmp/pdfs && chmod g+s $STACK_PATH/tmp/pdfs
       execute: true
       target: rails
       run_on: all_servers
@@ -16,7 +16,7 @@ staging:
 
 development:
   after_rails:
-    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp
+    - command: chown nginx:app_writers $STACK_PATH/tmp && chmod 775 $STACK_PATH/tmp && chmod g+s $STACK_PATH/tmp && chown nginx:app_writers $STACK_PATH/tmp/pdfs && chmod 775 $STACK_PATH/tmp/pdfs && chmod g+s $STACK_PATH/tmp/pdfs
       execute: true
       target: rails
       run_on: all_servers
