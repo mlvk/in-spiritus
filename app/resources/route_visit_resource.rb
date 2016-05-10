@@ -3,7 +3,8 @@ class RouteVisitResource < JSONAPI::Resource
               :depart_at,
               :position,
               :date,
-              :route_visit_state
+              :route_visit_state,
+              :completed_at
 
   has_one :route_plan
   has_one :address

@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.integer  "location_id",                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "submitted_at"
   end
 
   add_index "credit_notes", ["credit_note_number"], name: "index_credit_notes_on_credit_note_number", unique: true, using: :btree
@@ -193,6 +194,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.date     "delivery_date",                                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "submitted_at"
   end
 
   add_index "orders", ["location_id"], name: "index_orders_on_location_id", using: :btree
@@ -249,6 +251,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.integer  "route_visit_state",                  default: 0,         null: false
     t.date     "date",          null: false
     t.decimal  "position",      default: 0.0, null: false
+    t.datetime "completed_at"
     t.integer  "arrive_at"
     t.string   "depart_at"
     t.datetime "created_at"
@@ -265,13 +268,14 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.integer  "returns",        default: 0, null: false
     t.integer  "item_id",                    null: false
     t.integer  "stock_id",                   null: false
-    t.integer  "tracking_state",                  default: 0,         null: false
+    t.integer  "tracking_state", default: 0, null: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
   end
 
   add_index "stock_levels", ["item_id"], name: "index_stock_levels_on_item_id", using: :btree
   add_index "stock_levels", ["stock_id"], name: "index_stock_levels_on_stock_id", using: :btree
+  add_index "stock_levels", ["tracking_state"], name: "index_stock_levels_on_tracking_state", using: :btree
 
   create_table "stocks", force: :cascade do |t|
     t.integer  "day_of_week"

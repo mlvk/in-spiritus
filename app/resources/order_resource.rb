@@ -2,7 +2,8 @@ class OrderResource < JSONAPI::Resource
   attributes :delivery_date,
              :order_number,
              :xero_state,
-             :order_type
+             :order_type,
+             :submitted_at
 
   filter     :delivery_date
 

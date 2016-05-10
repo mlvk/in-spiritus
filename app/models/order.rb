@@ -76,7 +76,6 @@ class Order < ActiveRecord::Base
       if stale_route_visit?
         fulfillment.route_visit = RouteVisit.find_or_create_by(date:delivery_date, address:address)
         fulfillment.save
-        # save
       end
     else
       create_fulfillment_structure
@@ -85,9 +84,16 @@ class Order < ActiveRecord::Base
 
   def create_fulfillment_structure
     new_route_visit = RouteVisit.find_or_create_by(date:delivery_date, address:address)
-    fulfillment = Fulfillment.create(route_visit:new_route_visit, order:self)
-    # self.update_columns(fulfillment_id:fulfillment.id)
-    # save
+    credit_note = CreditNote.create(date:delivery_date, location:location)
+    stock = Stock.create(location:location)
+    pod = Pod.create
+    fulfillment = Fulfillment.create(
+      route_visit:new_route_visit,
+      order:self,
+      pod:pod,
+      credit_note: credit_note,
+      stock: stock
+    )
   end
 
 end
