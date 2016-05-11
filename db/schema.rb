@@ -32,7 +32,8 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.integer  "xero_state",                  default: 0,         null: false
     t.string   "name",          limit: 255,                      null: false
     t.integer  "terms",                     default: 14,         null: false
-    t.string   "tag",                       default: "customer", null: false
+    t.boolean  "is_customer",              default: true, null: false
+    t.boolean  "is_vendor",                default: false, null: false
     t.integer  "price_tier_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -40,7 +41,8 @@ ActiveRecord::Schema.define(version: 20160501213502) do
 
   add_index "companies", ["name"], name: "name", unique: true, using: :btree
   add_index "companies", ["price_tier_id"], name: "index_companies_on_price_tier_id", using: :btree
-  add_index "companies", ["tag"], name: "index_companies_on_tag", using: :btree
+  add_index "companies", ["is_customer"], name: "index_companies_on_is_customer", using: :btree
+  add_index "companies", ["is_vendor"], name: "index_companies_on_is_vendor", using: :btree
   add_index "companies", ["xero_id"], name: "index_companies_on_xero_id", unique: true, using: :btree
   add_index "companies", ["xero_state"], name: "index_companies_on_xero_state", using: :btree
 
@@ -127,25 +129,28 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_index "item_prices", ["price_tier_id"], name: "index_item_prices_on_price_tier_id", using: :btree
 
   create_table "items", force: :cascade do |t|
-    t.string   "xero_id",      limit: 255
-    t.integer  "xero_state",                  default: 0,         null: false
-    t.string   "name",         limit: 255,                        null: false
-    t.string   "code",         limit: 255
-    t.string   "description",  limit: 255
+    t.string   "xero_id",       limit: 255
+    t.integer  "xero_state",                default: 0,            null: false
+    t.string   "name",          limit: 255,                        null: false
+    t.string   "code",          limit: 255
+    t.string   "description",   limit: 255
+    t.integer  "company_id"
     t.integer  "position"
-    t.boolean  "is_sold",                  default: false,        null: false
-    t.boolean  "is_purchased",             default: true,         null: false
-    t.string   "tag",          limit: 255, default: "ingredient", null: false
+    t.decimal  "default_price",             default: 0.0,          null: false
+    t.boolean  "is_sold",                   default: false,        null: false
+    t.boolean  "is_purchased",              default: true,         null: false
+    t.string   "tag",           limit: 255, default: "ingredient", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "items", ["is_purchased"], name: "index_items_on_is_purchased", using: :btree
-  add_index "items", ["is_sold"], name: "index_items_on_is_sold", using: :btree
-  add_index "items", ["name"], name: "index_items_on_name", unique: true, using: :btree
-  add_index "items", ["tag"], name: "index_items_on_tag", using: :btree
   add_index "items", ["xero_id"], name: "index_items_on_xero_id", unique: true, using: :btree
   add_index "items", ["xero_state"], name: "index_items_on_xero_state", using: :btree
+  add_index "items", ["name"], name: "index_items_on_name", unique: true, using: :btree
+  add_index "items", ["company_id"], name: "index_items_on_company_id", using: :btree
+  add_index "items", ["is_sold"], name: "index_items_on_is_sold", using: :btree
+  add_index "items", ["is_purchased"], name: "index_items_on_is_purchased", using: :btree
+  add_index "items", ["tag"], name: "index_items_on_tag", using: :btree
 
   create_table "locations", force: :cascade do |t|
     t.integer  "company_id",                               null: false
@@ -357,6 +362,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_foreign_key "fulfillments", "pods"
   add_foreign_key "fulfillments", "route_visits"
   add_foreign_key "fulfillments", "stocks"
+  add_foreign_key "items", "companies"
   add_foreign_key "item_credit_rates", "items"
   add_foreign_key "item_credit_rates", "locations"
   add_foreign_key "item_desires", "items"

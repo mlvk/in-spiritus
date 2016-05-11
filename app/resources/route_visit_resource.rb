@@ -6,6 +6,10 @@ class RouteVisitResource < JSONAPI::Resource
               :route_visit_state,
               :completed_at
 
+  attribute :fulfillment_count
+  attribute  :has_pickup
+  attribute  :has_drop
+
   has_one :route_plan
   has_one :address
 
@@ -19,6 +23,18 @@ class RouteVisitResource < JSONAPI::Resource
 
   def records_for_fulfillments
     @model.fulfillments.joins(order: :order_items).where('order_items.quantity > ?', 0).distinct
+  end
+
+  def fulfillment_count
+    @model.fulfillments.count
+  end
+
+  def has_pickup
+    @model.fulfillments.any? {|f| f.order.is_sales_order?}
+  end
+
+  def has_drop
+    @model.fulfillments.any? {|f| f.order.is_purchase_order?}
   end
 
 end

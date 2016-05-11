@@ -7,10 +7,10 @@ namespace :restore do
     'db:drop',
     'db:create',
     'db:schema:load',
-    :items,
     :pt,
-    :ip,
     :companies,
+    :items,
+    :ip,
     :addresses,
     :locations,
     :visit_windows,
@@ -18,7 +18,7 @@ namespace :restore do
   ]
 
   task :items => :environment do
-    fields = "id,code,name,description,position,is_purchased,is_sold,tag"
+    fields = "id,default_price,company_id,code,name,description,position,is_purchased,is_sold,tag"
     csv = "'#{csv_dir}/items.csv'"
     sql = "COPY items(#{fields}) FROM #{csv} WITH csv HEADER"
     ActiveRecord::Base.connection.execute(sql)
@@ -42,7 +42,7 @@ namespace :restore do
   end
 
   task :companies => :environment do
-    fields = "id,name,terms,price_tier_id"
+    fields = "id,name,terms,price_tier_id,is_customer,is_vendor"
     csv = "'#{csv_dir}/companies.csv'"
     sql = "COPY companies(#{fields}) FROM #{csv} WITH csv HEADER"
     ActiveRecord::Base.connection.execute(sql)

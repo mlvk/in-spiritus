@@ -20,9 +20,11 @@ class Item < ActiveRecord::Base
 
 	validates :name, presence: true
 
-	has_many :order_items, :dependent => :destroy, autosave: true
-	has_many :item_prices, :dependent => :destroy, autosave: true
-	has_many :item_credit_rates, :dependent => :destroy, autosave: true
-	has_many :item_desires, :dependent => :destroy, autosave: true
-	has_many :stock_levels, :dependent => :destroy, autosave: true
+	belongs_to	:company
+	
+	has_many 		:order_items, :dependent => :destroy, autosave: true
+	has_many 		:item_prices, :dependent => :destroy, autosave: true
+	has_many 		:item_credit_rates, :dependent => :destroy, autosave: true
+	has_many 		:item_desires, :dependent => :destroy, autosave: true
+	has_many 		:stock_levels, :dependent => :destroy, autosave: true
 end

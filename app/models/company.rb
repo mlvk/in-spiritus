@@ -25,6 +25,8 @@ class Company < ActiveRecord::Base
 
   belongs_to :price_tier
 
+  has_many :items
+  
   has_many :item_prices, through: :price_tier
 
 	def price_for_item (item)
