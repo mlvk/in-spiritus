@@ -6,6 +6,7 @@ class OrderResource < JSONAPI::Resource
              :submitted_at
 
   filter     :delivery_date
+  filter     :order_type
 
   has_many   :order_items
   has_one    :location

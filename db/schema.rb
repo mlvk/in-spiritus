@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.string   "xero_id",      limit: 255
     t.integer  "xero_state",                  default: 0,         null: false
     t.string   "name",         limit: 255,                        null: false
+    t.string   "code",         limit: 255
     t.string   "description",  limit: 255
     t.integer  "position"
     t.boolean  "is_sold",                  default: false,        null: false

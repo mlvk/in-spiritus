@@ -1,8 +1,12 @@
 class Order < ActiveRecord::Base
   include AASM
 
+  SALES_ORDER_TYPE = 'sales-order'
+  PURCHASE_ORDER_TYPE = 'purchase-order'
+
   after_create :generate_order_number
   after_save :update_fulfillment_structure
+  before_destroy :clear_fulfillment_structure
 
   aasm :order, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
@@ -33,9 +37,17 @@ class Order < ActiveRecord::Base
 
   belongs_to :location
   has_one :address, through: :location
-  has_one :fulfillment, dependent: :nullify, autosave: true
+  has_one :fulfillment
   has_one :route_visit, through: :fulfillment
   has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
+
+  def is_sales_order?
+    order_type == SALES_ORDER_TYPE
+  end
+
+  def is_purchase_order?
+    !is_sales_order?
+  end
 
   def fulfillment_id=(_value)
      # TODO: Remove once it's fixed
@@ -55,7 +67,8 @@ class Order < ActiveRecord::Base
 
   private
   def generate_order_number
-    self.order_number = "OR-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(5)}"
+    prefix = is_sales_order? ? 'SO' : 'PO'
+    self.order_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
     save
   end
 
@@ -94,6 +107,13 @@ class Order < ActiveRecord::Base
       credit_note: credit_note,
       stock: stock
     )
+  end
+
+  def clear_fulfillment_structure
+    single_fulfillment_for_route_visit = Maybe(fulfillment).route_visit.fulfillments.size.fetch(1) == 1
+
+    Maybe(fulfillment).route_visit.fetch.destroy if single_fulfillment_for_route_visit
+    Maybe(fulfillment).fetch.destroy
   end
 
 end

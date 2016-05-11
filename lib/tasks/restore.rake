@@ -18,7 +18,7 @@ namespace :restore do
   ]
 
   task :items => :environment do
-    fields = "id,name,description,position,is_purchased,is_sold,tag"
+    fields = "id,code,name,description,position,is_purchased,is_sold,tag"
     csv = "'#{csv_dir}/items.csv'"
     sql = "COPY items(#{fields}) FROM #{csv} WITH csv HEADER"
     ActiveRecord::Base.connection.execute(sql)
