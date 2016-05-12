@@ -129,17 +129,19 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_index "item_prices", ["price_tier_id"], name: "index_item_prices_on_price_tier_id", using: :btree
 
   create_table "items", force: :cascade do |t|
-    t.string   "xero_id",       limit: 255
-    t.integer  "xero_state",                default: 0,            null: false
-    t.string   "name",          limit: 255,                        null: false
-    t.string   "code",          limit: 255
-    t.string   "description",   limit: 255
+    t.string   "xero_id",         limit: 255
+    t.integer  "xero_state",                  default: 0,            null: false
+    t.string   "name",            limit: 255,                        null: false
+    t.string   "code",            limit: 255
+    t.string   "unit_of_measure", limit: 255
+    t.string   "description",     limit: 255
     t.integer  "company_id"
     t.integer  "position"
-    t.decimal  "default_price",             default: 0.0,          null: false
-    t.boolean  "is_sold",                   default: false,        null: false
-    t.boolean  "is_purchased",              default: true,         null: false
-    t.string   "tag",           limit: 255, default: "ingredient", null: false
+    t.decimal  "default_price",               default: 0.0,          null: false
+    t.boolean  "is_sold",                     default: false,        null: false
+    t.boolean  "is_purchased",                default: true,         null: false
+    t.boolean  "active",                      default: true,         null: false
+    t.string   "tag",             limit: 255, default: "ingredient", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

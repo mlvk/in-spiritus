@@ -132,7 +132,7 @@ module Pdf
       end
 
       bounding_box([170, y], :width => 290, :height => height) do
-        desc = order_item.item.description.truncate(61)
+        desc = Maybe(order_item).item.description._.truncate(61)
         formatted_text_box [{ text: desc, size: 9}], :align => :left, :valign => :center
       end
 
