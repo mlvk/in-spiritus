@@ -16,12 +16,16 @@ FactoryGirl.define do
       xero_id { SecureRandom.hex(10) }
     end
 
+    trait :purchase_order do
+      order_type Order::PURCHASE_ORDER_TYPE
+    end
+
     trait :sales_order do
-      order_type "sales_order"
+      order_type Order::SALES_ORDER_TYPE
     end
 
     factory :sales_order_with_items do
-      order_type "sales_order"
+      order_type Order::SALES_ORDER_TYPE
 
       transient do
         order_items_count 5

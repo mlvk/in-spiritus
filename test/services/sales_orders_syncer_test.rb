@@ -31,10 +31,8 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
       SalesOrdersSyncer.new.sync_local
     end
 
-    order.reload
-
-    assert_equal(order.xero_id, yaml_props[:response_invoice_id], "Xero id didn't match")
-    assert order.synced?, 'order was not marked as synced'
+    assert_equal(Order.first.xero_id, yaml_props[:response_invoice_id], "Xero id didn't match")
+    assert Order.first.synced?, 'order was not marked as synced'
   end
 
   # Remote testing

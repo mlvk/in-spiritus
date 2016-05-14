@@ -32,8 +32,43 @@ class Order < ActiveRecord::Base
     end
   end
 
+  aasm :notification, :column => :notification_state, :skip_validation_on_save => true do
+    state :pending_notification, :initial => true
+    state :pending_updated_notification
+    state :awaiting_notification
+    state :notified
+    state :awaiting_updated_notification
+
+    event :mark_pending do
+      transitions :from => :awaiting_notification, :to => :pending
+      transitions :from => :awaiting_updated_notification, :to => :pending
+      transitions :from => :notified, :to => :pending
+    end
+
+    event :mark_pending_updated do
+      transitions :from => :awaiting_notification, :to => :pending_updated_notification
+      transitions :from => :awaiting_updated_notification, :to => :pending_updated_notification
+      transitions :from => :notified, :to => :pending_updated_notification
+    end
+
+    event :mark_awaiting_notification do
+      transitions :from => :pending_notification, :to => :awaiting_notification
+    end
+
+    event :mark_notified do
+      transitions :from => :awaiting_notification, :to => :notified
+      transitions :from => :awaiting_updated_notification, :to => :notified
+      transitions :from => :notified, :to => :notified
+    end
+
+    event :mark_awaiting_updated_notification do
+      transitions :from => :notified, :to => :awaiting_updated_notification
+    end
+  end
+
   # State machine settings
   enum xero_state: [ :pending, :submitted, :synced, :voided ]
+  enum notification_state: [ :pending_notification, :pending_updated_notification, :awaiting_notification, :notified, :awaiting_updated_notification ]
 
   belongs_to :location
   has_one :address, through: :location
@@ -41,12 +76,15 @@ class Order < ActiveRecord::Base
   has_one :route_visit, through: :fulfillment
   has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
 
-  def is_sales_order?
+  scope :purchase_order, -> { where(order_type:PURCHASE_ORDER_TYPE)}
+  scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
+
+  def sales_order?
     order_type == SALES_ORDER_TYPE
   end
 
-  def is_purchase_order?
-    !is_sales_order?
+  def purchase_order?
+    !sales_order?
   end
 
   def fulfillment_id=(_value)
@@ -67,7 +105,7 @@ class Order < ActiveRecord::Base
 
   private
   def generate_order_number
-    prefix = is_sales_order? ? 'SO' : 'PO'
+    prefix = sales_order? ? 'SO' : 'PO'
     self.order_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
     save
   end

@@ -10,12 +10,16 @@ module Clockwork
   every(10.seconds, SyncLocalItemsWorker)
   every(10.seconds, SyncLocalCompaniesWorker)
   every(10.seconds, SyncLocalSalesOrdersWorker)
+  every(10.seconds, SyncLocalPurchaseOrdersWorker)
   every(10.seconds, SyncLocalCreditNotesWorker)
   every(10.seconds, ProcessRouteVisitWorker)
   every(10.seconds, ProcessStockLevelsWorker)
 
+  every(5.seconds, EmailPurchaseOrdersWorker)
+
   every(1.hour, SyncRemoteItemsWorker)
   every(1.hour, SyncRemoteCompaniesWorker)
   every(1.hour, SyncRemoteSalesOrdersWorker)
+  every(1.hour, SyncRemotePurchaseOrdersWorker)
   every(1.hour, SyncRemoteCreditNotesWorker)
 end

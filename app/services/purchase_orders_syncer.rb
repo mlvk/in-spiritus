@@ -1,48 +1,27 @@
-class SalesOrdersSyncer < BaseSyncer
+class PurchaseOrdersSyncer < BaseSyncer
 
   protected
     def find_record(xero_id)
-      xero.Invoice.find(xero_id)
+      xero.PurchaseOrder.find(xero_id)
     end
 
     def find_record_by(model)
-      xero.Invoice.first(:where => {:invoice_number => model.order_number})
+      xero.PurchaseOrder.find(model.order_number)
     end
 
     def find_records(timestamp)
-      xero.Invoice.all({:modified_since => timestamp})
-    end
-
-    def pre_flight_check(record, model)
-      case record.status
-      when 'DELETED'
-        model.void!
-      when 'VOIDED'
-        model.void!
-      end
+      xero.PurchaseOrder.all({:modified_since => timestamp})
     end
 
     def should_save_record? (record, model)
       model.submitted?
     end
 
-    def should_update_model?(model, record)
-      case record.status
-      when 'DELETED'
-        false
-      when 'VOIDED'
-        false
-      else
-        true
-      end
-    end
-
     def update_record(record, model)
-      record.invoice_number = model.order_number
+      record.purchase_order_number = model.order_number
       record.date = model.delivery_date
-      record.due_date = model.delivery_date + model.location.company.terms
+      record.delivery_date = model.delivery_date
       record.status = 'AUTHORISED'
-      record.type = 'ACCREC'
 
       record.reference = model.location.full_name
       record.build_contact(contact_id:model.location.company.xero_id, name:model.location.company.name)
@@ -54,25 +33,25 @@ class SalesOrdersSyncer < BaseSyncer
     end
 
     def create_record
-      xero.Invoice.build
+      xero.PurchaseOrder.build
     end
 
     def save_records(records)
-      xero.Invoice.save_records(records)
+      xero.PurchaseOrder.save_records(records)
     end
 
     def find_model(record)
-      Order.find_by(xero_id:record.invoice_id) || Order.find_by(order_number:record.invoice_number)
+      Order.find_by(xero_id:record.purchase_order_id) || Order.find_by(order_number:record.purchase_order_number)
     end
 
     def find_models
       Order
-        .sales_order
+        .purchase_order
         .submitted
     end
 
     def update_model(model, record)
-      model.xero_id = record.invoice_id
+      model.xero_id = record.purchase_order_id
 
       record.line_items.each do |line_item|
         item = Item.find_by(code: line_item.item_code)
@@ -104,7 +83,7 @@ class SalesOrdersSyncer < BaseSyncer
           quantity:order_item.quantity,
           unit_amount:order_item.unit_price,
           tax_type:'NONE',
-          account_code: '400')
+          account_code: '500')
       end
     end
 

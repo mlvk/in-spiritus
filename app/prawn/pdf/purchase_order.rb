@@ -1,5 +1,5 @@
 module Pdf
-  class Invoice
+  class PurchaseOrder
     include Prawn::View
 
     def guide_y(y = cursor)
@@ -20,19 +20,19 @@ module Pdf
       # stroke_axis :step_length => 20
 
       orders.each do |order|
-        build_invoice order
+        build_document order
         start_new_page unless order == orders.last
       end
     end
 
-    def build_invoice(order)
+    def build_document(order)
       header(720, order)
       body(590, order)
 
       start_new_page if cursor < 175
 
-      footer
-      pod(order)
+      # footer
+      # pod(order)
     end
 
     def header(start_y, order)
@@ -40,7 +40,7 @@ module Pdf
       col2 = 80
 
       bounding_box([0, start_y], :width => 540, :height => 120) do
-        formatted_text_box [{ text: "Invoice:", styles: [:bold] }], :at => [col1, cursor]
+        formatted_text_box [{ text: "Purchase Order:", styles: [:bold] }], :at => [col1, cursor]
         formatted_text_box [{ text: order.order_number }], :at => [col2, cursor]
 
         y = cursor - 30
@@ -189,8 +189,6 @@ module Pdf
          self.line_width = 2
          self.join_style = :miter
          stroke_bounds
-
-         stroke_color "000000"
        end
 
        y = cursor - 5

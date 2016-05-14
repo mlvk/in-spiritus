@@ -6,27 +6,16 @@ class ProcessRouteVisitWorker
   sidekiq_options :retry => false, unique: :until_executed
 
   def perform
-    # SalesOrdersSyncer.new.sync_local
-    # CreditNotesSyncer.new.sync_local
-
-    # Process CCs
-
-    # Send notifications
     RouteVisit
       .fulfilled
-      .each do |rv|
-        process_route_visit rv
-      end
-
+      .each(&method(:process_route_visit))
   end
 
   def process_route_visit(route_visit)
     route_visit
       .fulfillments
-      .select {|fulfillment| fulfillment.fulfilled? }
-      .each do |fulfillment|
-        process_fulfillment fulfillment
-      end
+      .fulfilled
+      .each(&method(:process_fulfillment))
 
     route_visit.mark_processed!
   end
@@ -42,17 +31,24 @@ class ProcessRouteVisitWorker
 
     if fulfillment.awaiting?
       location.notification_rules.each do |rule|
-        mb_obj = build_notification_for_fulfillment(fulfillment, rule)
-        send_message mb_obj
+        send_notification_for_fulfillment(fulfillment, rule)
       end
 
       fulfillment.mark_notified!
     end
   end
 
-  def build_notification_for_fulfillment(fulfillment, rule)
-    html = ERB.new(File.open('app/views/emails/delivery_confirmation.html.erb').read).result(binding)
-    txt = ERB.new(File.open('app/views/emails/delivery_confirmation.txt.erb').read).result(binding)
+  def send_notification_for_fulfillment(fulfillment, rule)
+    if fulfillment.order.sales_order?
+      send_sales_order_fulfillment_notification(fulfillment, rule)
+    else
+      send_purchase_order_fulfillment_notification(fulfillment, rule)
+    end
+  end
+
+  def send_sales_order_fulfillment_notification(fulfillment, rule)
+    html = ERB.new(File.open('app/views/emails/sales_order_delivery_confirmation.html.erb').read).result(binding)
+    txt = ERB.new(File.open('app/views/emails/sales_order_delivery_confirmation.txt.erb').read).result(binding)
     date_fmt = fulfillment.order.delivery_date.strftime('%d/%m/%y')
 
     mb_obj = Mailgun::MessageBuilder.new
@@ -61,25 +57,45 @@ class ProcessRouteVisitWorker
     mb_obj.subject("Delivery Confirmation - MLVK - #{date_fmt}")
     mb_obj.body_html(html)
     mb_obj.body_text(txt)
-    add_invoice_attachment(fulfillment, mb_obj)
-    add_credit_note_attachment(fulfillment, mb_obj)
+    attach_orders_pdf(fulfillment.order, mb_obj)
+    add_credit_note_attachment(fulfillment.credit_note, mb_obj) if Maybe(fulfillment).credit_note.has_credit?.fetch(false)
 
-    return mb_obj
+    send_message mb_obj
   end
 
-  def add_credit_note_attachment(fulfillment, mb_obj)
-    if fulfillment.credit_note.present?
-      credit_note_date_fmt = fulfillment.credit_note.date.strftime('%d/%m/%y')
-      temp_credit_note_file_url = generate_temp_credit_notes_pdf [fulfillment.credit_note]
-      mb_obj.add_attachment(temp_credit_note_file_url, "Credit - #{fulfillment.credit_note.credit_note_number} - #{credit_note_date_fmt}.pdf")
+  def send_purchase_order_fulfillment_notification(fulfillment, rule)
+    html = ERB.new(File.open('app/views/emails/purchase_order_delivery_confirmation.html.erb').read).result(binding)
+    txt = ERB.new(File.open('app/views/emails/purchase_order_delivery_confirmation.txt.erb').read).result(binding)
+    date_fmt = fulfillment.order.delivery_date.strftime('%d/%m/%y')
+
+    mb_obj = Mailgun::MessageBuilder.new
+    mb_obj.from(ENV['SALES_FROM_EMAIL'], {"first"=>"Aram", "last" => "Zadikian"})
+    mb_obj.add_recipient(:to, rule.email, {"first"=>rule.first_name, "last" => rule.last_name || ""})
+    mb_obj.subject("Pickup Confirmation - MLVK - #{date_fmt}")
+    mb_obj.body_html(html)
+    mb_obj.body_text(txt)
+    attach_orders_pdf(fulfillment.order, mb_obj)
+
+    send_message mb_obj
+  end
+
+  def add_credit_note_attachment(credit_note, mb_obj)
+    if credit_note.present?
+      credit_note_date_fmt = credit_note.date.strftime('%d/%m/%y')
+      temp_credit_note_file_url = generate_temp_credit_notes_pdf [credit_note]
+      mb_obj.add_attachment(temp_credit_note_file_url, "Credit - #{credit_note.credit_note_number} - #{credit_note_date_fmt}.pdf")
     end
   end
 
-  def add_invoice_attachment(fulfillment, mb_obj)
-    if fulfillment.order.present?
-      order_date_fmt = fulfillment.order.delivery_date.strftime('%d/%m/%y')
-      temp_invoice_file_url = generate_temp_orders_pdf [fulfillment.order]
-      mb_obj.add_attachment(temp_invoice_file_url, "Invoice - #{fulfillment.order.order_number} - #{order_date_fmt}.pdf")
+  def attach_orders_pdf(order, mb_obj)
+    if order.present?
+      pdf_urls = convert_orders_to_pdfs [order]
+      order_date_fmt = order.delivery_date.strftime('%d/%m/%y')
+      if(order.sales_order?)
+        mb_obj.add_attachment(pdf_urls[:sales_orders_url], "Invoice - #{order.order_number} - #{order_date_fmt}.pdf")
+      else
+        mb_obj.add_attachment(pdf_urls[:purchase_orders_url], "Purchase Order - #{order.order_number} - #{order_date_fmt}.pdf")
+      end
     end
   end
 

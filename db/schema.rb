@@ -132,9 +132,9 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.string   "xero_id",         limit: 255
     t.integer  "xero_state",                  default: 0,            null: false
     t.string   "name",            limit: 255,                        null: false
-    t.string   "code",            limit: 255
+    t.string   "code",            limit: 255,                        null: false
     t.string   "unit_of_measure", limit: 255
-    t.string   "description",     limit: 255
+    t.string   "description",     limit: 255,                        null: false
     t.integer  "company_id"
     t.integer  "position"
     t.decimal  "default_price",               default: 0.0,          null: false
@@ -148,7 +148,8 @@ ActiveRecord::Schema.define(version: 20160501213502) do
 
   add_index "items", ["xero_id"], name: "index_items_on_xero_id", unique: true, using: :btree
   add_index "items", ["xero_state"], name: "index_items_on_xero_state", using: :btree
-  add_index "items", ["name"], name: "index_items_on_name", unique: true, using: :btree
+  add_index "items", ["name"], name: "index_items_on_name", using: :btree
+  add_index "items", ["code"], name: "index_items_on_code", unique: true, using: :btree
   add_index "items", ["company_id"], name: "index_items_on_company_id", using: :btree
   add_index "items", ["is_sold"], name: "index_items_on_is_sold", using: :btree
   add_index "items", ["is_purchased"], name: "index_items_on_is_purchased", using: :btree
@@ -197,7 +198,8 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.string   "xero_id",       limit: 255
     t.string   "order_number",  limit: 255
     t.integer  "xero_state",                  default: 0,         null: false
-    t.string   "order_type",                default: "sales-order", null: false
+    t.integer  "notification_state",          default: 0,         null: false
+    t.string   "order_type",                  default: "sales-order", null: false
     t.integer  "location_id",                                       null: false
     t.date     "delivery_date",                                     null: false
     t.datetime "created_at"
@@ -210,6 +212,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   add_index "orders", ["order_type"], name: "index_orders_on_order_type", using: :btree
   add_index "orders", ["xero_id"], name: "index_orders_on_xero_id", unique: true, using: :btree
   add_index "orders", ["xero_state"], name: "index_orders_on_xero_state", using: :btree
+  add_index "orders", ["notification_state"], name: "index_orders_on_notification_state", using: :btree
 
   create_table "pods", force: :cascade do |t|
     t.binary   "signature"

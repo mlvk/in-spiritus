@@ -6,7 +6,11 @@ class OrdersController < ApplicationJsonApiResourcesController
     authorize Order
 
     delivery_date = Date.parse(params['deliveryDate'])
-    allLocations = Location.with_valid_address.scheduled_for_delivery_on?(delivery_date.cwday)
+
+    allLocations = Location
+      .customer
+      .with_valid_address
+      .scheduled_for_delivery_on?(delivery_date.cwday)
 
     missingLocations = allLocations.select {|location| !location.has_sales_order_for_date?(delivery_date)}
 
@@ -38,6 +42,17 @@ class OrdersController < ApplicationJsonApiResourcesController
 
     render json: {url:url}
   end
+
+  # def email_purchase_orders
+  #   orders = Order.where(id: params['orders'])
+  #
+  #   orders.each do |order|
+  #     EmailPurchaseOrderWorker.perform_async(order.id)
+  #     order.mark_notified!
+  #   end
+  #
+  #   render
+  # end
 
   def index
     authorize Order

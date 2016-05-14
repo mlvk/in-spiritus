@@ -26,7 +26,7 @@ class Company < ActiveRecord::Base
   belongs_to :price_tier
 
   has_many :items
-  
+
   has_many :item_prices, through: :price_tier
 
 	def price_for_item (item)
@@ -36,5 +36,11 @@ class Company < ActiveRecord::Base
 
 		match.present? ? match.price : 0.0
 	end
+
+  def initials
+    name.split.map(&:first).join.downcase
+  end
+
+  scope :customer, -> { where(is_customer: true) }
 
 end

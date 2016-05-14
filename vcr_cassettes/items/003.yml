@@ -1,8 +1,21 @@
+# Requires:
+# item_id
+# code
+# name
+# description
+# code_changed
+# name_changed
+# description_changed
+#
+# Note, the changed response will append 'FORCE' to the string to
+# allow tests to confirm they process through the app code
+# test equal against: 'my_new_nameFORCE'
+
 ---
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Items/b3d9696b-13f3-455a-aac9-c5b26e9b71ea
+    uri: https://api.xero.com/api.xro/2.0/Items/<%= item_id %>
   response:
     status:
       code: 200
@@ -14,9 +27,10 @@ http_interactions:
           <Status>OK</Status>
           <Items>
             <Item>
-            <ItemID>b3d9696b-13f3-455a-aac9-c5b26e9b71ea</ItemID>
-            <Code>Sunseed Chorizo</Code>
-            <Description>No description</Description>
+            <ItemID><%= item_id %></ItemID>
+            <Code><%= code %></Code>
+            <Name><%= name %></Name>
+            <Description><%= description %></Description>
             <IsSold>true</IsSold>
             <IsPurchased>true</IsPurchased>
             </Item>
@@ -41,9 +55,10 @@ http_interactions:
           <Status>OK</Status>
           <Items>
             <Item status=\"OK\">
-              <ItemID>b3d9696b-13f3-455a-aac9-c5b26e9b71ea</ItemID>
-              <Code>Sunseed Chorizo - Changed</Code>
-              <Description>No description</Description>
+              <ItemID><%= item_id %></ItemID>
+              <Code><%= code_changed %>FORCE</Code>
+              <Name><%= name_changed %>FORCE</Name>
+              <Description><%= description_changed %>FORCE</Description>
               <IsSold>false</IsSold>
               <IsPurchased>true</IsPurchased>
             </Item>

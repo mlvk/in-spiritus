@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Items?where=Code==%22Sunseed%20Chorizo%22
+    uri: https://api.xero.com/api.xro/2.0/Items?where=Code==%22<%= item_code %>%22
   response:
     status:
       code: 200
@@ -32,8 +32,8 @@ http_interactions:
           <Status>OK</Status>
           <Items>
             <Item status=\"OK\">
-              <ItemID>b3d9696b-13f3-455a-aac9-c5b26e9b71ea</ItemID>
-              <Code>Sunseed Chorizo</Code>
+              <ItemID><%= item_id %></ItemID>
+              <Code><%= item_code %></Code>
               <Description>No description</Description>
               <IsSold>true</IsSold>
               <IsPurchased>true</IsPurchased>

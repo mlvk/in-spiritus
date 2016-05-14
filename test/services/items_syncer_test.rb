@@ -4,36 +4,62 @@ class ItemsSyncerTest < ActiveSupport::TestCase
 
   # Local sync testing
   test "Should sync local item when they don't exist in xero" do
-    Item.create(name:'Sunseed Chorizo')
+    item = create(:item)
 
-    VCR.use_cassette('items/001') do
+    yaml_props = {
+      item_code: item.code,
+      item_id: 'new_xero_id'
+    }
+
+    VCR.use_cassette('items/001', erb: yaml_props) do
       ItemsSyncer.new.sync_local
     end
 
-    assert Item.first.xero_id.present?
+    assert_equal(yaml_props[:item_id], Item.first.xero_id)
   end
 
-  test "Should sync local item when record exists in xero" do
-    new_name = 'Sunseed Chorizo - Changed'
-    Item.create(name:new_name, xero_id:'b3d9696b-13f3-455a-aac9-c5b26e9b71ea')
+  test "Sync local item attributes when record exists in xero" do
+    item = create(:item, :synced)
 
-    result = nil
-    VCR.use_cassette('items/003') do
-      result = ItemsSyncer.new.sync_local
+    yaml_props = {
+      item_id: item.xero_id,
+      code: item.code,
+      name: item.name,
+      description: item.description,
+
+      code_changed: 'new_code',
+      name_changed: 'new_name',
+      description_changed: 'new_description'
+    }
+
+    item.name = yaml_props[:new_name]
+    item.save
+
+    item.mark_pending!
+
+    VCR.use_cassette('items/003', erb: yaml_props) do
+      ItemsSyncer.new.sync_local
     end
 
-    assert_equal(result.first.code, new_name)
+    assert_equal("#{yaml_props[:name_changed]}FORCE", Item.first.name)
+    assert_equal("#{yaml_props[:code_changed]}FORCE", Item.first.code)
+    assert_equal("#{yaml_props[:description_changed]}FORCE", Item.first.description)
   end
 
   # Remote sync testing
   test "Should update local item with xero_id when item name matches remote item" do
-    Item.create(name:'Sunseed Chorizo')
+    item = create(:item)
 
-    VCR.use_cassette('items/002') do
+    yaml_props = {
+      item_id: 'new_item_id',
+      code: item.code
+    }
+
+    VCR.use_cassette('items/002', erb: yaml_props) do
       ItemsSyncer.new.sync_remote(10.minutes.ago)
     end
 
-    assert Item.first.xero_id.present?
+    assert_equal(yaml_props[:item_id], Item.first.xero_id)
   end
 
 end

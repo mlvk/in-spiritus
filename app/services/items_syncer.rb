@@ -6,7 +6,7 @@ class ItemsSyncer < BaseSyncer
     end
 
     def find_record_by(model)
-      xero.Item.first(:where => {:code => model.name})
+      xero.Item.first(:where => {:code => model.code})
     end
 
     def find_records(timestamp)
@@ -14,8 +14,10 @@ class ItemsSyncer < BaseSyncer
     end
 
     def update_record(record, model)
-      record.code = model.name
+      record.name = model.name
+      record.code = model.code
       record.description = model.description
+      record.purchase_details = {unit_price:model.default_price}
     end
 
     def create_record
@@ -27,7 +29,7 @@ class ItemsSyncer < BaseSyncer
     end
 
     def find_model(record)
-      Item.find_by(xero_id:record.item_id) || Item.find_by(name:record.code)
+      Item.find_by(xero_id:record.item_id) || Item.find_by(code:record.code)
     end
 
     def find_models
@@ -36,10 +38,12 @@ class ItemsSyncer < BaseSyncer
 
     def update_model(model, record)
       model.xero_id = record.item_id
-      model.name = record.code
-      model.description = record.description if record.description.present?
+      model.name = Maybe(record).name.fetch(model.name)
+      model.code = Maybe(record).code.fetch(model.code)
+      model.description = Maybe(record).description.fetch(model.description)
+      model.default_price = Maybe(record).purchase_details.unit_price.fetch(model.default_price)
 
-      model.save
+      model.save!
 
       model.mark_synced!
     end

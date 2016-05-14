@@ -30,11 +30,11 @@ class RouteVisitResource < JSONAPI::Resource
   end
 
   def has_pickup
-    @model.fulfillments.any? {|f| f.order.is_sales_order?}
+    @model.fulfillments.any? {|f| f.order.sales_order?}
   end
 
   def has_drop
-    @model.fulfillments.any? {|f| f.order.is_purchase_order?}
+    @model.fulfillments.any? {|f| f.order.purchase_order?}
   end
 
 end
