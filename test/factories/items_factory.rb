@@ -2,6 +2,8 @@ FactoryGirl.define do
   factory :item do
     code { SecureRandom.hex(3) }
     name { Faker::Commerce.product_name }
+    description { Faker::Lorem.words(6) }
+    default_price 5.1
 
     company
 

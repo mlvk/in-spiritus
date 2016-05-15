@@ -57,12 +57,8 @@ class CreditNotesSyncer < BaseSyncer
 
     def find_models
       CreditNote
-        .where(xero_state: CreditNote.xero_states[:submitted])
-        .joins(:credit_note_items)
-        .where('credit_note_items.quantity > ?', 0)
-        .where('credit_note_items.unit_price > ?', 0)
-        .distinct
-        .select{|cn| cn.has_credit?}
+        .submitted
+        .with_credit
     end
 
     def update_model(model, record)

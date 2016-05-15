@@ -28,8 +28,8 @@ http_interactions:
                 <UpdatedDateUTC>2016-03-11T23:10:51.14</UpdatedDateUTC>
                 <CurrencyCode>USD</CurrencyCode>
                 <Type>ACCRECCREDIT</Type>
-                <CreditNoteID>updated-remote-credit-note-id</CreditNoteID>
-                <CreditNoteNumber>updated-remote-credit-note-number</CreditNoteNumber>
+                <CreditNoteID><%= remote_credit_note_id %></CreditNoteID>
+                <CreditNoteNumber><%= remote_credit_note_number %></CreditNoteNumber>
                 <AmountDue>25.00</AmountDue>
                 <AmountPaid>0.00</AmountPaid>
                 <AmountCredited>0.00</AmountCredited>
@@ -43,7 +43,7 @@ http_interactions:
   recorded_at: Fri, 11 Mar 2016 23:10:50 GMT
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/CreditNotes/updated-remote-credit-note-id
+    uri: https://api.xero.com/api.xro/2.0/CreditNotes/<%= remote_credit_note_id %>
   response:
     status:
       code: 200
@@ -93,17 +93,19 @@ http_interactions:
               <Status>AUTHORISED</Status>
               <LineAmountTypes>Exclusive</LineAmountTypes>
               <LineItems>
-                <LineItem>
-                  <ItemCode>Sunseed Chorizo</ItemCode>
-                  <Description>No description</Description>
-                  <UnitAmount>5.00</UnitAmount>
-                  <TaxType>NONE</TaxType>
-                  <TaxAmount>0.00</TaxAmount>
-                  <LineAmount>30.00</LineAmount>
-                  <AccountCode>400</AccountCode>
-                  <Quantity>6.0000</Quantity>
-                  <LineItemID>45027871-55df-4b25-b01a-ca26af4a9fff</LineItemID>
-                </LineItem>
+                <% credit_note_items do |cni| %>
+                  <LineItem>
+                    <ItemCode><%= cni.item.code %></ItemCode>
+                    <Description><%= cni.item.description %></Description>
+                    <UnitAmount><%= cni.unit_price %></UnitAmount>
+                    <TaxType>NONE</TaxType>
+                    <TaxAmount>0.00</TaxAmount>
+                    <LineAmount>30.00</LineAmount>
+                    <AccountCode>400</AccountCode>
+                    <Quantity><%= remote_quantity %></Quantity>
+                    <LineItemID>45027871-55df-4b25-b01a-ca26af4a9fff</LineItemID>
+                  </LineItem>
+                  <% end %>
               </LineItems>
               <SubTotal>30.00</SubTotal>
               <TotalTax>0.00</TotalTax>
@@ -111,8 +113,8 @@ http_interactions:
               <UpdatedDateUTC>2016-03-14T00:09:40.997</UpdatedDateUTC>
               <CurrencyCode>USD</CurrencyCode>
               <Type>ACCRECCREDIT</Type>
-              <CreditNoteID>updated-remote-credit-note-id</CreditNoteID>
-              <CreditNoteNumber>updated-remote-credit-note-number</CreditNoteNumber>
+              <CreditNoteID><%= remote_credit_note_id %></CreditNoteID>
+              <CreditNoteNumber><%= remote_credit_note_number %></CreditNoteNumber>
               <AmountDue>30.00</AmountDue>
               <AmountPaid>0.00</AmountPaid>
               <SentToContact>true</SentToContact>

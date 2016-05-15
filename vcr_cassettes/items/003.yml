@@ -1,16 +1,3 @@
-# Requires:
-# item_id
-# code
-# name
-# description
-# code_changed
-# name_changed
-# description_changed
-#
-# Note, the changed response will append 'FORCE' to the string to
-# allow tests to confirm they process through the app code
-# test equal against: 'my_new_nameFORCE'
-
 ---
 http_interactions:
 - request:
@@ -27,12 +14,7 @@ http_interactions:
           <Status>OK</Status>
           <Items>
             <Item>
-            <ItemID><%= item_id %></ItemID>
-            <Code><%= code %></Code>
-            <Name><%= name %></Name>
-            <Description><%= description %></Description>
-            <IsSold>true</IsSold>
-            <IsPurchased>true</IsPurchased>
+              <ItemID><%= item_id %></ItemID>
             </Item>
           </Items>
         </Response>"
@@ -43,7 +25,7 @@ http_interactions:
     uri: https://api.xero.com/api.xro/2.0/Items?summarizeErrors=false
     body:
       encoding: US-ASCII
-      string: xml=%3CItems%3E%0A%20%20%3CItem%3E%0A%20%20%20%20%3CItemID%3Eb3d9696b-13f3-455a-aac9-c5b26e9b71ea%3C%2FItemID%3E%0A%20%20%20%20%3CCode%3ESunseed%20Chorizo%20-%20Changed%3C%2FCode%3E%0A%20%20%20%20%3CPurchaseDescription%3EForce%20Change%3C%2FPurchaseDescription%3E%0A%20%20%20%20%3CPurchaseDetails%3E%0A%20%20%20%20%3C%2FPurchaseDetails%3E%0A%20%20%20%20%3CSalesDetails%3E%0A%20%20%20%20%3C%2FSalesDetails%3E%0A%20%20%20%20%3CIsTrackedAsInventory%3Efalse%3C%2FIsTrackedAsInventory%3E%0A%20%20%20%20%3CIsSold%3Efalse%3C%2FIsSold%3E%0A%20%20%20%20%3CIsPurchased%3Etrue%3C%2FIsPurchased%3E%0A%20%20%3C%2FItem%3E%0A%3C%2FItems%3E%0A
+      string: fake_payload
   response:
     status:
       code: 200
@@ -53,6 +35,8 @@ http_interactions:
         "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
           <Id>1bb8d0b3-d3b7-415f-895d-5d4569833e53</Id>
           <Status>OK</Status>
+          <ProviderName>MLVK - Staging</ProviderName>
+          <DateTimeUTC>2016-03-11T23:10:53.6215473Z</DateTimeUTC>
           <Items>
             <Item status=\"OK\">
               <ItemID><%= item_id %></ItemID>

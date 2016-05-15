@@ -3,23 +3,17 @@ require 'test_helper'
 class CreditNotesSyncerTest < ActiveSupport::TestCase
 
   # Local sync testing
-  test "Remote deleted credit_notes should update to voided locally" do
-
-    Item.create(name:'Sunseed Chorizo')
-
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', company:company)
-    credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
-    credit_note.credit_note_number = 'voided-credit-note-number'
-    credit_note.save
-
+  test "Remote voided credit_notes should update to voided locally" do
+    credit_note = create(:credit_note_with_credit_note_items, :synced)
     credit_note.mark_submitted!
 
-    Item.all.each do |item|
-      CreditNoteItem.create(item:item, quantity:5, unit_price:5, credit_note:credit_note)
-    end
+    yaml_props = {
+      credit_note_id: credit_note.xero_id,
+      credit_note_number: credit_note.credit_note_number,
+      remote_credit_note_status: 'VOIDED'
+    }
 
-    VCR.use_cassette('credit_notes/001') do
+    VCR.use_cassette('credit_notes/007',  erb: yaml_props) do
       CreditNotesSyncer.new.sync_local
     end
 
@@ -28,23 +22,35 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     assert credit_note.voided?, 'Should have been voided'
   end
 
-  test "Valid local credit_notes should be created in xero" do
-
-    Item.create(name:'Sunseed Chorizo')
-
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', company:company)
-    credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
-    credit_note.credit_note_number = 'valid-new-credit-note'
-    credit_note.save
-
+  test "Remote deleted credit_notes should update to voided locally" do
+    credit_note = create(:credit_note_with_credit_note_items, :synced)
     credit_note.mark_submitted!
 
-    Item.all.each do |item|
-      CreditNoteItem.create(item:item, quantity:5, unit_price:5, credit_note:credit_note)
+    yaml_props = {
+      credit_note_id: credit_note.xero_id,
+      credit_note_number: credit_note.credit_note_number,
+      remote_credit_note_status: 'DELETED'
+    }
+
+    VCR.use_cassette('credit_notes/007', erb: yaml_props) do
+      CreditNotesSyncer.new.sync_local
     end
 
-    VCR.use_cassette('credit_notes/002') do
+    credit_note.reload
+
+    assert credit_note.voided?, 'Should have been deleted'
+  end
+
+  test "Valid local credit_notes should be created in xero" do
+    credit_note = create(:credit_note_with_credit_note_items, :submitted)
+
+    yaml_props = {
+      remote_credit_note_id: 'new_credit_note_id',
+      credit_note_number: credit_note.credit_note_number,
+      credit_note_items: credit_note.credit_note_items
+    }
+
+    VCR.use_cassette('credit_notes/002',  erb: yaml_props) do
       CreditNotesSyncer.new.sync_local
     end
 
@@ -66,52 +72,34 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
   end
 
   test "should update a local credit when remote/local are out of sync and local model is in state synced" do
+    credit_note = create(:credit_note_with_credit_note_items, :synced, quantity:7)
 
-    Item.create(name:'Sunseed Chorizo')
+    yaml_props = {
+      remote_credit_note_id: 'new_credit_note_id',
+      remote_credit_note_number: credit_note.credit_note_number,
+      remote_quantity: 10,
+      credit_note_items: credit_note.credit_note_items
+    }
 
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', company:company)
-    credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
-    credit_note.credit_note_number = 'updated-remote-credit-number'
-    credit_note.xero_id = 'updated-remote-credit-note-id'
-    credit_note.save
-
-    credit_note.mark_submitted!
-
-    Item.all.each do |item|
-      CreditNoteItem.create(item:item, quantity:5, unit_price:5, credit_note:credit_note)
-    end
-
-    credit_note.mark_synced!
-
-    VCR.use_cassette('credit_notes/004') do
+    VCR.use_cassette('credit_notes/004', erb: yaml_props) do
       CreditNotesSyncer.new.sync_remote(10.minutes.ago)
     end
 
     credit_note.reload
 
-    assert credit_note.credit_note_items.all? {|credit_note_item| credit_note_item.quantity == 6.0}, 'Credit_note_items quantities did not match'
+    assert credit_note.credit_note_items.all? {|credit_note_item| credit_note_item.quantity == yaml_props[:quantity]}, 'Credit_note_items quantities did not match'
   end
 
   test "should remove credit_note_item if missing from remote record and local model is synced?" do
-    Item.create(name:'Sunseed Chorizo')
+    credit_note = create(:credit_note_with_credit_note_items, :synced)
 
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', company:company)
-    credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
-    credit_note.credit_note_number = 'remote-credit-order-with-removed-order-item-number'
-    credit_note.xero_id = 'remote-credit-order-with-removed-order-item-id'
-    credit_note.save
+    yaml_props = {
+      remote_credit_note_id: 'new_credit_note_id',
+      remote_credit_note_number: credit_note.credit_note_number,
+      credit_note_items: []
+    }
 
-    credit_note.mark_submitted!
-
-    Item.all.each do |item|
-      CreditNoteItem.create(item:item, quantity:5, unit_price:5, credit_note:credit_note)
-    end
-
-    credit_note.mark_synced!
-
-    VCR.use_cassette('credit_notes/005') do
+    VCR.use_cassette('credit_notes/004', erb: yaml_props) do
       CreditNotesSyncer.new.sync_remote(10.minutes.ago)
     end
 
@@ -121,20 +109,9 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
   end
 
   test "should not create new credit note when credit total is 0" do
-    Item.create(name:'Sunseed Chorizo')
-
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', company:company)
-    credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
-
-    credit_note.mark_submitted!
-
-    Item.all.each do |item|
-      CreditNoteItem.create(item:item, quantity:5, unit_price:0, credit_note:credit_note)
-    end
+    credit_note = create(:credit_note_with_credit_note_items, :submitted, unit_price:0, quantity:5)
 
     syncer = CreditNotesSyncer.new
-
 
     prepare_record_spy = Spy.on(syncer, :prepare_record)
     syncer.sync_local
@@ -143,17 +120,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
   end
 
   test "should create new credit note when credit total is greater than 0" do
-    Item.create(name:'Sunseed Chorizo')
-
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', company:company)
-    credit_note = CreditNote.create(location:location, date:Date.parse('2016-03-01'))
-
-    credit_note.mark_submitted!
-
-    Item.all.each do |item|
-      CreditNoteItem.create(item:item, quantity:5, unit_price:5, credit_note:credit_note)
-    end
+    credit_note = create(:credit_note_with_credit_note_items, :submitted, unit_price:10, quantity:5)
 
     syncer = CreditNotesSyncer.new
 
@@ -164,36 +131,40 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
   end
 
   test "should only sync items with quanity and unit_price greater than 0" do
-    Item.create(name:'Sunseed Chorizo')
 
-    company = Company.create(name:'Nature Well')
-    location = Location.create(name:'Silverlake', company:company)
-    credit_note = CreditNote.create(
-      credit_note_number: 'local-credit-note-with-invalid-items-id',
-      location:location,
-      date:Date.parse('2016-03-01'))
+    credit_note = create(:credit_note, :submitted)
 
-    credit_note.mark_submitted!
+    valid_credit_note_items = [create(:credit_note_item, credit_note: credit_note)]
 
-    valid_credit_note_item = CreditNoteItem.create(item:Item.first, quantity:5.0, unit_price:5.0, credit_note:credit_note)
-    invalid_credit_note_item = CreditNoteItem.create(item:Item.last, quantity:5.0, unit_price:0.0, credit_note:credit_note)
+    invalid_credit_note_items = [
+      create(:credit_note_item, quantity: 0, unit_price: 0, credit_note: credit_note),
+      create(:credit_note_item, quantity: 0, unit_price: 10, credit_note: credit_note)
+    ]
+
+    all_credit_note_items = valid_credit_note_items.concat invalid_credit_note_items
 
     credit_note.reload
 
-    # binding.pry
+    assert_equal(all_credit_note_items.count, credit_note.credit_note_items.count, 'Incorrect number of starting credit_note_items for test');
 
     syncer = CreditNotesSyncer.new
 
     update_record_spy = Spy.on(syncer, :update_record).and_call_through
 
-    VCR.use_cassette('credit_notes/006') do
+    yaml_props = {
+      remote_credit_note_id: 'new_credit_note_id',
+      credit_note_number: credit_note.credit_note_number,
+      credit_note_items: valid_credit_note_items
+    }
+
+    VCR.use_cassette('credit_notes/002', erb: yaml_props) do
       syncer.sync_local
     end
 
     first_call = update_record_spy.calls.first
 
-    assert_equal(first_call.result.count, 1, 'Wrong number of credit note items created');
-    assert_equal(first_call.result.first, valid_credit_note_item, 'The wrong credit note was created');
+    assert_equal(1, first_call.result.count, 'Wrong number of credit note items created');
+    assert_equal(valid_credit_note_items.first, first_call.result.first, 'The wrong credit note was created');
   end
 
 end

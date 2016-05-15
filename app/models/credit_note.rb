@@ -11,6 +11,7 @@ class CreditNote < ActiveRecord::Base
 
     event :mark_submitted do
       transitions :from => :pending, :to => :submitted
+      transitions :from => :synced, :to => :submitted
     end
 
     event :mark_synced do
@@ -29,6 +30,12 @@ class CreditNote < ActiveRecord::Base
 
   has_one :fulfillment, dependent: :nullify, autosave: true
   has_many :credit_note_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
+
+  scope :with_credit, -> {
+    joins(:credit_note_items)
+    .where('credit_note_items.quantity > ? AND credit_note_items.unit_price > ?', 0, 0)
+    .distinct
+  }
 
   def fulfillment_id=(_value)
      # TODO: Remove once it's fixed

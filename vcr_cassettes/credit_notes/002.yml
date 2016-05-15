@@ -7,7 +7,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/CreditNotes?where=CreditNoteNumber==%22valid-new-credit-note%22
+    uri: https://api.xero.com/api.xro/2.0/CreditNotes?where=CreditNoteNumber==%22<%= credit_note_number %>%22
   response:
     status:
       code: 200
@@ -74,17 +74,19 @@ http_interactions:
               <Status>AUTHORISED</Status>
               <LineAmountTypes>Exclusive</LineAmountTypes>
               <LineItems>
-                <LineItem>
-                  <ItemCode>Sunseed Chorizo</ItemCode>
-                  <Description>No description</Description>
-                  <UnitAmount>5.00</UnitAmount>
-                  <TaxType>NONE</TaxType>
-                  <TaxAmount>0.00</TaxAmount>
-                  <LineAmount>25.00</LineAmount>
-                  <AccountCode>400</AccountCode>
-                  <Quantity>5.0000</Quantity>
-                  <LineItemID>45027871-55df-4b25-b01a-ca26af4a9fff</LineItemID>
-                </LineItem>
+                <% credit_note_items do |cni| %>
+                  <LineItem>
+                    <ItemCode><%= cni.item.code %></ItemCode>
+                    <Description><%= cni.item.description %></Description>
+                    <UnitAmount><%= cni.unit_price %></UnitAmount>
+                    <TaxType>NONE</TaxType>
+                    <TaxAmount>0.00</TaxAmount>
+                    <LineAmount>30.00</LineAmount>
+                    <AccountCode>400</AccountCode>
+                    <Quantity><%= cni.quantity %></Quantity>
+                    <LineItemID>45027871-55df-4b25-b01a-ca26af4a9fff</LineItemID>
+                  </LineItem>
+                <% end %>
               </LineItems>
               <SubTotal>25.00</SubTotal>
               <TotalTax>0.00</TotalTax>
@@ -92,8 +94,8 @@ http_interactions:
               <UpdatedDateUTC>2016-03-11T23:10:51.14</UpdatedDateUTC>
               <CurrencyCode>USD</CurrencyCode>
               <Type>ACCRECCREDIT</Type>
-              <CreditNoteID>af1a0348-0762-401d-a08a-61272e2c5e55</CreditNoteID>
-              <CreditNoteNumber>valid-new-credit-note</CreditNoteNumber>
+              <CreditNoteID><%= remote_credit_note_id %></CreditNoteID>
+              <CreditNoteNumber><%= credit_note_number %></CreditNoteNumber>
               <AmountDue>25.00</AmountDue>
               <AmountPaid>0.00</AmountPaid>
               <SentToContact>true</SentToContact>

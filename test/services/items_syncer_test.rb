@@ -32,7 +32,9 @@ class ItemsSyncerTest < ActiveSupport::TestCase
       description_changed: 'new_description'
     }
 
+    item.code = yaml_props[:code_changed]
     item.name = yaml_props[:new_name]
+    item.description = yaml_props[:description_changed]
     item.save
 
     item.mark_pending!

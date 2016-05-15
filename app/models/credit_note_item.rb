@@ -3,7 +3,7 @@ class CreditNoteItem < ActiveRecord::Base
   belongs_to :item
 
   def has_credit?
-    (quantity * unit_price) > 0.0
+    total > 0.0
   end
 
   def total
