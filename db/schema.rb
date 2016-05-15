@@ -232,12 +232,14 @@ ActiveRecord::Schema.define(version: 20160501213502) do
   create_table "route_plans", force: :cascade do |t|
     t.integer  "user_id"
     t.date     "date"
+    t.integer  "published_state",          default: 0,         null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "route_plans", ["user_id"], name: "index_route_plans_on_user_id", using: :btree
   add_index "route_plans", ["date"], name: "index_route_plans_on_date", using: :btree
+  add_index "route_plans", ["published_state"], name: "index_route_plans_on_published_state", using: :btree
 
   create_table "route_plan_blueprints", force: :cascade do |t|
     t.integer  "user_id"

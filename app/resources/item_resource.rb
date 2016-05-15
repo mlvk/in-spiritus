@@ -19,11 +19,11 @@ class ItemResource < JSONAPI::Resource
   has_many :stocks
   has_one  :company
 
-  filter :tag
-  filter :is_sold
-  filter :is_purchased
-  filter :company_id
-  filter :active
+  filters :tag,
+          :is_sold,
+          :is_purchased,
+          :company_id,
+          :active
 
   before_save do
     @model.xero_state = Item.xero_states[:pending]

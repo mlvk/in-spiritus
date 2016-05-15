@@ -46,6 +46,10 @@ class CreditNote < ActiveRecord::Base
     credit_note_items.inject(0) {|acc, cur| acc = acc + cur.total }
   end
 
+  def renderer
+    Pdf::CreditNote
+  end
+
   private
     def generate_credit_note_number
       if self.credit_note_number.nil?

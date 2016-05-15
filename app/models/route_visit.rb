@@ -22,4 +22,14 @@ class RouteVisit < ActiveRecord::Base
 	has_one 		:visit_windows, through: :address
 	has_many 		:fulfillments, :dependent => :destroy, autosave: true
 	has_many 		:orders, through: :fulfillments
+
+	def has_multiple?
+		fulfillments.size > 1
+	end
+
+	def has_pickup?
+		fulfillments
+			.flat_map {|f| f.order}
+			.any? {|o| o.purchase_order?}
+	end
 end

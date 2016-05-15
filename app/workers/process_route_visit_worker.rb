@@ -82,19 +82,17 @@ class ProcessRouteVisitWorker
   def add_credit_note_attachment(credit_note, mb_obj)
     if credit_note.present?
       credit_note_date_fmt = credit_note.date.strftime('%d/%m/%y')
-      temp_credit_note_file_url = generate_temp_credit_notes_pdf [credit_note]
-      mb_obj.add_attachment(temp_credit_note_file_url, "Credit - #{credit_note.credit_note_number} - #{credit_note_date_fmt}.pdf")
+      mb_obj.add_attachment(generate_pdf(credit_note), "Credit - #{credit_note.credit_note_number} - #{credit_note_date_fmt}.pdf")
     end
   end
 
   def attach_orders_pdf(order, mb_obj)
     if order.present?
-      pdf_urls = convert_orders_to_pdfs [order]
       order_date_fmt = order.delivery_date.strftime('%d/%m/%y')
       if(order.sales_order?)
-        mb_obj.add_attachment(pdf_urls[:sales_orders_url], "Invoice - #{order.order_number} - #{order_date_fmt}.pdf")
+        mb_obj.add_attachment(generate_pdf(order), "Invoice - #{order.order_number} - #{order_date_fmt}.pdf")
       else
-        mb_obj.add_attachment(pdf_urls[:purchase_orders_url], "Purchase Order - #{order.order_number} - #{order_date_fmt}.pdf")
+        mb_obj.add_attachment(generate_pdf(order), "Purchase Order - #{order.order_number} - #{order_date_fmt}.pdf")
       end
     end
   end

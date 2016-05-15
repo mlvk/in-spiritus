@@ -5,6 +5,6 @@ class Address < ActiveRecord::Base
   has_many :route_plan_blueprints
 
   def to_s
-    "#{street.titleize}\n#{city.titleize}, #{state.upcase} #{zip}"
+    "#{street.titleize}\n#{city.titleize}"
   end
 end

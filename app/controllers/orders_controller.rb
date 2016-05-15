@@ -38,9 +38,9 @@ class OrdersController < ApplicationJsonApiResourcesController
       authorize order
     end
 
-    url = generate_and_upload_orders_pdf orders
+    pdf_url = generate_and_upload_pdfs orders
 
-    render json: {url:url}
+    render json: {url:pdf_url}
   end
 
   # def email_purchase_orders

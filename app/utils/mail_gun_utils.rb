@@ -22,7 +22,7 @@ module MailGunUtils
     mb_obj.subject("New Purchase Order - MLVK - #{order.order_number} - #{date_fmt}")
     mb_obj.body_html(html)
     mb_obj.body_text(txt)
-		mb_obj.add_attachment(generate_purchase_order_pdf([order]), "Purchase Order - #{order.order_number} - #{date_fmt}.pdf")
+		mb_obj.add_attachment(generate_pdfs(order), "Purchase Order - #{order.order_number} - #{date_fmt}.pdf")
 
 		send_message mb_obj
 	end

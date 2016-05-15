@@ -17,6 +17,7 @@ gem 'redis'
 gem 'httplog'
 gem 'aws-sdk'
 gem 'firebase'
+gem 'hamster'
 
 # Job scheduling
 gem 'sidekiq'

@@ -79,12 +79,20 @@ class Order < ActiveRecord::Base
   scope :purchase_order, -> { where(order_type:PURCHASE_ORDER_TYPE)}
   scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
 
+  def renderer
+    sales_order? ? Pdf::Invoice : Pdf::PurchaseOrder
+  end
+
   def sales_order?
     order_type == SALES_ORDER_TYPE
   end
 
   def purchase_order?
     !sales_order?
+  end
+
+  def has_quantity?
+    order_items.any?(&:has_quantity?)
   end
 
   def fulfillment_id=(_value)
@@ -96,7 +104,7 @@ class Order < ActiveRecord::Base
   end
 
   def total
-    order_items.inject(0) {|acc, cur| acc = acc + cur.total }
+    order_items.inject(0) {|acc, cur| acc + cur.total }
   end
 
   def due_date
