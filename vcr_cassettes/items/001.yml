@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Items?where=Code==%22<%= item_code %>%22
+    uri: https://api.xero.com/api.xro/2.0/Items/<%= item_code %>
   response:
     status:
       code: 200

@@ -6,7 +6,7 @@ class SalesOrdersSyncer < BaseSyncer
     end
 
     def find_record_by(model)
-      xero.Invoice.first(:where => {:invoice_number => model.order_number})
+      xero.Invoice.find(model.order_number)
     end
 
     def find_records(timestamp)

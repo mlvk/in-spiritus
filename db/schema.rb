@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(version: 20160501213502) do
     t.datetime "updated_at"
   end
 
-  add_index "companies", ["name"], name: "name", unique: true, using: :btree
+  add_index "companies", ["name"], name: "index_companies_on_name", unique: true, using: :btree
   add_index "companies", ["price_tier_id"], name: "index_companies_on_price_tier_id", using: :btree
   add_index "companies", ["is_customer"], name: "index_companies_on_is_customer", using: :btree
   add_index "companies", ["is_vendor"], name: "index_companies_on_is_vendor", using: :btree

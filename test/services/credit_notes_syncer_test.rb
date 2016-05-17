@@ -13,7 +13,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
       remote_credit_note_status: 'VOIDED'
     }
 
-    VCR.use_cassette('credit_notes/007',  erb: yaml_props) do
+    VCR.use_cassette('credit_notes/007', erb: yaml_props) do
       CreditNotesSyncer.new.sync_local
     end
 

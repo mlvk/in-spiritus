@@ -6,7 +6,7 @@ class ItemsSyncer < BaseSyncer
     end
 
     def find_record_by(model)
-      xero.Item.first(:where => {:code => model.code})
+      xero.Item.find(model.code)
     end
 
     def find_records(timestamp)

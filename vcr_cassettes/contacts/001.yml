@@ -39,7 +39,7 @@ http_interactions:
           <Status>OK</Status>
           <Contacts>
             <Contact status=\"OK\">
-              <ContactID>xero_nature_well_contact_id</ContactID>
+              <ContactID><%= remote_contact_id %></ContactID>
               <ContactStatus>ACTIVE</ContactStatus>
               <Name>Nature Well</Name>
               <IsSupplier>false</IsSupplier>

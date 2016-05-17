@@ -5,7 +5,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Invoices?where=InvoiceNumber==%22<%= invoice_number %>%22
+    uri: https://api.xero.com/api.xro/2.0/Invoices/<%= invoice_number %>
   response:
     status:
       code: 200

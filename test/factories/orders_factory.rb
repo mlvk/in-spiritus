@@ -36,5 +36,17 @@ FactoryGirl.define do
       end
     end
 
+    factory :purchase_order_with_items do
+      order_type Order::PURCHASE_ORDER_TYPE
+
+      transient do
+        order_items_count 5
+      end
+
+      after(:create) do |order, evaluator|
+        create_list(:order_item, evaluator.order_items_count, order: order)
+      end
+    end
+
   end
 end
