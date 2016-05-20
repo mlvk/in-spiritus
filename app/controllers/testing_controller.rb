@@ -1,5 +1,3 @@
-require 'google/apis/prediction_v1_6'
-require 'googleauth'
 
 class TestingController < ActionController::Base
   include PdfUtils
