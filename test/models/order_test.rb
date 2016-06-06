@@ -37,4 +37,26 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, Fulfillment.all.count, "Fulfillment not deleted after order destroy"
   end
 
+
+  test "Should find or create route_visit when order date changes" do
+    order = create(:sales_order_with_items)
+
+    route_visit_id = order.fulfillment.route_visit.id
+
+    order.delivery_date = order.delivery_date + 1
+    order.save
+
+    refute_equal route_visit_id, order.fulfillment.route_visit.id
+  end
+
+  test "Should not change route_visit when order saves but date is same" do
+    order = create(:sales_order_with_items)
+
+    generate_parent_route_visit_spy = Spy.on(order, :generate_parent_route_visit)
+
+    order.save
+
+    refute generate_parent_route_visit_spy.has_been_called?
+  end
+
 end

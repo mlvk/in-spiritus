@@ -119,21 +119,13 @@ class Order < ActiveRecord::Base
   end
 
   def stale_route_visit?
-    if Maybe(fulfillment).route_visit.present?
-      if fulfillment.route_visit.date != delivery_date
-        true
-      else
-        false
-      end
-    else
-      false
-    end
+    Maybe(fulfillment).route_visit.date.fetch(nil) != delivery_date
   end
 
   def update_fulfillment_structure
     if Maybe(fulfillment).route_visit.present?
       if stale_route_visit?
-        fulfillment.route_visit = RouteVisit.find_or_create_by(date:delivery_date, address:address)
+        fulfillment.route_visit = generate_parent_route_visit
         fulfillment.save
       end
     else
@@ -141,13 +133,16 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def generate_parent_route_visit
+    RouteVisit.find_or_create_by(date:delivery_date, address:address)
+  end
+
   def create_fulfillment_structure
-    new_route_visit = RouteVisit.find_or_create_by(date:delivery_date, address:address)
     credit_note = CreditNote.create(date:delivery_date, location:location)
     stock = Stock.create(location:location)
     pod = Pod.create
     fulfillment = Fulfillment.create(
-      route_visit:new_route_visit,
+      route_visit:generate_parent_route_visit,
       order:self,
       pod:pod,
       credit_note: credit_note,
@@ -158,8 +153,8 @@ class Order < ActiveRecord::Base
   def clear_fulfillment_structure
     single_fulfillment_for_route_visit = Maybe(fulfillment).route_visit.fulfillments.size.fetch(1) == 1
 
-    Maybe(fulfillment).route_visit.fetch.destroy if single_fulfillment_for_route_visit
-    Maybe(fulfillment).fetch.destroy
+    Maybe(fulfillment).route_visit._.destroy if single_fulfillment_for_route_visit
+    Maybe(fulfillment)._.destroy
   end
 
 end

@@ -41,7 +41,14 @@ class PurchaseOrdersSyncer < BaseSyncer
     end
 
     def find_model(record)
-      Order.find_by(xero_id:record.purchase_order_id) || Order.find_by(order_number:record.purchase_order_number)
+      Order
+        .purchase_order
+        .synced
+        .find_by(xero_id:record.purchase_order_id) ||
+      Order
+        .purchase_order
+        .synced
+        .find_by(order_number:record.purchase_order_number)
     end
 
     def find_models
