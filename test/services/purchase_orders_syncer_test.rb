@@ -54,11 +54,14 @@ class PurchaseOrdersSyncerTest < ActiveSupport::TestCase
     assert_equal 0, Order.purchase_order.count
   end
 
-  test "Local POs in state submitted should not be updated with remote changes." do
+  test "Local POs in state submitted should also be updated with remote changes." do
     purchase_order = create(:purchase_order_with_items, :submitted)
 
     local_quantity = 99
     local_unit_price = 11.00
+
+    remote_quantity = 150
+    remote_unit_price = 21.50
 
     purchase_order.order_items.each do |order_item|
       order_item.quantity = local_quantity
@@ -70,8 +73,8 @@ class PurchaseOrdersSyncerTest < ActiveSupport::TestCase
       purchase_order_number: purchase_order.order_number,
       purchase_order_id: 'purchase_order_id',
       order_items: purchase_order.order_items,
-      forced_quantity: 150,
-      forced_unit_price: 21.00
+      forced_quantity: remote_quantity,
+      forced_unit_price: remote_unit_price
     }
 
     VCR.use_cassette('purchase_orders/004', erb: yaml_props) do
@@ -81,8 +84,8 @@ class PurchaseOrdersSyncerTest < ActiveSupport::TestCase
     purchase_order.reload
 
     purchase_order.order_items.each do |order_item|
-      assert_equal local_quantity, order_item.quantity.to_i
-      assert_equal local_unit_price, order_item.unit_price.to_i
+      assert_equal remote_quantity, order_item.quantity.to_i
+      assert_equal remote_unit_price, order_item.unit_price
     end
 
   end
