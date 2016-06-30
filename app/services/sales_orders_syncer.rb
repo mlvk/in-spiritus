@@ -47,10 +47,8 @@ class SalesOrdersSyncer < BaseSyncer
       record.reference = model.location.full_name
       record.build_contact(contact_id:model.location.company.xero_id, name:model.location.company.name)
 
-      record.line_items.clear
-      model.order_items.each do | order_item |
-        create_record_line_item(record, order_item)
-      end
+      create_record_line_items(record, model)
+      create_record_shipping_line_item(record, model)
     end
 
     def create_record
@@ -96,6 +94,13 @@ class SalesOrdersSyncer < BaseSyncer
     end
 
     private
+    def create_record_line_items(record, model)
+      record.line_items.clear
+      model.order_items.each do | order_item |
+        create_record_line_item(record, order_item)
+      end
+    end
+
     def create_record_line_item(record, order_item)
       if order_item.has_quantity?
         record.add_line_item(
@@ -110,5 +115,16 @@ class SalesOrdersSyncer < BaseSyncer
 
     def create_model_order_item(model, item)
       OrderItem.create(item:item, order:model)
+    end
+
+    def create_record_shipping_line_item(record, model)
+      if model.has_shipping?
+        record.add_line_item(
+          description: 'Shipping',
+          quantity: 1,
+          unit_amount: model.shipping,
+          tax_type: 'NONE',
+          account_code:  '400')
+      end
     end
 end

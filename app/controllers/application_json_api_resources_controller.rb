@@ -29,6 +29,9 @@ class ApplicationJsonApiResourcesController < JSONAPI::ResourceController
         end
       end
 
+      # Hack this until simple auth is fixed
+      # @current_user = User.first if @current_user.nil?
+
       render_unauthorized! "Valid user required to make that request" if @current_user.nil?
     end
 

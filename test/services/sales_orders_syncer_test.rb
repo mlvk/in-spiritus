@@ -122,4 +122,5 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
 
     assert order.order_items.all? {|order_item| order_item.quantity == yaml_props[:forced_xero_quantity]}, 'Order item quantities did not match'
   end
+
 end

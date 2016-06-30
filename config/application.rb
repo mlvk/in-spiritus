@@ -35,7 +35,8 @@ module InSpiritus
       end
     end
 
-    config.assets.enabled = false
+    config.assets.enabled = true
+    config.serve_static_files = true
 
     config.generators do |g|
       g.factory_girl false

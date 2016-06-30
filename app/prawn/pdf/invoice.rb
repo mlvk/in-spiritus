@@ -1,9 +1,13 @@
 module Pdf
   class Invoice
 
-    # def guide_y(y = cursor)
-    #   stroke_axis(:at => [0, y], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
-    # end
+    def guide_y(y = @pdf.cursor)
+      @pdf.stroke_axis(:at => [0, y], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
+    end
+
+    def guide_x(x = @pdf.cursor)
+      @pdf.stroke_axis(:at => [x, 0], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
+    end
 
     def initialize(order, pdf)
       @order = order
@@ -68,6 +72,7 @@ module Pdf
           order_row(order_item, index)
         end
 
+      shipping(order.shipping)
       total(order.total)
     end
 
@@ -134,10 +139,29 @@ module Pdf
       @pdf.start_new_page if @pdf.cursor < 20
     end
 
-    def total(val)
+    def shipping(val)
       # guide_y
+      # guide_x
       y = @pdf.cursor
       @pdf.line_width = 1
+
+      @pdf.dash(1, :space => 0, :phase => 0)
+      @pdf.stroke_horizontal_line 380, 540
+
+      @pdf.bounding_box([340, y], :width => 100, :height => 20) do
+       @pdf.formatted_text_box [{ text: 'Shipping', size: 9, styles:[:bold]}], :align => :right, :valign => :center
+      end
+
+      @pdf.bounding_box([500, y], :width => 35, :height => 20) do
+       @pdf.formatted_text_box [{ text: val.to_s, size: 11}], :align => :right, :valign => :center
+      end
+    end
+
+    def total(val)
+      # guide_y
+      # guide_x
+      y = @pdf.cursor
+      @pdf.line_width = 0.25
 
       @pdf.dash(1, :space => 0, :phase => 0)
       @pdf.stroke_horizontal_line 380, 540
@@ -149,7 +173,6 @@ module Pdf
       @pdf.bounding_box([500, y], :width => 35, :height => 20) do
        @pdf.formatted_text_box [{ text: val.to_s, size: 11}], :align => :right, :valign => :center
       end
-
     end
 
     def pod(order)

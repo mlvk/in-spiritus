@@ -4,7 +4,7 @@ class Order < ActiveRecord::Base
   SALES_ORDER_TYPE = 'sales-order'
   PURCHASE_ORDER_TYPE = 'purchase-order'
 
-  after_create :generate_order_number
+  after_create :setup_defaults
   after_save :update_fulfillment_structure
   before_destroy :clear_fulfillment_structure
 
@@ -95,6 +95,10 @@ class Order < ActiveRecord::Base
     order_items.any?(&:has_quantity?)
   end
 
+  def has_shipping?
+    shipping > 0
+  end
+
   def fulfillment_id=(_value)
      # TODO: Remove once it's fixed
   end
@@ -104,7 +108,8 @@ class Order < ActiveRecord::Base
   end
 
   def total
-    order_items.inject(0) {|acc, cur| acc + cur.total }
+    order_items_total = order_items.inject(0) {|acc, cur| acc + cur.total }
+    order_items_total + shipping
   end
 
   def due_date
@@ -112,10 +117,21 @@ class Order < ActiveRecord::Base
   end
 
   private
+  def setup_defaults
+    generate_order_number
+    set_shipping
+  end
+
   def generate_order_number
-    prefix = sales_order? ? 'SO' : 'PO'
-    self.order_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
-    save
+    if order_number.nil?
+      prefix = sales_order? ? 'SO' : 'PO'
+      new_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
+      update_columns(order_number: new_number)
+    end
+  end
+
+  def set_shipping
+    update_columns(shipping: location.delivery_rate)
   end
 
   def stale_route_visit?

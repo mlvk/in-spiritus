@@ -5,6 +5,10 @@ module PdfUtils
 		pdf = build_pdf records
 		local_url = "tmp/pdfs/#{SecureRandom.hex}.pdf"
     pdf.render_file local_url
+
+		# For Testing Only
+		pdf.render_file 'public/testing.pdf'
+
     return local_url
 	end
 
