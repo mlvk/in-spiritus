@@ -63,3 +63,26 @@ This project integrates with the following systems:
 ### Development
 1. Start zeus: `zeus start`
 1. Start guard: `bundle exec guard`
+
+### Restore from local DB
+1. pg_dump dbname > outfile
+1. Log on the remote server
+1. Turn down workers to stop sidekiq
+1. `CD $STACK_PATH`
+1. Drop db: `bundle exec rake db:drop`
+1. Recreate db: `bundle exec rake db:create`
+1. Get the dump file: `wget url`
+1. Lookup the POSTGRESQL_USERNAME in cloud66
+1. Restore `psql in_spiritus_staging < /home/az940/all.dump -U uesey3`
+
+If there are problems with sticky connections try the following
+1. Open the pg client: `psql -d postgres -U postgres`
+1. Drop the connections to the target db
+```SQL
+SELECT pg_terminate_backend(pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE pg_stat_activity.datname = 'db_name'
+  AND pid <> pg_backend_pid();
+```
+1. Quit `\q`
+1. Try to then drop with the above steps

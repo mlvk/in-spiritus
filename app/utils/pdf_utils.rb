@@ -7,7 +7,7 @@ module PdfUtils
     pdf.render_file local_url
 
 		# For Testing Only
-		pdf.render_file 'public/testing.pdf'
+		# pdf.render_file 'public/testing.pdf'
 
     return local_url
 	end
