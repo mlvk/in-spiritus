@@ -31,4 +31,6 @@ class RoutePlan < ActiveRecord::Base
 	def renderer
     Pdf::RoutePlan
   end
+
+	default_scope { order 'date DESC' }
 end
