@@ -14,7 +14,7 @@ class ItemsController < ApplicationJsonApiResourcesController
 
     item = Item.find(params[:id])
     item.mark_pending!
-    
+
     super
   end
 
@@ -31,6 +31,12 @@ class ItemsController < ApplicationJsonApiResourcesController
   def get_related_resources
     authorize Item
     super
+  end
+
+  def name_check
+    authorize Item
+
+    render json: {valid: false}
   end
 
 end

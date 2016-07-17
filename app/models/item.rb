@@ -1,6 +1,9 @@
 class Item < ActiveRecord::Base
 	include AASM
 
+	PRODUCT_TYPE = 'product'
+  INGREDIENT_TYPE = 'ingredient'
+
 	before_save :generate_item_code
 
 	aasm :item, :column => :xero_state, :skip_validation_on_save => true do
@@ -32,6 +35,9 @@ class Item < ActiveRecord::Base
 
 	scope :sold, -> { where(is_sold:true) }
 	scope :purchased, -> { where(is_purchased:true) }
+
+	scope :product, -> { where(tag:PRODUCT_TYPE)}
+  scope :ingredient, -> { where(tag:INGREDIENT_TYPE)}
 
 	def generate_item_code
 		if code.nil?

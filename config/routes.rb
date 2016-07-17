@@ -34,6 +34,8 @@ Rails.application.routes.draw do
   post 'orders/generate_pdf'
   post 'documents/generate_packing_documents'
 
+  post 'items/name_check'
+
   get 'testing/pdf'
 
   mount Sidekiq::Web => '/sidekiq'
