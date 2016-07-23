@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160629202903) do
+ActiveRecord::Schema.define(version: 20160717202524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,7 +134,7 @@ ActiveRecord::Schema.define(version: 20160629202903) do
     t.string   "name",            limit: 255,                        null: false
     t.string   "code",            limit: 255,                        null: false
     t.string   "unit_of_measure", limit: 255
-    t.string   "description",     limit: 255,                        null: false
+    t.string   "description"
     t.integer  "company_id"
     t.integer  "position"
     t.decimal  "default_price",               default: 0.0,          null: false
@@ -146,14 +146,14 @@ ActiveRecord::Schema.define(version: 20160629202903) do
     t.datetime "updated_at"
   end
 
+  add_index "items", ["xero_id"], name: "index_items_on_xero_id", unique: true, using: :btree
+  add_index "items", ["xero_state"], name: "index_items_on_xero_state", using: :btree
+  add_index "items", ["name"], name: "index_items_on_name", using: :btree
   add_index "items", ["code"], name: "index_items_on_code", unique: true, using: :btree
   add_index "items", ["company_id"], name: "index_items_on_company_id", using: :btree
   add_index "items", ["is_purchased"], name: "index_items_on_is_purchased", using: :btree
   add_index "items", ["is_sold"], name: "index_items_on_is_sold", using: :btree
-  add_index "items", ["name"], name: "index_items_on_name", using: :btree
   add_index "items", ["tag"], name: "index_items_on_tag", using: :btree
-  add_index "items", ["xero_id"], name: "index_items_on_xero_id", unique: true, using: :btree
-  add_index "items", ["xero_state"], name: "index_items_on_xero_state", using: :btree
 
   create_table "locations", force: :cascade do |t|
     t.integer  "company_id",                               null: false

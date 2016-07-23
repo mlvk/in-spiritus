@@ -23,7 +23,7 @@ class Item < ActiveRecord::Base
 
 	enum xero_state: [ :pending, :synced ]
 
-	validates :name, :description, presence: true
+	validates :name, presence: true
 
 	belongs_to	:company
 
@@ -39,10 +39,12 @@ class Item < ActiveRecord::Base
 	scope :product, -> { where(tag:PRODUCT_TYPE)}
   scope :ingredient, -> { where(tag:INGREDIENT_TYPE)}
 
+	private
 	def generate_item_code
 		if code.nil?
-			prefix = Maybe(company).initials.fetch('')
-			new_code = "#{prefix} - #{SecureRandom.hex(3)}"
+			initials = Maybe(company).initials
+			prefix = initials.empty? ? "" : "#{initials.fetch()} - "
+			new_code = "#{prefix}#{SecureRandom.hex(3)}"
 			update_attributes(code:new_code)
 		end
 	end

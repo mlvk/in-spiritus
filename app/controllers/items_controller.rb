@@ -23,6 +23,11 @@ class ItemsController < ApplicationJsonApiResourcesController
     super
   end
 
+  def destroy
+    authorize Item
+    super
+  end
+
   def get_related_resource
     authorize Item
     super
@@ -31,12 +36,6 @@ class ItemsController < ApplicationJsonApiResourcesController
   def get_related_resources
     authorize Item
     super
-  end
-
-  def name_check
-    authorize Item
-
-    render json: {valid: false}
   end
 
 end

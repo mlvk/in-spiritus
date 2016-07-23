@@ -34,7 +34,7 @@ Rails.application.routes.draw do
   post 'orders/generate_pdf'
   post 'documents/generate_packing_documents'
 
-  post 'items/name_check'
+  post 'custom/unique_check'
 
   get 'testing/pdf'
 

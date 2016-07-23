@@ -7,7 +7,7 @@ module Clockwork
 
   every(1.day, CleanTmpFilesWorker, :at => '00:00')
 
-  every(10.seconds, SyncLocalItemsWorker)
+  # every(10.seconds, SyncLocalItemsWorker)
   every(10.seconds, SyncLocalCompaniesWorker)
   every(10.seconds, SyncLocalSalesOrdersWorker)
   every(10.seconds, SyncLocalPurchaseOrdersWorker)
@@ -17,7 +17,7 @@ module Clockwork
 
   every(5.seconds, EmailPurchaseOrdersWorker)
 
-  every(1.hour, SyncRemoteItemsWorker)
+  # every(1.hour, SyncRemoteItemsWorker)
   every(1.hour, SyncRemoteCompaniesWorker)
   every(1.hour, SyncRemoteSalesOrdersWorker)
   every(1.hour, SyncRemotePurchaseOrdersWorker)

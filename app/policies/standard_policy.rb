@@ -7,32 +7,40 @@ class StandardPolicy
     @model = model
   end
 
-  def index?
+  def is_admin?
+    @current_user.admin?
+  end
+
+  def is_standard?
     @current_user.admin? or @current_user.driver? or @current_user.accountant?
+  end
+
+  def index?
+    is_admin?
   end
 
   def show?
-    @current_user.admin? or @current_user.driver? or @current_user.accountant?
+    is_admin?
   end
 
   def create?
-  	@current_user.admin?
+  	is_admin?
   end
 
   def update?
-  	@current_user.admin?
+  	is_admin?
   end
 
   def destroy?
-  	@current_user.admin?
+  	is_admin?
   end
 
   def get_related_resource?
-    @current_user.admin?
+    is_admin?
   end
 
   def get_related_resources?
-    @current_user.admin?
+    is_admin?
   end
 
 end
