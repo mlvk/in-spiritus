@@ -11,6 +11,35 @@ This project integrates with the following systems:
 1. [Routific](https://routific.com)
 1. [Stripe](https://stripe.com/) - Future
 
+### Vagrant Dev Environment Setup
+
+1. Install [Vagrant](https://www.vagrantup.com/)
+1. Clone the repo `git clone git@github.com:brancusi/in-spiritus.git`
+1. Change dir to: `cd railsbox/development/`
+1. Build and provision vagrant: `vagrant up`
+
+### Working with the vagrant box
+
+1. SSH into the box: `vagrant ssh`
+1. Start rails: `rs` or long form: `rails server -b 0.0.0.0`
+1. The server will now be accessible from your host machine on: [localhost:3000](http://localhost:3000)
+
+### Start sidekiq
+
+1. SSH into the box with a new shell: `vagrant ssh`
+1. Start sidekiq: `sidekiq`
+
+### Starting clockwork
+
+1. SSH into the box: `vagrant ssh`
+1. Start clockwork: `clockwork clock.rb`
+
+### Vagrant box aliases
+
+1. To move to the project directory: `app`
+1. To start the rails server: `rs`
+1. To connect to redis with redis-cli: `red`
+
 ### Setup
 1. Run `rake secret` for each slot where needed in the secrets file
 1. Install and start postgres

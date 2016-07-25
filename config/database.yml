@@ -1,13 +1,14 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  username: postgres
+  username: vagrant
+  password: vagrant
   host: localhost
   pool: 5
 
 development:
   <<: *default
-  database: in_spiritus_development
+  database: in_spiritus
 
 test:
   <<: *default
