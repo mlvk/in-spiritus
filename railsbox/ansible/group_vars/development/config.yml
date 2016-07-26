@@ -4,9 +4,9 @@ target: virtualbox
 autoconf: true
 vm_memory: 1024
 vm_swap: 1024
-vm_cores: 2
+vm_cores: 4
 vm_share_type: virtualbox
 vm_ip: 192.168.20.50
-host: 
-port: 
-username: 
+host:
+port:
+username:
