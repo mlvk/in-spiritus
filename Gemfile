@@ -18,6 +18,7 @@ gem 'httplog'
 gem 'aws-sdk'
 gem 'firebase'
 gem 'hamster'
+gem 'globalid'
 
 # Job scheduling
 gem 'sidekiq'

@@ -1,9 +1,8 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  username: vagrant
-  password: vagrant
-  host: localhost
+  username: postgres
+  host: db
   pool: 5
 
 development:
