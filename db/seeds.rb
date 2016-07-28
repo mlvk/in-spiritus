@@ -3,22 +3,34 @@ admin = User.create(first_name:'Tony', last_name:'Starks', email:'admin@wutang.c
 admin.set_admin_role!
 admin.save
 
-Location
-  .customer
-  .each do |location|
-    Item.sold.each do |item|
-      ItemDesire.create(item:item, location:location, enabled:true)
-    end
+FactoryGirl.create_list(:item, 10, tag: Item::PRODUCT_TYPE)
 
-    (0..6).each do |day|
-      VisitDay.create(day:day, location:location, enabled:true)
-    end
+FactoryGirl.create_list(:price_tier, 3, items: Item.products)
 
-    NotificationRule.create(first_name:'Aram', email:'az@mlvegankitchen.com', location:location)
-  end
+FactoryGirl.create_list(:companies_with_locations, 20)
 
-VisitWindow.all.each do |vw|
-  (0..6).each do |day|
-    VisitWindowDay.create(day:day, visit_window:vw)
-  end
-end
+
+
+# (0..20).each do |i|
+#   Company
+# end
+
+# Location
+#   .customer
+#   .each do |location|
+#     Item.sold.each do |item|
+#       ItemDesire.create(item:item, location:location, enabled:true)
+#     end
+#
+#     (0..6).each do |day|
+#       VisitDay.create(day:day, location:location, enabled:true)
+#     end
+#
+#     NotificationRule.create(first_name:'Aram', email:'az@mlvegankitchen.com', location:location)
+#   end
+#
+# VisitWindow.all.each do |vw|
+#   (0..6).each do |day|
+#     VisitWindowDay.create(day:day, visit_window:vw)
+#   end
+# end

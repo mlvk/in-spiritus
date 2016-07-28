@@ -36,8 +36,8 @@ class Item < ActiveRecord::Base
 	scope :sold, -> { where(is_sold:true) }
 	scope :purchased, -> { where(is_purchased:true) }
 
-	scope :product, -> { where(tag:PRODUCT_TYPE)}
-  scope :ingredient, -> { where(tag:INGREDIENT_TYPE)}
+	scope :products, -> { where(tag:PRODUCT_TYPE)}
+  scope :ingredients, -> { where(tag:INGREDIENT_TYPE)}
 
 	private
 	def generate_item_code

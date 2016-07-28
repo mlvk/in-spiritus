@@ -3,9 +3,7 @@ FactoryGirl.define do
     code { SecureRandom.hex(3) }
     name { Faker::Commerce.product_name }
     description { Faker::Lorem.words(6) }
-    default_price 5.1
-
-    company
+    default_price { Faker::Commerce.price }
 
     trait :synced do
       xero_state { Item.xero_states[:synced] }

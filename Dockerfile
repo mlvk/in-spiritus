@@ -3,6 +3,7 @@ MAINTAINER Aram Zadikian <if@else.run>
 
 RUN apt-get update && apt-get install -y \
 	postgresql-client \
+	graphviz \
 	--no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 

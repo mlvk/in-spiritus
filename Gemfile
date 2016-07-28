@@ -44,6 +44,9 @@ end
 
 group :development, :test do
   gem 'dotenv-rails'
+  gem 'factory_girl'
+  gem 'factory_girl_rails'
+  gem 'faker'
   gem 'gist'
   gem 'zeus'
   gem 'pry'
@@ -53,12 +56,9 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_girl_rails'
-  gem 'faker'
   gem 'vcr'
   gem 'webmock', '~> 1.24.2'
   gem 'fakeredis'
-  gem 'factory_girl'
   gem 'spy'
   gem 'codeclimate-test-reporter'
   gem 'maxitest'

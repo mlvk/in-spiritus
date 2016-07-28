@@ -11,22 +11,6 @@ services:
     volumes:
       - .:/app/in-spiritus
 
-  sidekiq:
-    image: brancusi/in-spiritus
-    command: bundle exec sidekiq
-    networks:
-      - backend
-    volumes:
-      - .:/app/in-spiritus
-
-  scheduler:
-    image: brancusi/in-spiritus
-    command: bundle exec clockwork clock.rb
-    networks:
-      - backend
-    volumes:
-      - .:/app/in-spiritus
-
   db:
     image: postgres
     networks:
