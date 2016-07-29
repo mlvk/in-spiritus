@@ -14,6 +14,16 @@ class PriceTiersController < ApplicationJsonApiResourcesController
     super
   end
 
+  def update
+    authorize PriceTier
+    super
+  end
+
+  def destroy
+    authorize PriceTier
+    super
+  end
+
   def get_related_resource
     authorize PriceTier
     super

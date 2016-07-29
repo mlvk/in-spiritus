@@ -14,6 +14,16 @@ class ItemPricesController < ApplicationJsonApiResourcesController
     super
   end
 
+  def update
+    authorize ItemPrice
+    super
+  end
+
+  def destroy
+    authorize ItemPrice
+    super
+  end
+
   def get_related_resource
     authorize ItemPrice
     super

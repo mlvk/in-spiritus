@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  web:
+    build: .
+    command: bash -c "rake db:create && rake db:schema:load && rake db:migrate && rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+    volumes:
+      - .:/app/in-spiritus
+
+  db:
+    image: postgres
+    networks:
+     - backend
+
+  redis:
+    image: redis
+    networks:
+      - backend
+
+networks:
+  backend:
