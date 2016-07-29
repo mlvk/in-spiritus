@@ -2,26 +2,10 @@ version: '2'
 
 services:
   web:
-    image: brancusi/in-spiritus:0.0.1
-    command: bash -c "rake db:create && rake db:schema:load && rake db:migrate && rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    image: brancusi/in-spiritus:0.0.2
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
       - "3000:3000"
-    networks:
-      - backend
-    volumes:
-      - .:/app/in-spiritus
-
-  sidekiq:
-    image: brancusi/in-spiritus:0.0.1
-    command: bundle exec sidekiq
-    networks:
-      - backend
-    volumes:
-      - .:/app/in-spiritus
-
-  scheduler:
-    image: brancusi/in-spiritus:0.0.1
-    command: bundle exec clockwork clock.rb
     networks:
       - backend
     volumes:
