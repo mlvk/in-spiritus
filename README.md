@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/brancusi/in-spiritus.svg?branch=master)](https://travis-ci.org/brancusi/in-spiritus)
-[![Code Climate](https://codeclimate.com/github/brancusi/in-spiritus/badges/gpa.svg)](https://codeclimate.com/github/brancusi/in-spiritus)
-[![Test Coverage](https://codeclimate.com/github/brancusi/in-spiritus/badges/coverage.svg)](https://codeclimate.com/github/brancusi/in-spiritus/coverage)
-[![Issue Count](https://codeclimate.com/github/brancusi/in-spiritus/badges/issue_count.svg)](https://codeclimate.com/github/brancusi/in-spiritus)
+[![Build Status](https://travis-ci.org/mlvk/in-spiritus.svg?branch=master)](https://travis-ci.org/mlvk/in-spiritus)
+[![Code Climate](https://codeclimate.com/github/mlvk/in-spiritus/badges/gpa.svg)](https://codeclimate.com/github/mlvk/in-spiritus)
+[![Test Coverage](https://codeclimate.com/github/mlvk/in-spiritus/badges/coverage.svg)](https://codeclimate.com/github/mlvk/in-spiritus/coverage)
+[![Issue Count](https://codeclimate.com/github/mlvk/in-spiritus/badges/issue_count.svg)](https://codeclimate.com/github/mlvk/in-spiritus)
 ## In Spiritus
 An attempt to simplify order and distribution management for startup food companies.
 
