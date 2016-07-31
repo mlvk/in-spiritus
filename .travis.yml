@@ -10,7 +10,7 @@ script:
 - rake db:test:prepare
 - rake
 deploy:
-  webhooks:
-    secure: "g9uFqe8Ir3b+SLOeiYvl0dvVVr34OHkSfnRxzxOwUSsAGpoZPJjBSYzrSKmEWqdFemTpsCvap5D3a06p6fEixKLgS+D5NcBp028imeNsKcD5gpPFrCXLaozgof9yt5xPIW6u0k8Edk9jhktAWBGy2ysiok8Y+wj+KXcjUtBnwlEaf4RrFySe1zc+kXuo+tVeCAHNvczuOeNMVdajdppwvartVp0GDSn/RiQjDwTpVbU7fZsdCOCVuwIA/dQI/+n07TnigTk9hI1Gag5nZCruypPR2aBJfMAajqz6LVZl5yBST39UqsV444dG7VW9LKUZNiOQkarMxwysCdjAQH3Dtls1bUSgdAhtbehzhuMb+tocMqEAq0/CuGnUVAh39VjDmTmQOGRm17vtULyWzYLO7+MBn00G4dSEutmewlR/h4jL6ybYmW8SkHZaTWP/SWcTGado6ognqob0Zj/DPA43TQZvkWZ1n0MhV8a42f2JBSfe90CR8/tynOpavi6cZ21Qj9/Oo8fvyUPVu9DsObS+B0QWsgHBi8Q8fV+Y1EuuSTkay6cSj31rmL96O5OVggZpQTtKs9PecfGb0LRHslaWZgzwE1p6+HTBKzDRi1oEm2XdRPjzNPhJl51H9x6hdBJmUjBLcTb4K8D6romMecPENwm3j4vLbKbUO+N/uZN8+v4="
+  provider: cloud66
+  redeployment_hook: ${CLOUD66_REDEPLOYMENT_HOOK}
   on:
     repo: mlvk/in-spiritus
