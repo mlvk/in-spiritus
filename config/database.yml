@@ -11,7 +11,6 @@ development:
 
 test:
   <<: *default
-  host: localhost
   database: in_spiritus_test
 
 staging:
