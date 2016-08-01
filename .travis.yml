@@ -14,6 +14,3 @@ deploy:
   redeployment_hook: ${CLOUD66_REDEPLOYMENT_HOOK}
   on:
     repo: mlvk/in-spiritus
-addons:
-  hosts:
-    - db

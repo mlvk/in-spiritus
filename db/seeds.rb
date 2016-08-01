@@ -3,7 +3,7 @@ admin = User.create(first_name:'Tony', last_name:'Starks', email:'admin@wutang.c
 admin.set_admin_role!
 admin.save
 
-FactoryGirl.create_list(:item, 10, tag: Item::PRODUCT_TYPE, is_sold: true, is_purchased: false)
+FactoryGirl.create_list(:item, 10, tag: Item::PRODUCT_TYPE)
 
 FactoryGirl.create_list(:price_tier, 3, items: Item.products)
 

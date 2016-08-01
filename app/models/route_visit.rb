@@ -32,8 +32,4 @@ class RouteVisit < ActiveRecord::Base
 			.flat_map {|f| f.order}
 			.any? {|o| o.purchase_order?}
 	end
-
-	def has_route_plan?
-		has_route_plan.present?
-	end
 end
