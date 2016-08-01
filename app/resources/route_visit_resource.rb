@@ -15,7 +15,7 @@ class RouteVisitResource < JSONAPI::Resource
 
   has_many  :fulfillments
 
-  filter    :date
+  filter    :date, :has_route_plan
 
   filter :status, default: 'with_valid_orders', apply: ->(records, value, _options) {
     records.joins(orders: :order_items).where('order_items.quantity > ?', 0).distinct
@@ -35,6 +35,10 @@ class RouteVisitResource < JSONAPI::Resource
 
   def has_drop
     @model.fulfillments.any? {|f| f.order.purchase_order?}
+  end
+
+  def has_route_plan
+    @model.has_route_plan?
   end
 
 end
