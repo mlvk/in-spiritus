@@ -38,5 +38,7 @@ Rails.application.routes.draw do
 
   get 'testing/pdf'
 
+  get '/routing/optimize_route/:id', to: 'routing#optimize_route'
+
   mount Sidekiq::Web => '/sidekiq'
 end
