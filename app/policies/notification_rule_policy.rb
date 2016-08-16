@@ -1,0 +1,2 @@
+class NotificationRulePolicy < StandardPolicy
+end

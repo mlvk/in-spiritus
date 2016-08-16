@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160717202524) do
+ActiveRecord::Schema.define(version: 20160816212203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -170,13 +170,15 @@ ActiveRecord::Schema.define(version: 20160717202524) do
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
 
   create_table "notification_rules", force: :cascade do |t|
-    t.string   "first_name",  limit: 255
-    t.string   "last_name",   limit: 255
-    t.string   "email",       limit: 255,                null: false
-    t.integer  "location_id",                            null: false
-    t.boolean  "enabled",                 default: true, null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.string   "first_name",    limit: 255
+    t.string   "last_name",     limit: 255
+    t.string   "email",         limit: 255,                 null: false
+    t.integer  "location_id",                               null: false
+    t.boolean  "enabled",                   default: true,  null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.boolean  "wants_invoice",             default: false, null: false
+    t.boolean  "wants_credit",              default: false, null: false
   end
 
   add_index "notification_rules", ["enabled"], name: "index_notification_rules_on_enabled", using: :btree
