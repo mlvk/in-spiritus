@@ -3,7 +3,7 @@ class NotificationRuleResource < JSONAPI::Resource
              :last_name,
              :email,
              :enabled,
-             :wants_invoice,
+             :wants_order,
              :wants_credit
 
   has_one  :location
