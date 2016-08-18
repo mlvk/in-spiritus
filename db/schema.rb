@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160816212203) do
+ActiveRecord::Schema.define(version: 20160816235223) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -183,6 +183,20 @@ ActiveRecord::Schema.define(version: 20160816212203) do
 
   add_index "notification_rules", ["enabled"], name: "index_notification_rules_on_enabled", using: :btree
   add_index "notification_rules", ["location_id"], name: "index_notification_rules_on_location_id", using: :btree
+
+  create_table "notifications", force: :cascade do |t|
+    t.integer  "order_id"
+    t.integer  "credit_note_id"
+    t.integer  "notification_rule_id",             null: false
+    t.datetime "processed_at"
+    t.integer  "notification_state",   default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "notifications", ["credit_note_id"], name: "index_notifications_on_credit_note_id", using: :btree
+  add_index "notifications", ["notification_rule_id"], name: "index_notifications_on_notification_rule_id", using: :btree
+  add_index "notifications", ["order_id"], name: "index_notifications_on_order_id", using: :btree
 
   create_table "order_items", force: :cascade do |t|
     t.integer  "order_id",                 null: false
@@ -382,6 +396,9 @@ ActiveRecord::Schema.define(version: 20160816212203) do
   add_foreign_key "locations", "addresses"
   add_foreign_key "locations", "companies"
   add_foreign_key "notification_rules", "locations"
+  add_foreign_key "notifications", "credit_notes"
+  add_foreign_key "notifications", "notification_rules"
+  add_foreign_key "notifications", "orders"
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "locations"

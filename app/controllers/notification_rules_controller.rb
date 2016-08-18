@@ -30,7 +30,7 @@ class NotificationRulesController < ApplicationJsonApiResourcesController
   end
 
   def get_related_resources
-    authorize VisitWindow
+    authorize NotificationRule
     super
   end
 end

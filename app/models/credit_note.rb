@@ -30,6 +30,7 @@ class CreditNote < ActiveRecord::Base
 
   has_one :fulfillment, dependent: :nullify, autosave: true
   has_many :credit_note_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
+  has_many :notifications
 
   scope :with_credit, -> {
     joins(:credit_note_items)

@@ -42,5 +42,6 @@ class Company < ActiveRecord::Base
   end
 
   scope :customer, -> { where(is_customer: true) }
+  scope :vendor, -> { where(is_vendor: true) }
 
 end

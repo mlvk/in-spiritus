@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  notifiable_id: 
+  notifiable_type: Notifiable
+  processed_at: 2016-08-16 23:52:23
+  notificable_id: 1
+  notifiable_type: MyString
+  notification_rule_id: 
+  notification_state: 1
+
+two:
+  notifiable_id: 
+  notifiable_type: Notifiable
+  processed_at: 2016-08-16 23:52:23
+  notificable_id: 1
+  notifiable_type: MyString
+  notification_rule_id: 
+  notification_state: 1

@@ -6,7 +6,8 @@ class NotificationRuleResource < JSONAPI::Resource
              :wants_invoice,
              :wants_credit
 
-  has_one :location
+  has_one  :location
+  has_many :notifications
 
   filter :enabled
 end

@@ -24,15 +24,39 @@ FactoryGirl.define do
       order_type Order::SALES_ORDER_TYPE
     end
 
-    factory :sales_order_with_items do
-      order_type Order::SALES_ORDER_TYPE
-
+    factory :order_with_items do
       transient do
+        items nil
         order_items_count 5
       end
 
       after(:create) do |order, evaluator|
-        create_list(:order_item, evaluator.order_items_count, order: order)
+        if evaluator.items.present?
+          evaluator.items.each do |item|
+            create(:order_item, order: order, item:item)
+          end
+        else
+          create_list(:order_item, evaluator.order_items_count, order: order)
+        end
+      end
+    end
+
+    factory :sales_order_with_items do
+      order_type Order::SALES_ORDER_TYPE
+
+      transient do
+        items nil
+        order_items_count 5
+      end
+
+      after(:create) do |order, evaluator|
+        if evaluator.items.present?
+          evaluator.items.each do |item|
+            create(:order_item, order: order, item:item)
+          end
+        else
+          create_list(:order_item, evaluator.order_items_count, order: order)
+        end
       end
     end
 

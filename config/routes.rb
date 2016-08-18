@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   jsonapi_resources :item_prices
   jsonapi_resources :item_credit_rates
   jsonapi_resources :locations
+  jsonapi_resources :notifications
   jsonapi_resources :notification_rules
   jsonapi_resources :price_tiers
   jsonapi_resources :stocks

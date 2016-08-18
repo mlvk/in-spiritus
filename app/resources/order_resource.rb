@@ -13,4 +13,5 @@ class OrderResource < JSONAPI::Resource
   has_many   :order_items
   has_one    :location
   has_one    :fulfillment
+  has_many   :notifications
 end

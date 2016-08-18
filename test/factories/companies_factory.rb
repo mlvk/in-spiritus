@@ -1,5 +1,7 @@
 FactoryGirl.define do
   factory :company do
+    is_customer true
+    is_vendor false
     name { Faker::Company.name }
     terms 7
 
@@ -8,9 +10,9 @@ FactoryGirl.define do
       xero_id { SecureRandom.hex(10) }
     end
 
-    factory :companies_with_locations do
+    factory :company_with_locations do
       transient do
-        location_count 5
+        location_count 3
       end
 
       after(:create) do |company, evaluator|
@@ -19,6 +21,11 @@ FactoryGirl.define do
 
       before(:create) do |company, evaluator|
         company.price_tier = PriceTier.all.sample
+      end
+
+      trait :vendor do
+        is_customer false
+        is_vendor true
       end
     end
   end
