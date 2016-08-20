@@ -68,6 +68,14 @@ Company.vendor.each do |company|
 end
 
 route_visits = RouteVisit.take(5)
+
+# Set position value for route visits
+position = 0
+route_visits.each do |rv|
+  rv.position = position
+  position += 10
+end
+
 FactoryGirl.create(:route_plan,
   :published,
   user: admin,
