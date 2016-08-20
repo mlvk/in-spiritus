@@ -88,7 +88,7 @@ class CreditNotesSyncer < BaseSyncer
     private
       def create_record_line_item(record, credit_note_item)
         record.add_line_item(
-          item_code:credit_note_item.item.name,
+          item_code:credit_note_item.item.code,
           description:credit_note_item.item.description,
           quantity:credit_note_item.quantity,
           unit_amount:credit_note_item.unit_price.round(2),
@@ -97,7 +97,7 @@ class CreditNotesSyncer < BaseSyncer
       end
 
       def create_model_credit_note_item(model, line_item)
-        item = Item.find_by name: line_item.item_code
+        item = Item.find_by code: line_item.item_code
         CreditNoteItem.create(item:item, credit_note:model)
       end
 end
