@@ -46,6 +46,9 @@ class Fulfillment < ActiveRecord::Base
   belongs_to :stock
   belongs_to :pod
   belongs_to :credit_note
+  has_many   :notifications
+
+  has_one :location, through: :order
 
   # has_one :visit_window, through: :route_visit
   # has_one :location, through: :visit_window

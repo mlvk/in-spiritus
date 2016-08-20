@@ -21,5 +21,18 @@ class Notification < ActiveRecord::Base
 
   belongs_to :order
   belongs_to :credit_note
+  belongs_to :fulfillment
   belongs_to :notification_rule
+
+  def has_order?
+    !order.nil?
+  end
+
+  def has_credit?
+    !credit_note.nil?
+  end
+
+  def build_message
+    Maybe(renderer).constantize.new.render(self).fetch()
+  end
 end

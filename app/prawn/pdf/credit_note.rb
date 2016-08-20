@@ -30,11 +30,11 @@ module Pdf
 
         y = @pdf.cursor - 30
         @pdf.formatted_text_box [{ text: "Delivery date:", size: 10}], :at => [col1, y]
-        @pdf.formatted_text_box [{ text: credit_note.delivery_date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
+        @pdf.formatted_text_box [{ text: credit_note.date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
 
-        y = @pdf.cursor - 45
-        @pdf.formatted_text_box [{ text: "Due date:", size: 10}], :at => [col1, y]
-        @pdf.formatted_text_box [{ text: credit_note.due_date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
+        # y = @pdf.cursor - 45
+        # @pdf.formatted_text_box [{ text: "Due date:", size: 10}], :at => [col1, y]
+        # @pdf.formatted_text_box [{ text: credit_note.due_date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
 
         y = @pdf.cursor - 60
         @pdf.bounding_box([col1, y], :width => 50, :height => 20) do

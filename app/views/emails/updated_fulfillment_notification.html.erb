@@ -204,7 +204,7 @@
 														<tr>
 															<td style="font-family: Helvetica, arial, sans-serif; font-size: 30px; color: #333333; text-align:center; line-height: 30px;">
 																<p>
-																	Order Delivered!
+																	New Updated Fulfillment Notification!
 																</p>
 															</td>
 														</tr>
@@ -223,7 +223,7 @@
 														<tr>
 															<td style="font-family: Helvetica, arial, sans-serif; font-size: 16px; color: #666666; text-align:center; line-height: 30px;">
 																<p style="text-align: center;">
-																	Hello <%= 'Aram' %>, attached is a new purchase order <strong><%= context[:order].order_number %></strong> for pickup on: <strong><%= context[:order].delivery_date.strftime('%A, %d/%m/%y') %></strong>.
+																	Hello <%= 'Aram' %>, attached is a new fulfillment <strong><%= context[:fulfillment].id %></strong> for pickup on: <strong><%= DateTime.now.strftime('%A, %d/%m/%y') %></strong>.
 																</p>
 																<p style="text-align: center;">
 																	Attached are the associated documents.

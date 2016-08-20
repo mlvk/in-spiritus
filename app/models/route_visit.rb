@@ -8,6 +8,7 @@ class RouteVisit < ActiveRecord::Base
 
 		event :mark_fulfilled do
 			transitions :from => :pending, :to => :fulfilled
+			transitions :from => :processed, :to => :fulfilled
 		end
 
 		event :mark_processed do
