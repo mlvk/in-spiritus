@@ -1,0 +1,47 @@
+version: '2'
+
+services:
+  web:
+    image: brancusi/in-spiritus:0.0.2
+    command: bash -c "rm -f tmp/pids/* && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+    volumes:
+      - ..:/app/in-spiritus
+
+  db:
+    image: postgres
+    networks:
+     - backend
+
+  redis:
+    image: redis
+    networks:
+      - backend
+
+  sidekiq:
+    image: brancusi/in-spiritus:0.0.2
+    command: bundle exec sidekiq
+    networks:
+      - backend
+    volumes:
+      - ..:/app/in-spiritus
+
+  scheduler:
+    image: brancusi/in-spiritus:0.0.2
+    command: bundle exec clockwork clock.rb
+    networks:
+      - backend
+    volumes:
+      - ..:/app/in-spiritus
+
+  logging:
+    image: brancusi/remote_syslog:0.0.1
+    volumes_from:
+      - web
+    command: remote_syslog -D -c /app/in-spiritus/config/log_config.yml
+
+networks:
+  backend:

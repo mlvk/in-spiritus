@@ -48,7 +48,6 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'gist'
-  gem 'zeus'
   gem 'pry'
   gem 'pry-byebug'
   gem 'pry-rails'

@@ -282,8 +282,6 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
-    zeus (0.15.10)
-      method_source (>= 0.6.7)
 
 PLATFORMS
   ruby
@@ -337,7 +335,6 @@ DEPENDENCIES
   vcr
   webmock (~> 1.24.2)
   xeroizer!
-  zeus
 
 BUNDLED WITH
    1.12.5
