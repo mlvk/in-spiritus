@@ -1,12 +1,8 @@
-New Updated Fulfillment Notification!
+Your order has arrived!
 
-Hello <%= 'Aram' %>,
+Hello <%= context[:notification_rule].full_name %>, please find the attached document for your recent delivery: <%= DateTime.now.strftime('%A, %d/%m/%y') %>.
 
-New PO for <%= DateTime.now.strftime('%A, %d/%m/%y') %>.
-
-Attached are the associated documents.
-
-Thank you for working with us.
+Thank you.
 
 If you have any questions, please contact us at:
 Phone: (323) 404-9372

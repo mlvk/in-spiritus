@@ -3,4 +3,9 @@ class NotificationRule < ActiveRecord::Base
 
   belongs_to :location
   has_many :notifications
+
+  def full_name
+    full_name = "#{first_name.titleize} #{Maybe(last_name).fetch('').titleize}"
+    full_name.strip! || full_name
+  end
 end

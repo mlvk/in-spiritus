@@ -3,7 +3,8 @@ class UpdatedFulfillment < BaseNotificationRenderer
     fulfillment = notification.fulfillment
     date_fmt = DateTime.now.strftime('%d/%m/%y')
     context = {
-      fulfillment: fulfillment
+      fulfillment: fulfillment,
+      notification_rule: notification.notification_rule
     }
 
     {

@@ -204,7 +204,7 @@
 														<tr>
 															<td style="font-family: Helvetica, arial, sans-serif; font-size: 30px; color: #333333; text-align:center; line-height: 30px;">
 																<p>
-																	New Updated Fulfillment Notification!
+																	Your order has arrived!
 																</p>
 															</td>
 														</tr>
@@ -223,10 +223,7 @@
 														<tr>
 															<td style="font-family: Helvetica, arial, sans-serif; font-size: 16px; color: #666666; text-align:center; line-height: 30px;">
 																<p style="text-align: center;">
-																	Hello <%= 'Aram' %>, attached is a new fulfillment <strong><%= context[:fulfillment].id %></strong> for pickup on: <strong><%= DateTime.now.strftime('%A, %d/%m/%y') %></strong>.
-																</p>
-																<p style="text-align: center;">
-																	Attached are the associated documents.
+                                  Hello <strong><%= context[:notification_rule].full_name %></strong>, please find the attached document for your recent delivery: <strong><%= DateTime.now.strftime('%A, %d/%m/%y') %></strong>.
 																</p>
 															</td>
 														</tr>
@@ -309,7 +306,7 @@
 														<tr>
 															<td style="font-family: Helvetica, arial, sans-serif; font-size: 30px; color: #333333; text-align:center; line-height: 30px;">
 																<p align="left">
-																	<span style="font-size: 14pt;">Thank you for working with us.</span>
+																	<span style="font-size: 14pt;">Thank you.</span>
 																</p>
 															</td>
 														</tr>
@@ -335,9 +332,6 @@
 																</p>
 																<p style="text-align: left;">
 																	<span style="font-size: 10pt;"></span><span style="font-size: 10pt;">Email: <a href="mailto:support@mlvegankitchen.com">support@mlvegankitchen.com</a></span>
-																</p>
-																<p style="text-align: center;">
-																	Have a colorful day!
 																</p>
 																<p style="text-align: right;">
 																	<em>~MLVK Team</em>
