@@ -1,4 +1,7 @@
 class Location < ActiveRecord::Base
+
+	before_save :pre_process_code
+
 	belongs_to :company
 	belongs_to :address
 
@@ -29,6 +32,28 @@ class Location < ActiveRecord::Base
 
 	def full_name
 		"#{id} - #{name}"
+	end
+
+	private
+	def pre_process_code
+		generate_code unless has_code?
+		self.code = self.code.downcase
+	end
+	def has_code?
+		code.present?
+	end
+
+	def valid_code?(str)
+		match = Location.find_by(code: str)
+		(match.nil? || match == self) && str.present?
+	end
+
+	def generate_code(inc = 1)
+		prefix = company.location_code_prefix
+		num = inc.to_s.rjust(2, '0')
+		str = "#{prefix}#{num}"
+		self.code = str
+		generate_code(inc + 1) unless valid_code?(str)
 	end
 
 end

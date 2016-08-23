@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160819213143) do
+ActiveRecord::Schema.define(version: 20160823163136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,19 +28,21 @@ ActiveRecord::Schema.define(version: 20160819213143) do
   end
 
   create_table "companies", force: :cascade do |t|
-    t.string   "xero_id",       limit: 255
-    t.integer  "xero_state",                default: 0,     null: false
-    t.string   "name",          limit: 255,                 null: false
-    t.integer  "terms",                     default: 14,    null: false
-    t.boolean  "is_customer",               default: true,  null: false
-    t.boolean  "is_vendor",                 default: false, null: false
+    t.string   "xero_id",              limit: 255
+    t.integer  "xero_state",                       default: 0,     null: false
+    t.string   "name",                 limit: 255,                 null: false
+    t.integer  "terms",                            default: 14,    null: false
+    t.boolean  "is_customer",                      default: true,  null: false
+    t.boolean  "is_vendor",                        default: false, null: false
     t.integer  "price_tier_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "location_code_prefix", limit: 10,                  null: false
   end
 
   add_index "companies", ["is_customer"], name: "index_companies_on_is_customer", using: :btree
   add_index "companies", ["is_vendor"], name: "index_companies_on_is_vendor", using: :btree
+  add_index "companies", ["location_code_prefix"], name: "index_companies_on_location_code_prefix", unique: true, using: :btree
   add_index "companies", ["name"], name: "name", unique: true, using: :btree
   add_index "companies", ["price_tier_id"], name: "index_companies_on_price_tier_id", using: :btree
   add_index "companies", ["xero_id"], name: "index_companies_on_xero_id", unique: true, using: :btree
@@ -163,10 +165,12 @@ ActiveRecord::Schema.define(version: 20160819213143) do
     t.integer  "address_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "code",          limit: 10,                 null: false
   end
 
   add_index "locations", ["active"], name: "index_locations_on_active", using: :btree
   add_index "locations", ["address_id"], name: "index_locations_on_address_id", using: :btree
+  add_index "locations", ["code"], name: "index_locations_on_code", unique: true, using: :btree
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
 
   create_table "notification_rules", force: :cascade do |t|
