@@ -13,6 +13,12 @@ class AddCodeRelatedFieldsToCompaniesAndLocation < ActiveRecord::Migration
       p l.code
     end
 
+    invalid_companies = Company.where(location_code_prefix: nil)
+    invalid_locations = Location.where(code: nil)
+
+    p invalid_companies
+    p invalid_locations
+
     change_column :companies, :location_code_prefix, :string, limit: 10, null: false
     change_column :locations, :code, :string, limit: 10, null: false
 
