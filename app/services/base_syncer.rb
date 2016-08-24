@@ -4,7 +4,11 @@ class BaseSyncer
 
   # Sync from local to xero
   def sync_local
-    process_local(find_models)
+    begin
+      process_local(find_models)
+    rescue => e
+      error e
+    end
   end
 
   # Sync from xero to local
@@ -89,11 +93,15 @@ class BaseSyncer
     end
 
     def log(message, level = 'info')
-      Rails.logger.info("[Syncer - #{self.class} - #{level}]: #{message}")
+      Rails.logger.info("[Syncer]: #{message}")
     end
 
     def warn(message)
       log(message, 'warn')
+    end
+
+    def error(e)
+      Rails.logger.error { "[Syncer]: #{e.message} #{e.backtrace.join("\n")}" }
     end
 
   private
@@ -107,17 +115,20 @@ class BaseSyncer
         if save_records(records)
           begin
             process_records(records)
-          rescue => errors
-            raise "Error processing records for #{self.class}: #{records}"
+          rescue => e
+            error e
           end
         else
-          raise "Error batch saving for #{self.class}: #{records}"
+          errors = records
+            .select {|r| r.errors.present?}
+            .map {|r| [r, r.errors]}
+          warn ("Failed to save records #{errors}")
         end
       end
     end
 
     def prepare_record(model)
-      record = _find_or_create_record(model)
+      record = find_or_create_record(model)
       pre_flight_check(record, model)
 
       if should_save_record?(record, model)
@@ -139,24 +150,25 @@ class BaseSyncer
           else
             nil
           end
-        rescue => errors
-          p "There was an error processing this record: #{errors}"
+        rescue => e
+          error e
           nil
         end
       }.compact
     end
 
-    def _find_or_create_record(model)
-      _find_record_by_id_or_other(model) || create_record
+    private
+    def find_or_create_record(model)
+      find_record_by_id_or_other(model) || create_record
     end
 
-    def _find_record_by_id_or_other(model)
+    def find_record_by_id_or_other(model)
       record = nil
       if model.xero_id.present?
         begin
           record = find_record(model.xero_id)
         rescue => errors
-          p "Error finding record by xero_id: #{errors}"
+
         end
       end
 
@@ -164,7 +176,7 @@ class BaseSyncer
         begin
           record = find_record_by(model)
         rescue => errors
-          p "Error finding record with that search criteria: #{errors}"
+
         end
       end
 

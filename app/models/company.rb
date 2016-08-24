@@ -1,6 +1,8 @@
 class Company < ActiveRecord::Base
   include AASM
 
+  validates :name, presence: true
+
   before_save :pre_process_location_code_prefix
 
   aasm :company, :column => :xero_state, :skip_validation_on_save => true do
