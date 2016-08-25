@@ -19,6 +19,7 @@ Signup for the following services:
 1. [AWS](https://aws.amazon.com/)
 1. [Papertrail](https://papertrailapp.com/)
 1. [Routific](https://routific.com)
+1. [Mapbox](https://www.mapbox.com/)
 
 ### Setup papertrail logging
 1. Create a new log [destination](https://papertrailapp.com/account/destinations)
@@ -59,6 +60,7 @@ Add in the following env vars to the stack
   1. __PDF_BUCKET__             : *required*
   1. __MAIL_GUN_API_KEY__       : *required*
   1. __MAIL_GUN_DOMAIN__        : *required*
+  1. __MAPBOX_API_TOKEN__       : *required*
 
 **Note** The private key needs to be converted to a single line with newlines replaced with `\n`
 Example:
