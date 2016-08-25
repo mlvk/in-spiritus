@@ -42,7 +42,7 @@ group :development do
   gem 'guard-minitest'
 end
 
-group :development, :test do
+group :development, :staging, :test do
   gem 'dotenv-rails'
   gem 'factory_girl'
   gem 'factory_girl_rails'
