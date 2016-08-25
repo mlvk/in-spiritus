@@ -13,6 +13,7 @@ deploy:
   provider: cloud66
   redeployment_hook: ${CLOUD66_REDEPLOYMENT_HOOK}
   on:
+    branch: development
     repo: mlvk/in-spiritus
 addons:
   hosts:
