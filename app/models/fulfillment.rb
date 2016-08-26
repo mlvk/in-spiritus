@@ -46,7 +46,7 @@ class Fulfillment < ActiveRecord::Base
   belongs_to :stock
   belongs_to :pod
   belongs_to :credit_note
-  has_many   :notifications
+  has_many   :notifications, dependent: :nullify, autosave: true
 
   has_one :location, through: :order
 

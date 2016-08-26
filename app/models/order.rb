@@ -89,7 +89,7 @@ class Order < ActiveRecord::Base
   has_one :fulfillment
   has_one :route_visit, through: :fulfillment
   has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
-  has_many :notifications, dependent: :destroy
+  has_many :notifications, dependent: :nullify, autosave: true
 
   scope :purchase_order, -> { where(order_type:PURCHASE_ORDER_TYPE)}
   scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
