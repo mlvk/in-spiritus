@@ -66,7 +66,21 @@ class Order < ActiveRecord::Base
     end
   end
 
+  aasm :order_state, :column => :order_state, :skip_validation_on_save => true do
+    state :draft, :initial => true
+    state :approved
+
+    event :mark_draft do
+      transitions :from => [:approved, :draft], :to => :draft
+    end
+
+    event :mark_approved do
+      transitions :from => [:approved, :draft], :to => :approved
+    end
+  end
+
   # State machine settings
+  enum order_state: [ :draft, :approved ]
   enum xero_state: [ :pending, :submitted, :synced, :voided ]
   enum notification_state: [ :pending_notification, :pending_updated_notification, :awaiting_notification, :notified, :awaiting_updated_notification ]
 

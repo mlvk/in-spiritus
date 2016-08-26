@@ -5,7 +5,8 @@ class OrderResource < JSONAPI::Resource
              :order_type,
              :submitted_at,
              :notification_state,
-             :shipping
+             :shipping,
+             :order_state
 
   filter     :delivery_date
   filter     :order_type
