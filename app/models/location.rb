@@ -1,6 +1,5 @@
 class Location < ActiveRecord::Base
-
-	validates :name, presence: true
+	# validates :name, presence: true
 
 	before_save :pre_process_code
 
