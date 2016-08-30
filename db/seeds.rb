@@ -77,6 +77,5 @@ route_visits.each do |rv|
 end
 
 FactoryGirl.create(:route_plan,
-  :published,
   user: admin,
   route_visits: route_visits)
