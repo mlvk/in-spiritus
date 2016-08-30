@@ -27,7 +27,7 @@ Company.customer.each do |company|
       order:order,
       notification_rule: notification_rule)
 
-    Item.take(5).each do |item|
+    Item.product.each do |item|
       FactoryGirl.create(
         :item_desire,
         location:location,
