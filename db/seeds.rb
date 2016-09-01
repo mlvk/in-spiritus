@@ -9,8 +9,8 @@ FactoryGirl.create_list(:item, 20, tag: Item::PRODUCT_TYPE, is_sold: true, is_pu
 
 FactoryGirl.create_list(:price_tier, 5, items: Item.product)
 
-FactoryGirl.create_list(:company_with_locations, 20)
-FactoryGirl.create_list(:company_with_locations, 5, :vendor)
+FactoryGirl.create_list(:company_with_locations, 20, location_count: 4)
+FactoryGirl.create_list(:company_with_locations, 5, :vendor, location_count: 5)
 
 Company.customer.each do |company|
   company.locations.each do |location|
@@ -18,19 +18,17 @@ Company.customer.each do |company|
       :notification_rule,
       location: location)
 
-    5.times do
-      order = FactoryGirl.create(
-        :order_with_items,
-        :sales_order,
-        items: Item.product,
-        location: location)
+    order = FactoryGirl.create(
+      :order_with_items,
+      :sales_order,
+      items: Item.product,
+      location: location)
 
-      FactoryGirl.create(
-        :notification,
-        :renderer,
-        order:order,
-        notification_rule: notification_rule)
-    end
+    FactoryGirl.create(
+      :notification,
+      :renderer,
+      order:order,
+      notification_rule: notification_rule)
 
     Item.product.each do |item|
       FactoryGirl.create(
@@ -59,19 +57,17 @@ Company.vendor.each do |company|
       :notification_rule,
       location: location)
 
-    3.times do
-      order = FactoryGirl.create(
-        :order_with_items,
-        :purchase_order,
-        items: items,
-        location: location)
+    order = FactoryGirl.create(
+      :order_with_items,
+      :purchase_order,
+      items: items,
+      location: location)
 
-      FactoryGirl.create(
-        :notification,
-        :renderer,
-        order:order,
-        notification_rule: notification_rule)
-    end
+    FactoryGirl.create(
+      :notification,
+      :renderer,
+      order:order,
+      notification_rule: notification_rule)
   end
 end
 
