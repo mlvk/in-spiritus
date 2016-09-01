@@ -35,24 +35,21 @@ class Location < ActiveRecord::Base
 
 	private
 	def pre_process_code
-		generate_code unless has_code?
-		self.code = self.code.downcase
-	end
-	def has_code?
-		code.present?
+		generate_code unless valid_code?
+		self.code = code.downcase
 	end
 
-	def valid_code?(str)
-		match = Location.find_by(code: str)
-		(match.nil? || match == self) && str.present?
+	def valid_code?
+		match = Location.find_by(code: code)
+		(match.nil? || match == self) && code.present?
 	end
 
 	def generate_code(inc = 1)
 		prefix = company.location_code_prefix
 		num = inc.to_s.rjust(2, '0')
-		str = "#{prefix}#{num}"
-		self.code = str
-		generate_code(inc + 1) unless valid_code?(str)
+		self.code = "#{prefix}#{num}".downcase
+
+		generate_code(inc + 1) unless valid_code?
 	end
 
 end

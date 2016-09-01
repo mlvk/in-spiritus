@@ -54,23 +54,19 @@ class Company < ActiveRecord::Base
 
   private
   def pre_process_location_code_prefix
-    generate_prefix unless has_location_code_prefix?
-    self.location_code_prefix = self.location_code_prefix.downcase
+    generate_prefix unless valid_prefix?
+    self.location_code_prefix = location_code_prefix.downcase
   end
 
-  def has_location_code_prefix?
-    location_code_prefix.present?
-  end
-
-  def valid_prefix?(prefix)
-    match = Company.find_by(location_code_prefix: prefix)
-    (match.nil? || match == self) && prefix.present?
+  def valid_prefix?
+    match = Company.find_by(location_code_prefix: location_code_prefix)
+    (match.nil? || match == self) && location_code_prefix.present?
   end
 
   def generate_prefix(rand = false)
     prefix = rand ? rand_char(2).downcase : short_code.downcase
     self.location_code_prefix = prefix
-    generate_prefix(true) unless valid_prefix?(prefix)
+    generate_prefix(true) unless valid_prefix?
   end
 
   def rand_char(count)

@@ -4,7 +4,7 @@ class Order < ActiveRecord::Base
   SALES_ORDER_TYPE = 'sales-order'
   PURCHASE_ORDER_TYPE = 'purchase-order'
 
-  after_create :setup_defaults
+  before_save :setup_defaults
   after_save :update_fulfillment_structure
   before_destroy :clear_fulfillment_structure
 
@@ -133,20 +133,26 @@ class Order < ActiveRecord::Base
 
   private
   def setup_defaults
-    generate_order_number
-    set_shipping
+    generate_order_number unless valid_order_number?
+    self.order_number = order_number.downcase
+
+    set_default_shipping unless shipping.present?
   end
 
   def generate_order_number
-    if order_number.nil?
-      prefix = sales_order? ? 'SO' : 'PO'
-      new_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
-      update_columns(order_number: new_number)
-    end
+    prefix = sales_order? ? 'SO' : 'PO'
+    self.order_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}".downcase
+
+    generate_order_number unless valid_order_number?
   end
 
-  def set_shipping
-    update_columns(shipping: location.delivery_rate)
+  def valid_order_number?
+    match = Order.find_by(order_number: order_number)
+    (match.nil? || match == self) && order_number.present?
+  end
+
+  def set_default_shipping
+    self.shipping = location.delivery_rate
   end
 
   def stale_route_visit?
