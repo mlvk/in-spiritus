@@ -3,11 +3,13 @@ admin = User.create(first_name:'Tony', last_name:'Starks', email:'admin@wutang.c
 admin.set_admin_role!
 admin.save
 
-FactoryGirl.create_list(:item, 5, tag: Item::PRODUCT_TYPE, is_sold: true, is_purchased: false)
+FactoryGirl.create_list(:user, 2, :driver)
 
-FactoryGirl.create_list(:price_tier, 3, items: Item.product)
+FactoryGirl.create_list(:item, 20, tag: Item::PRODUCT_TYPE, is_sold: true, is_purchased: false)
 
-FactoryGirl.create_list(:company_with_locations, 5)
+FactoryGirl.create_list(:price_tier, 5, items: Item.product)
+
+FactoryGirl.create_list(:company_with_locations, 20)
 FactoryGirl.create_list(:company_with_locations, 5, :vendor)
 
 Company.customer.each do |company|
@@ -16,16 +18,19 @@ Company.customer.each do |company|
       :notification_rule,
       location: location)
 
-    order = FactoryGirl.create(
-      :order_with_items,
-      :sales_order,
-      items: Item.product,
-      location: location)
+    5.times do
+      order = FactoryGirl.create(
+        :order_with_items,
+        :sales_order,
+        items: Item.product,
+        location: location)
 
-    FactoryGirl.create(
-      :notification,
-      order:order,
-      notification_rule: notification_rule)
+      FactoryGirl.create(
+        :notification,
+        :renderer,
+        order:order,
+        notification_rule: notification_rule)
+    end
 
     Item.product.each do |item|
       FactoryGirl.create(
@@ -43,7 +48,7 @@ end
 
 Company.vendor.each do |company|
   items = FactoryGirl.create_list(
-    :item, 3,
+    :item, 10,
     tag: Item::INGREDIENT_TYPE,
     company: company,
     is_sold: false,
@@ -54,28 +59,34 @@ Company.vendor.each do |company|
       :notification_rule,
       location: location)
 
-    order = FactoryGirl.create(
-      :order_with_items,
-      :purchase_order,
-      items: items,
-      location: location)
+    3.times do
+      order = FactoryGirl.create(
+        :order_with_items,
+        :purchase_order,
+        items: items,
+        location: location)
 
-    FactoryGirl.create(
-      :notification,
-      order:order,
-      notification_rule: notification_rule)
+      FactoryGirl.create(
+        :notification,
+        :renderer,
+        order:order,
+        notification_rule: notification_rule)
+    end
   end
 end
 
-route_visits = RouteVisit.take(5)
+3.times do
+  route_visits = RouteVisit.all.sample 30
 
-# Set position value for route visits
-position = 0
-route_visits.each do |rv|
-  rv.position = position
-  position += 10
+  # Set position value for route visits
+  position = 0
+  route_visits.each do |rv|
+    rv.position = position
+    position += 10
+  end
+
+  FactoryGirl.create(
+    :route_plan,
+    user: User.all.sample,
+    route_visits: route_visits)
 end
-
-FactoryGirl.create(:route_plan,
-  user: admin,
-  route_visits: route_visits)

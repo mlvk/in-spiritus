@@ -6,6 +6,10 @@ FactoryGirl.define do
       notification_state { Notification.notification_states[:processed] }
     end
 
+    trait :renderer do
+      renderer "UpdatedSalesOrder"
+    end
+
     factory :notification_with_sales_order do
       renderer "UpdatedSalesOrder"
       order { create(:order, :sales_order) }
