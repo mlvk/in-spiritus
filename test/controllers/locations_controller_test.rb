@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class LocationsControllerTest < ActionController::TestCase
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
   def setup
     prep_jr_headers
   end

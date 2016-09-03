@@ -2,6 +2,7 @@ files:
   - /app/in-spiritus/log/development.log
   - /app/in-spiritus/log/xero.log
   - /app/in-spiritus/log/vcr.log
+  - /app/in-spiritus/log/aws.log
 destination:
   host: HOST.papertail.com
   port: 11111

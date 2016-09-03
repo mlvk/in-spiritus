@@ -15,7 +15,11 @@ module PdfUtils
 	def generate_and_upload_pdfs(records)
 		pdf = build_pdf records
 		key = "#{SecureRandom.hex}.pdf"
-		upload_file(key: key, body:pdf.render)
+		path = "tmp/pdfs/#{key}"
+		pdf.render_file path
+		s3_data = upload_file(key, path)
+		File.delete(path)
+		return s3_data
 	end
 
 	def build_pdf(records)

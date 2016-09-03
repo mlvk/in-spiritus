@@ -4,7 +4,7 @@ module MailUtils
   end
 
   def send_notification(notification)
-		p "Sending email #{notification}"
+    Rails.logger.info("[Mail]: Sending notification #{notification.id}")
 
     msg = notification.build_message
 

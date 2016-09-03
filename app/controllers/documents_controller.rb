@@ -11,6 +11,8 @@ class DocumentsController < ApplicationJsonApiResourcesController
 
     pdf_url = generate_and_upload_pdfs records
 
+    p "pdf_url"
+
     render json: {url:pdf_url}
   end
 
