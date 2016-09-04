@@ -11,11 +11,15 @@ class ProcessRouteVisitWorker
 
   def process_route_visit(route_visit)
     route_visit.fulfillments.each do |f|
-      f.location.notification_rules.each do |nr|
-        Notification.create(
-          fulfillment:f,
-          renderer:"UpdatedFulfillment",
-          notification_rule:nr)
+      if !f.has_pending_notification? && f.is_valid?
+        renderer = f.never_notified? ? "Fulfillment" : "UpdatedFulfillment"
+
+        f.location.notification_rules.each do |nr|
+          Notification.create(
+            fulfillment:f,
+            renderer:renderer,
+            notification_rule:nr)
+        end
       end
     end
 

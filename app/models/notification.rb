@@ -32,7 +32,15 @@ class Notification < ActiveRecord::Base
     !credit_note.nil?
   end
 
+  def has_fulfillment?
+    !fulfillment.nil?
+  end
+
+  def has_documents?
+    has_order? || has_credit? || has_fulfillment?
+  end
+
   def build_message
-    Maybe(renderer).constantize.new.render(self).fetch()
+    Maybe("Renderers::#{renderer}").constantize.new.render(self).fetch()
   end
 end

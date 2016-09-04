@@ -119,6 +119,10 @@ class Order < ActiveRecord::Base
     order_items.any?(&:has_quantity?)
   end
 
+  def is_valid?
+    has_quantity?
+  end
+
   def has_shipping?
     shipping > 0
   end

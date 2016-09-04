@@ -50,6 +50,14 @@ class CreditNote < ActiveRecord::Base
     credit_note_items.any? { |cni| cni.has_credit? }
   end
 
+  def has_quantity?
+    credit_note_items.any?(&:has_quantity?)
+  end
+
+  def is_valid?
+    has_quantity?
+  end
+
   def total
     credit_note_items.inject(0) {|acc, cur| acc = acc + cur.total }
   end

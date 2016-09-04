@@ -7,6 +7,7 @@ class NotificationWorker
   def perform
     Notification
       .pending
+      .select { |n| n.has_documents? }
       .each(&method(:process))
   end
 

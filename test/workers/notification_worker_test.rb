@@ -26,37 +26,28 @@ class NotificationWorkerTest < ActiveSupport::TestCase
     assert notification.processed?
   end
 
-  test "Should send credit note notification when has credit note and wants credit" do
-    notification = create(:notification_with_credit_note)
+  test "Should not send notification when missing both order and credit note" do
+    notification = create(:notification_invalid)
 
-    VCR.use_cassette('mail_gun/001') do
-      NotificationWorker.new.perform
-    end
+    worker = NotificationWorker.new
 
-    notification.reload
-    assert notification.processed?
-  end
+    process_notification_worker_spy = Spy.on(worker, :process)
 
-  test "Should not send notification when has not order and credit note" do
-    notification = create(:notification)
+    worker.perform
 
-    VCR.use_cassette('mail_gun/001') do
-      NotificationWorker.new.perform
-    end
-
-    notification.reload
-    assert notification.processed?
+    refute process_notification_worker_spy.has_been_called?
   end
 
   test "Should not send notification when processed" do
-    notification = create(:notification, :processed)
+    notification = create(:notification_with_sales_order, :processed)
 
-    VCR.use_cassette('mail_gun/001') do
-      NotificationWorker.new.perform
-    end
+    worker = NotificationWorker.new
 
-    notification.reload
-    assert notification.processed?
+    process_notification_worker_spy = Spy.on(worker, :process)
+
+    worker.perform
+
+    refute process_notification_worker_spy.has_been_called?
   end
 
 end

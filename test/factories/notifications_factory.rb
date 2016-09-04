@@ -6,23 +6,24 @@ FactoryGirl.define do
       notification_state { Notification.notification_states[:processed] }
     end
 
-    trait :renderer do
-      renderer "UpdatedSalesOrder"
+    factory :notification_invalid do
+      renderer "SalesOrder"
     end
 
     factory :notification_with_sales_order do
-      renderer "UpdatedSalesOrder"
+      renderer "SalesOrder"
       order { create(:order, :sales_order) }
     end
 
     factory :notification_with_purchase_order do
-      renderer "UpdatedPurchaseOrder"
+      renderer "PurchaseOrder"
       order { create(:order, :purchase_order) }
     end
 
-    factory :notification_with_credit_note do
-      renderer "UpdatedCreditNote"
-      credit_note
+    factory :notification_with_fulfillment do
+      renderer "Fulfillment"
+      order { create(:fulfillment) }
     end
+
   end
 end

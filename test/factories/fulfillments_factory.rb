@@ -1,9 +1,9 @@
 FactoryGirl.define do
   factory :fulfillment do
     route_visit
-    order
-    credit_note
     pod
+    association :order, factory: :order_with_items
+    association :credit_note, factory: :credit_note_with_credit_note_items
 
     trait :fulfilled do
       delivery_state { Fulfillment.delivery_states[:fulfilled] }
