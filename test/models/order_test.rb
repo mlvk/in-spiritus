@@ -101,4 +101,21 @@ class OrderTest < ActiveSupport::TestCase
     order2 = create(:sales_order_with_items)
     assert_equal(order2.order_number, order2.order_number.downcase)
   end
+
+  test "should be able to clone an order to a new date" do
+    order = create(:sales_order_with_items, delivery_date: 1.day.ago)
+
+    duplicated_order = order.clone(to_date: Date.today)
+
+    assert_equal(duplicated_order.delivery_date, Date.today)
+    assert_equal(duplicated_order.order_items.count, order.order_items.count)
+  end
+
+  test "raises an error when cloned without a new date" do
+    order = create(:sales_order_with_items, delivery_date: 1.day.ago)
+
+    assert_raise do
+      order.clone
+    end
+  end
 end

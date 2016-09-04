@@ -31,6 +31,28 @@ class OrdersController < ApplicationJsonApiResourcesController
     render json: serializer.serialize_to_hash(resources)
   end
 
+  def duplicate_sales_orders
+    authorize Order
+
+    is_valid = params['fromDate'].present? && params['toDate'].present?
+
+    if is_valid
+      from_date = Date.parse(params['fromDate'])
+      to_date = Date.parse(params['toDate'])
+
+      resources = Order
+        .sales_order
+        .where(delivery_date:from_date)
+        .each { |so|
+          so.clone(to_date: to_date)
+        }
+
+      render json: { status: true }
+    else
+      render json: { status: false, message: "Request not valid" }
+    end
+  end
+
   def generate_pdf
     orders = Order.where(order_number: params['orders'])
 

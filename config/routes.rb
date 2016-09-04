@@ -33,6 +33,7 @@ Rails.application.routes.draw do
 
   # Custom action endpoints
   post 'orders/stub_orders'
+  post 'orders/duplicate_sales_orders'
   post 'orders/generate_pdf'
   post 'documents/generate_packing_documents'
 

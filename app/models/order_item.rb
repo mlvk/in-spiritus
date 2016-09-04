@@ -9,6 +9,12 @@ class OrderItem < ActiveRecord::Base
       .where(item:item)
   end
 
+  def clone(order: nil)
+    raise "Must supply an order when cloning" if order.nil?
+
+    OrderItem.create(order:order, item:item, quantity:quantity, unit_price:unit_price)
+  end
+
   def has_quantity?
     quantity > 0.0
   end

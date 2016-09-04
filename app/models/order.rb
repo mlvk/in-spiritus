@@ -94,6 +94,15 @@ class Order < ActiveRecord::Base
   scope :purchase_order, -> { where(order_type:PURCHASE_ORDER_TYPE)}
   scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
 
+  def clone(to_date: nil)
+    raise "Must specify a to date" if to_date.nil?
+
+    cloned_order = Order.create(location:location, delivery_date:to_date, order_type:order_type)
+    order_items.each { |oi| oi.clone(order:cloned_order) }
+
+    return cloned_order
+  end
+
   def renderer
     sales_order? ? Pdf::Invoice : Pdf::PurchaseOrder
   end

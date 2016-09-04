@@ -1,16 +1,23 @@
+# A scale to use to build various records
+companies = 5
+locations = 3
+users = 3
+products = 12
+ingredients = 20
+
 #### Users
 admin = User.create(first_name:'Tony', last_name:'Starks', email:'admin@wutang.com', authentication_token:'admin_token', password:'password')
 admin.set_admin_role!
 admin.save
 
-FactoryGirl.create_list(:user, 2, :driver)
+FactoryGirl.create_list(:user, users, :driver)
 
-FactoryGirl.create_list(:item, 20, tag: Item::PRODUCT_TYPE, is_sold: true, is_purchased: false)
+FactoryGirl.create_list(:item, products, tag: Item::PRODUCT_TYPE, is_sold: true, is_purchased: false)
 
 FactoryGirl.create_list(:price_tier, 5, items: Item.product)
 
-FactoryGirl.create_list(:company_with_locations, 20, location_count: 4)
-FactoryGirl.create_list(:company_with_locations, 5, :vendor, location_count: 5)
+FactoryGirl.create_list(:company_with_locations, companies, location_count: locations)
+FactoryGirl.create_list(:company_with_locations, companies, :vendor, location_count: locations)
 
 Company.customer.each do |company|
   company.locations.each do |location|
@@ -41,12 +48,17 @@ Company.customer.each do |company|
         location:location,
         item: item)
     end
+
+    FactoryGirl.create(
+      :visit_day,
+      location:location,
+      day:rand(0..6))
   end
 end
 
 Company.vendor.each do |company|
   items = FactoryGirl.create_list(
-    :item, 10,
+    :item, ingredients,
     tag: Item::INGREDIENT_TYPE,
     company: company,
     is_sold: false,
@@ -71,18 +83,18 @@ Company.vendor.each do |company|
   end
 end
 
-3.times do
-  route_visits = RouteVisit.all.sample 30
-
-  # Set position value for route visits
-  position = 0
-  route_visits.each do |rv|
-    rv.position = position
-    position += 10
-  end
-
-  FactoryGirl.create(
-    :route_plan,
-    user: User.all.sample,
-    route_visits: route_visits)
-end
+# 3.times do
+#   route_visits = RouteVisit.all.sample 30
+#
+#   # Set position value for route visits
+#   position = 0
+#   route_visits.each do |rv|
+#     rv.position = position
+#     position += 10
+#   end
+#
+#   FactoryGirl.create(
+#     :route_plan,
+#     user: User.all.sample,
+#     route_visits: route_visits)
+# end
