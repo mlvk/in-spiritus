@@ -30,7 +30,7 @@ module Pdf
         y = @pdf.cursor
 
         @pdf.formatted_text_box [{ text: "Invoice:", styles: [:bold] }], :at => [col1, y]
-        @pdf.formatted_text_box [{ text: order.order_number }], :at => [col2, y]
+        @pdf.formatted_text_box [{ text: order.order_number.upcase }], :at => [col2, y]
 
         y = @pdf.cursor - 30
         @pdf.formatted_text_box [{ text: "Delivery date:", size: 10}], :at => [col1, y]
@@ -46,15 +46,13 @@ module Pdf
         end
 
         @pdf.bounding_box([col2, y], :width => 300, :height => 20) do
-         name = "#{order.location.company.name} - #{order.location.name} - #{order.location.id}"
+         name = "#{order.location.code.upcase} - #{order.location.name} - #{order.location.company.name}"
          @pdf.formatted_text_box [{ text: name, size: 12, styles: [:bold, :italic] }], :valign => :bottom
         end
 
         y = @pdf.cursor - 5
         @pdf.bounding_box([col2, y], :width => 300, :height => 30) do
-          # address = "#{order.location.address.street}\n#{order.location.address.city}, #{order.location.address.state} #{order.location.address.zip}"
           @pdf.formatted_text_box [{ text: order.location.address.to_s, size: 10 }]
-          # transparent(0.5) { stroke_bounds }
         end
       end
 
@@ -106,7 +104,7 @@ module Pdf
       height = 17
 
       @pdf.line_width = 0.5
-      # dash(8, :space => 20, :phase => 5)
+
       @pdf.transparent(0.5) { @pdf.stroke_horizontal_line 0, 540, :at => y + 2 }
 
       @pdf.bounding_box([-10, y], :width => 30, :height => height) do
@@ -140,8 +138,6 @@ module Pdf
     end
 
     def shipping(val)
-      # guide_y
-      # guide_x
       y = @pdf.cursor
       @pdf.line_width = 1
 
@@ -158,8 +154,6 @@ module Pdf
     end
 
     def total(val)
-      # guide_y
-      # guide_x
       y = @pdf.cursor
       @pdf.line_width = 0.25
 
@@ -177,43 +171,48 @@ module Pdf
 
     def pod(order)
       size = 30
-      y = 210
-      x = 540/2-(size*4)/2
+      y = 730
+      x = 440
+      rotation = -90
 
-      signature = Maybe(order).fulfillment.pod.signature._
+      pod = Maybe(order).fulfillment.pod._
+      signature = Maybe(pod).signature._
 
       if signature.present?
         img = StringIO.new(Base64.decode64(signature['data:image/png;base64,'.length .. -1]))
 
-        @pdf.bounding_box([x, y], :width => size*4, :height => size) do
-          @pdf.formatted_text_box [{ text: 'Received', size: size/3}], :align => :left, :valign => :bottom
-        end
+        @pdf.rotate(rotation, :origin => [x, y]) do
 
-        y = @pdf.cursor
-        @pdf.bounding_box([x, y], :width => size*4, :height => size) do
-         @pdf.image img, :height => size, :position => :center, :vposition => :bottom
+          @pdf.bounding_box([x, y], :width => size*4, :height => size) do
+            @pdf.formatted_text_box [{ text: 'Received', size: size/3}], :align => :left, :valign => :bottom
+          end
 
-         @pdf.stroke_color "FF5500"
-         @pdf.line_width = 2
-         @pdf.join_style = :miter
-         @pdf.stroke_bounds
+          y = @pdf.cursor
+          @pdf.bounding_box([x, y], :width => size*4, :height => size) do
+           @pdf.image img, :height => size, :position => :center, :vposition => :bottom
 
-         @pdf.stroke_color "000000"
+           @pdf.stroke_color "FF5500"
+           @pdf.line_width = 1
+           @pdf.join_style = :miter
+           @pdf.stroke_bounds
+
+           @pdf.stroke_color "000000"
+         end
+
+         y = @pdf.cursor - 5
+         @pdf.bounding_box([x, y], :width => size*4, :height => size/3) do
+           name = pod.name
+           date = pod.signed_at.strftime('%d/%m/%y - %l:%m%P')
+           @pdf.formatted_text_box [{ text: "#{date} - #{name}", size: size/4.5, styles: [:italic, :bold]}], :align => :left, :valign => :top
+         end
+
        end
 
-       y = @pdf.cursor - 5
-       @pdf.bounding_box([x, y], :width => size*4, :height => size/3) do
-         name = Maybe(order).fulfillment.pod.name.fetch('')
-         date = '01/12/16 - 10:42am'
-         @pdf.formatted_text_box [{ text: "#{date} - #{name}", size: size/4.5, styles: [:italic, :bold]}], :align => :left, :valign => :top
-       end
-
-       @pdf.image "app/assets/images/stamp_icon.png", :at => [x + size*3.5, y+size], :width => size/2
       end
     end
 
     def footer
-      @pdf.image "app/assets/images/footer.png", :at => [0, 140], :width => 540
+      @pdf.svg IO.read("app/assets/images/invoice_footer.svg"), :at => [0, 140], :width => 540
     end
 
   end

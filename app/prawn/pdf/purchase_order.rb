@@ -1,9 +1,13 @@
 module Pdf
   class PurchaseOrder
 
-    # def guide_y(y = cursor)
-    #   stroke_axis(:at => [0, y], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
-    # end
+    def guide_y(y = @pdf.cursor)
+      @pdf.stroke_axis(:at => [0, y], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
+    end
+
+    def guide_x(x = @pdf.cursor)
+      @pdf.stroke_axis(:at => [x, 0], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
+    end
 
     def initialize(order, pdf)
       @order = order
@@ -13,17 +17,20 @@ module Pdf
       body(590, order)
 
       @pdf.start_new_page if @pdf.cursor < 175
+
+      footer
+      pod(order)
     end
 
     def header(start_y, order)
       col1 = 10
-      col2 = 130
+      col2 = 110
 
       @pdf.bounding_box([0, start_y], :width => 540, :height => 120) do
         y = @pdf.cursor
 
         @pdf.formatted_text_box [{ text: "Purchase Order:", styles: [:bold] }], :at => [col1, y]
-        @pdf.formatted_text_box [{ text: order.order_number }], :at => [col2, y]
+        @pdf.formatted_text_box [{ text: order.order_number.upcase }], :at => [col2, y]
 
         y = @pdf.cursor - 30
         @pdf.formatted_text_box [{ text: "Delivery date:", size: 10}], :at => [col1, y]
@@ -35,16 +42,14 @@ module Pdf
         end
 
         @pdf.bounding_box([col2, y], :width => 300, :height => 20) do
-         name = "ML Vegan Kitchen"
+         name = "For pickup"
          @pdf.formatted_text_box [{ text: name, size: 12, styles: [:bold, :italic] }], :valign => :bottom
         end
 
-        y = @pdf.cursor - 5
-        @pdf.bounding_box([col2, y], :width => 300, :height => 30) do
-          # address = "#{order.location.address.street}\n#{order.location.address.city}, #{order.location.address.state} #{order.location.address.zip}"
-          @pdf.formatted_text_box [{ text: "86 7th Ave, Brooklyn NY", size: 10 }]
-          # transparent(0.5) { stroke_bounds }
-        end
+        # y = @pdf.cursor - 5
+        # @pdf.bounding_box([col2, y], :width => 300, :height => 30) do
+        #   @pdf.formatted_text_box [{ text: order.location.address.to_s, size: 10 }]
+        # end
       end
 
       @pdf.image "app/assets/images/logo.png", :width => 120, :at => [ 430, start_y+10]
@@ -61,6 +66,7 @@ module Pdf
           order_row(order_item, index)
         end
 
+      shipping(order.shipping)
       total(order.total)
     end
 
@@ -94,7 +100,7 @@ module Pdf
       height = 17
 
       @pdf.line_width = 0.5
-      # dash(8, :space => 20, :phase => 5)
+
       @pdf.transparent(0.5) { @pdf.stroke_horizontal_line 0, 540, :at => y + 2 }
 
       @pdf.bounding_box([-10, y], :width => 30, :height => height) do
@@ -127,10 +133,25 @@ module Pdf
       @pdf.start_new_page if @pdf.cursor < 20
     end
 
-    def total(val)
-      # guide_y
+    def shipping(val)
       y = @pdf.cursor
       @pdf.line_width = 1
+
+      @pdf.dash(1, :space => 0, :phase => 0)
+      @pdf.stroke_horizontal_line 380, 540
+
+      @pdf.bounding_box([340, y], :width => 100, :height => 20) do
+       @pdf.formatted_text_box [{ text: 'Shipping', size: 9, styles:[:bold]}], :align => :right, :valign => :center
+      end
+
+      @pdf.bounding_box([500, y], :width => 35, :height => 20) do
+       @pdf.formatted_text_box [{ text: val.to_s, size: 11}], :align => :right, :valign => :center
+      end
+    end
+
+    def total(val)
+      y = @pdf.cursor
+      @pdf.line_width = 0.25
 
       @pdf.dash(1, :space => 0, :phase => 0)
       @pdf.stroke_horizontal_line 380, 540
@@ -142,7 +163,53 @@ module Pdf
       @pdf.bounding_box([500, y], :width => 35, :height => 20) do
        @pdf.formatted_text_box [{ text: val.to_s, size: 11}], :align => :right, :valign => :center
       end
-
     end
+
+    def pod(order)
+      size = 30
+      y = 730
+      x = 440
+      rotation = -90
+
+      pod = Maybe(order).fulfillment.pod._
+      signature = Maybe(pod).signature._
+
+      if signature.present?
+        img = StringIO.new(Base64.decode64(signature['data:image/png;base64,'.length .. -1]))
+
+        @pdf.rotate(rotation, :origin => [x, y]) do
+
+          @pdf.bounding_box([x, y], :width => size*4, :height => size) do
+            @pdf.formatted_text_box [{ text: 'Received', size: size/3}], :align => :left, :valign => :bottom
+          end
+
+          y = @pdf.cursor
+          @pdf.bounding_box([x, y], :width => size*4, :height => size) do
+           @pdf.image img, :height => size, :position => :center, :vposition => :bottom
+
+           @pdf.stroke_color "FF5500"
+           @pdf.line_width = 1
+           @pdf.join_style = :miter
+           @pdf.stroke_bounds
+
+           @pdf.stroke_color "000000"
+         end
+
+         y = @pdf.cursor - 5
+         @pdf.bounding_box([x, y], :width => size*4, :height => size/3) do
+           name = pod.name
+           date = pod.signed_at.strftime('%d/%m/%y - %l:%m%P')
+           @pdf.formatted_text_box [{ text: "#{date} - #{name}", size: size/4.5, styles: [:italic, :bold]}], :align => :left, :valign => :top
+         end
+
+       end
+
+      end
+    end
+
+    def footer
+      @pdf.svg IO.read("app/assets/images/purchase_order_footer.svg"), :at => [0, 140], :width => 540
+    end
+
   end
 end

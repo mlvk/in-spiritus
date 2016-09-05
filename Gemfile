@@ -28,6 +28,7 @@ gem 'sidekiq-unique-jobs'
 
 # Printing
 gem 'prawn'
+gem 'prawn-svg'
 
 # Mail
 gem 'mailgun-ruby', require: 'mailgun'
