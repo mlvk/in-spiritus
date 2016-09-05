@@ -19,6 +19,7 @@ module Pdf
       @pdf.start_new_page if @pdf.cursor < 175
 
       footer
+      pod(credit_note)
     end
 
     def header(start_y, credit_note)
@@ -144,6 +145,48 @@ module Pdf
 
       @pdf.bounding_box([500, y], :width => 35, :height => 20) do
        @pdf.formatted_text_box [{ text: val.to_s, size: 11}], :align => :right, :valign => :center
+      end
+    end
+
+    def pod(credit_note)
+      size = 30
+      y = 730
+      x = 440
+      rotation = -90
+
+      pod = Maybe(credit_note).fulfillment.pod._
+      signature = Maybe(pod).signature._
+
+      if signature.present?
+        img = StringIO.new(Base64.decode64(signature['data:image/png;base64,'.length .. -1]))
+
+        @pdf.rotate(rotation, :origin => [x, y]) do
+
+          @pdf.bounding_box([x, y], :width => size*4, :height => size) do
+            @pdf.formatted_text_box [{ text: 'Confirmed', size: size/3}], :align => :left, :valign => :bottom
+          end
+
+          y = @pdf.cursor
+          @pdf.bounding_box([x, y], :width => size*4, :height => size) do
+           @pdf.image img, :height => size, :position => :center, :vposition => :bottom
+
+           @pdf.stroke_color "FF5500"
+           @pdf.line_width = 1
+           @pdf.join_style = :miter
+           @pdf.stroke_bounds
+
+           @pdf.stroke_color "000000"
+         end
+
+         y = @pdf.cursor - 5
+         @pdf.bounding_box([x, y], :width => size*4, :height => size/3) do
+           name = pod.name
+           date = pod.signed_at.strftime('%d/%m/%y - %l:%m%P')
+           @pdf.formatted_text_box [{ text: "#{date} - #{name}", size: size/4.5, styles: [:italic, :bold]}], :align => :left, :valign => :top
+         end
+
+       end
+
       end
     end
 
