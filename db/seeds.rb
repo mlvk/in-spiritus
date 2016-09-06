@@ -32,8 +32,7 @@ Company.customer.each do |company|
       location: location)
 
     FactoryGirl.create(
-      :notification,
-      :renderer,
+      :notification_invalid,
       order:order,
       notification_rule: notification_rule)
 
@@ -76,8 +75,7 @@ Company.vendor.each do |company|
       location: location)
 
     FactoryGirl.create(
-      :notification,
-      :renderer,
+      :notification_invalid,
       order:order,
       notification_rule: notification_rule)
   end
