@@ -70,10 +70,11 @@ module Pdf
         @pdf.formatted_text_box [{ text: label, size: 11}], :align => :left, :valign => :center
       end
 
+      # Locations
       @pdf.bounding_box([col3, y], :width => 200, :height => height) do
-        location_id = route_visit.fulfillments.first.order.location.id
+        location_code = route_visit.fulfillments.first.order.location.code.upcase
         location_name = route_visit.fulfillments.first.order.location.name
-        label = route_visit.has_multiple? ? 'Multiple orders' : "#{location_id} - #{location_name}"
+        label = route_visit.has_multiple? ? 'Multiple orders' : "#{location_code} - #{location_name}"
         @pdf.formatted_text_box [{ text: label, size: 9}], :align => :left, :valign => :center
       end
 
@@ -96,9 +97,9 @@ module Pdf
           .select(&:has_quantity?)
           .each_with_index do |order, i|
           @pdf.bounding_box([col3, y], :width => 300, :height => height) do
-            location_id = order.location.id
+            location_code = order.location.code.upcase
             location_name = order.location.name
-            label = "#{location_id} - #{location_name}"
+            label = "#{location_code} - #{location_name}"
             @pdf.formatted_text_box [{ text: label, size: 8}], :align => :left, :valign => :center
           end
           y = @pdf.cursor + 5
