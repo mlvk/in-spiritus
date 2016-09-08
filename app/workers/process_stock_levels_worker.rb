@@ -14,7 +14,7 @@ class ProcessStockLevelsWorker
         item = stock_level.item
         ending_level = stock_level.ending_level
 
-        last_stock_levels = location.stock_levels_for_item(item).limit(10)
+        last_stock_levels = location.stock_levels_for_item(item).limit(2)
         index_of_current = last_stock_levels.index { |sl| sl.id == stock_level.id }
         previous_stock_level = last_stock_levels[index_of_current - 1]
 
