@@ -33,6 +33,14 @@ class Location < ActiveRecord::Base
 		"#{id} - #{name}"
 	end
 
+	def stock_levels_for_item(item)
+		StockLevel
+			.joins(:stock)
+			.where(stocks: {location_id: id})
+			.order("stocks.taken_at DESC")
+			.where(item_id: item.id)
+	end
+
 	private
 	def pre_process_code
 		generate_code unless valid_code?

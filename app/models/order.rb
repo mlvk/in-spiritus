@@ -103,6 +103,10 @@ class Order < ActiveRecord::Base
     return cloned_order
   end
 
+  def quantity_of_item(item)
+    Maybe(order_items.find_by(item:item)).quantity.fetch(0)
+  end
+
   def renderer
     sales_order? ? Pdf::Invoice : Pdf::PurchaseOrder
   end
