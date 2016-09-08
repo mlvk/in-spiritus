@@ -93,6 +93,7 @@ class Order < ActiveRecord::Base
 
   scope :purchase_order, -> { where(order_type:PURCHASE_ORDER_TYPE)}
   scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
+  scope :has_active_location, -> { joins(:location).where(locations: {active: true}) }
 
   def clone(to_date: nil)
     raise "Must specify a to date" if to_date.nil?

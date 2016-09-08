@@ -28,6 +28,7 @@ class Location < ActiveRecord::Base
 
 	scope :customer, -> { joins(:company).where(companies: {is_customer: true}) }
 	scope :with_valid_address, -> { where("address_id IS NOT NULL") }
+	scope :active, -> { where(active:true) }
 
 	def full_name
 		"#{id} - #{name}"

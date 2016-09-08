@@ -8,6 +8,7 @@ class OrdersController < ApplicationJsonApiResourcesController
     delivery_date = Date.parse(params['deliveryDate'])
 
     allLocations = Location
+      .active
       .customer
       .with_valid_address
       .scheduled_for_delivery_on?(delivery_date.cwday)
@@ -43,6 +44,7 @@ class OrdersController < ApplicationJsonApiResourcesController
       resources = Order
         .sales_order
         .where(delivery_date:from_date)
+        .has_active_location
         .each { |so|
           so.clone(to_date: to_date)
         }
