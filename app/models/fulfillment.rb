@@ -47,6 +47,8 @@ class Fulfillment < ActiveRecord::Base
 
   has_one :location, through: :order
 
+  scope :belongs_to_sales_order, -> { joins(:order).where(orders: {order_type: Order::SALES_ORDER_TYPE}) }
+
   def has_processed_notification?
     notifications.processed.present?
   end
