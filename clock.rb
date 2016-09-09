@@ -6,6 +6,7 @@ module Clockwork
   handler {|job| job.perform_async}
 
   every(1.day, CleanTmpFilesWorker, :at => '00:00')
+  every(1.day, NotifyAdminWorker, :at => '23:00')
 
   every(10.seconds, SyncLocalItemsWorker)
   every(10.seconds, SyncLocalCompaniesWorker)
