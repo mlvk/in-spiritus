@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160904210418) do
+ActiveRecord::Schema.define(version: 20160908223925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,7 +138,7 @@ ActiveRecord::Schema.define(version: 20160904210418) do
     t.string   "unit_of_measure", limit: 255
     t.string   "description"
     t.integer  "company_id"
-    t.integer  "position"
+    t.decimal  "position",                    default: 0.0
     t.decimal  "default_price",               default: 0.0,          null: false
     t.boolean  "is_sold",                     default: false,        null: false
     t.boolean  "is_purchased",                default: true,         null: false
