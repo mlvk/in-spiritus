@@ -18,7 +18,14 @@ class RouteVisitResource < JSONAPI::Resource
   filter      :date
 
   filter :status, default: 'with_valid_orders', apply: ->(records, value, _options) {
-    records.joins(orders: :order_items).where('order_items.quantity > ?', 0).distinct
+    case value.first
+    when "with_valid_orders"
+      records.joins(orders: :order_items).where('order_items.quantity > ?', 0).distinct
+    when "all"
+      records
+    else
+      raise "Status is not valid, use either with_valid_orders or all"
+    end
   }
 
   filter :has_route_plan, apply: ->(records, value, _options) {

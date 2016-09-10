@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   has_many :route_plans
   has_many :stocks
   has_many :pods
+  has_many :route_plan_blueprints
 
   def name
     "#{self.first_name} #{self.last_name}"

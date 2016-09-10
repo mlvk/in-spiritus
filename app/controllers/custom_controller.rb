@@ -4,7 +4,7 @@ class CustomController < ApplicationJsonApiResourcesController
 
     type, key, value = params.values_at(:type, :key, :value)
     clazz = type.camelize.constantize
-    is_unique = clazz.find_by("#{key}": value).nil?
+    is_unique = clazz.find_by("#{key}": value.downcase).nil?
 
     render json: {unique: is_unique}
   end

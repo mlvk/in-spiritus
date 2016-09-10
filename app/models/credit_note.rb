@@ -30,6 +30,7 @@ class CreditNote < ActiveRecord::Base
 
   has_one :fulfillment, dependent: :nullify, autosave: true
   has_many :credit_note_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
+  has_many :notifications, dependent: :nullify, autosave: true
 
   scope :with_credit, -> {
     joins(:credit_note_items)
@@ -47,6 +48,14 @@ class CreditNote < ActiveRecord::Base
 
   def has_credit?
     credit_note_items.any? { |cni| cni.has_credit? }
+  end
+
+  def has_quantity?
+    credit_note_items.any?(&:has_quantity?)
+  end
+
+  def is_valid?
+    has_quantity?
   end
 
   def total

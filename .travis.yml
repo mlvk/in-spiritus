@@ -11,8 +11,16 @@ script:
 - rake
 deploy:
   provider: cloud66
-  redeployment_hook: ${CLOUD66_REDEPLOYMENT_HOOK}
+  redeployment_hook: ${CLOUD66_STAGING_REDEPLOYMENT_HOOK}
   on:
+    branch: development
+    repo: mlvk/in-spiritus
+deploy:
+  provider: cloud66
+  redeployment_hook: ${CLOUD66_PRODUCTION_REDEPLOYMENT_HOOK}
+  on:
+    condition: $TRAVIS_BRANCH == master
+    tags: true
     repo: mlvk/in-spiritus
 addons:
   hosts:

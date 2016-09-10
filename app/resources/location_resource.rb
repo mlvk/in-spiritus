@@ -1,7 +1,8 @@
 class LocationResource < JSONAPI::Resource
   attributes  :name,
               :delivery_rate,
-              :active
+              :active,
+              :code
 
   has_one  :company
   has_one  :address
@@ -12,6 +13,7 @@ class LocationResource < JSONAPI::Resource
   has_many :credit_notes
   has_many :orders
   has_many :stocks
+  has_many :notification_rules
 
   filter :active
 end

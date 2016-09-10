@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.6'
+gem 'rails', '4.2.7'
 gem 'rake', '10.4.2'
 gem 'devise'
 gem 'pg', '0.18.4'
@@ -28,6 +28,7 @@ gem 'sidekiq-unique-jobs'
 
 # Printing
 gem 'prawn'
+gem 'prawn-svg'
 
 # Mail
 gem 'mailgun-ruby', require: 'mailgun'
@@ -42,13 +43,12 @@ group :development do
   gem 'guard-minitest'
 end
 
-group :development, :test do
+group :development, :staging, :test do
   gem 'dotenv-rails'
   gem 'factory_girl'
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'gist'
-  gem 'zeus'
   gem 'pry'
   gem 'pry-byebug'
   gem 'pry-rails'

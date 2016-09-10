@@ -4,7 +4,7 @@ class Order < ActiveRecord::Base
   SALES_ORDER_TYPE = 'sales-order'
   PURCHASE_ORDER_TYPE = 'purchase-order'
 
-  after_create :setup_defaults
+  before_save :setup_defaults
   after_save :update_fulfillment_structure
   before_destroy :clear_fulfillment_structure
 
@@ -66,7 +66,21 @@ class Order < ActiveRecord::Base
     end
   end
 
+  aasm :order_state, :column => :order_state, :skip_validation_on_save => true do
+    state :draft, :initial => true
+    state :approved
+
+    event :mark_draft do
+      transitions :from => [:approved, :draft], :to => :draft
+    end
+
+    event :mark_approved do
+      transitions :from => [:approved, :draft], :to => :approved
+    end
+  end
+
   # State machine settings
+  enum order_state: [ :draft, :approved ]
   enum xero_state: [ :pending, :submitted, :synced, :voided ]
   enum notification_state: [ :pending_notification, :pending_updated_notification, :awaiting_notification, :notified, :awaiting_updated_notification ]
 
@@ -75,9 +89,24 @@ class Order < ActiveRecord::Base
   has_one :fulfillment
   has_one :route_visit, through: :fulfillment
   has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
+  has_many :notifications, dependent: :nullify, autosave: true
 
   scope :purchase_order, -> { where(order_type:PURCHASE_ORDER_TYPE)}
   scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
+  scope :has_active_location, -> { joins(:location).where(locations: {active: true}) }
+
+  def clone(to_date: nil)
+    raise "Must specify a to date" if to_date.nil?
+
+    cloned_order = Order.create(location:location, delivery_date:to_date, order_type:order_type)
+    order_items.each { |oi| oi.clone(order:cloned_order) }
+
+    return cloned_order
+  end
+
+  def quantity_of_item(item)
+    Maybe(order_items.find_by(item:item)).quantity.fetch(0)
+  end
 
   def renderer
     sales_order? ? Pdf::Invoice : Pdf::PurchaseOrder
@@ -93,6 +122,10 @@ class Order < ActiveRecord::Base
 
   def has_quantity?
     order_items.any?(&:has_quantity?)
+  end
+
+  def is_valid?
+    has_quantity?
   end
 
   def has_shipping?
@@ -118,20 +151,26 @@ class Order < ActiveRecord::Base
 
   private
   def setup_defaults
-    generate_order_number
-    set_shipping
+    generate_order_number unless valid_order_number?
+    self.order_number = order_number.downcase
+
+    set_default_shipping unless shipping.present?
   end
 
   def generate_order_number
-    if order_number.nil?
-      prefix = sales_order? ? 'SO' : 'PO'
-      new_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
-      update_columns(order_number: new_number)
-    end
+    prefix = sales_order? ? 'SO' : 'PO'
+    self.order_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}".downcase
+
+    generate_order_number unless valid_order_number?
   end
 
-  def set_shipping
-    update_columns(shipping: location.delivery_rate)
+  def valid_order_number?
+    match = Order.find_by(order_number: order_number)
+    (match.nil? || match == self) && order_number.present?
+  end
+
+  def set_default_shipping
+    self.shipping = location.delivery_rate
   end
 
   def stale_route_visit?

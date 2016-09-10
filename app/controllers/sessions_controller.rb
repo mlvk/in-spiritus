@@ -13,7 +13,8 @@ class SessionsController < Devise::SessionsController
       first_name: self.resource.first_name,
       last_name: self.resource.last_name,
       email: self.resource.email,
-      role: self.resource.role
+      role: self.resource.role,
+      mapbox_api_token: ENV['MAPBOX_API_TOKEN']
     }
 
     render json: data, status: 201

@@ -1,6 +1,4 @@
 class Fulfillment < ActiveRecord::Base
-  # after_create :create_linked_resources
-
   include AASM
 
   aasm :fulfillment, :column => :delivery_state, :skip_validation_on_save => true do
@@ -37,7 +35,6 @@ class Fulfillment < ActiveRecord::Base
     end
   end
 
-  # State machine settings
   enum delivery_state: [ :pending, :fulfilled, :processed ]
   enum notification_state: [ :awaiting, :notified, :awaiting_updated ]
 
@@ -46,56 +43,29 @@ class Fulfillment < ActiveRecord::Base
   belongs_to :stock
   belongs_to :pod
   belongs_to :credit_note
+  has_many   :notifications, dependent: :nullify, autosave: true
 
-  # has_one :visit_window, through: :route_visit
-  # has_one :location, through: :visit_window
-  # has_one :company, through: :location
-  # has_one :price_tier, through: :company
-  # has_many :item_desires, through: :location
-  # has_many :item_prices, through: :price_tier
-  # has_many :item_credit_rates, through: :location
+  has_one :location, through: :order
 
-  # private
-  # def create_linked_resources
-  #   build_stock
-  #   build_credit_note
-  #   build_pod
-  #
-  #   save
-  # end
-  #
-  # def build_stock
-  #   if stock.nil?
-  #     self.stock = Stock.create(location:location)
-  #     item_desires
-  #       .select {|item_desire| item_desire.enabled}
-  #       .each do |item_desire|
-  #         StockLevel.create(
-  #           item:item_desire.item,
-  #           stock:self.stock)
-  #         end
-  #   end
-  # end
-  #
-  # def build_credit_note
-  #   if credit_note.nil?
-  #     self.credit_note = CreditNote.create(location:location, date:order.delivery_date)
-  #     item_desires
-  #       .select {|item_desire| item_desire.enabled}
-  #       .each do |item_desire|
-  #         credit_rate = Maybe(item_credit_rates.where(item:item_desire.item).first)[:rate].fetch(0.0)
-  #         price = Maybe(item_prices.where(item:item_desire.item).first)[:price].fetch(0.0)
-  #         CreditNoteItem.create(
-  #           item:item_desire.item,
-  #           unit_price:price * credit_rate,
-  #           credit_note:self.credit_note)
-  #       end
-  #   end
-  # end
-  #
-  # def build_pod
-  #   if pod.nil?
-  #     self.pod = Pod.create
-  #   end
-  # end
+  scope :belongs_to_sales_order, -> { joins(:order).where(orders: {order_type: Order::SALES_ORDER_TYPE}) }
+
+  def has_processed_notification?
+    notifications.processed.present?
+  end
+
+  def has_pending_notification?
+    notifications.pending.present?
+  end
+
+  def never_notified?
+    notifications.empty?
+  end
+
+  def has_valid_order?
+    order.is_valid?
+  end
+
+  def is_valid?
+    order.is_valid? || credit_note.is_valid?
+  end
 end

@@ -1,9 +1,13 @@
 module Pdf
   class CreditNote
 
-    # def guide_y(y = cursor)
-    #   stroke_axis(:at => [0, y], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
-    # end
+    def guide_y(y = @pdf.cursor)
+      @pdf.stroke_axis(:at => [0, y], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
+    end
+
+    def guide_x(x = @pdf.cursor)
+      @pdf.stroke_axis(:at => [x, 0], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
+    end
 
     def initialize(credit_note, pdf)
       @credit_note = credit_note
@@ -15,42 +19,36 @@ module Pdf
       @pdf.start_new_page if @pdf.cursor < 175
 
       footer
-      # pod(credit_note)
+      pod(credit_note)
     end
 
     def header(start_y, credit_note)
       col1 = 10
-      col2 = 80
+      col2 = 110
 
       @pdf.bounding_box([0, start_y], :width => 540, :height => 120) do
         y = @pdf.cursor
 
-        @pdf.formatted_text_box [{ text: "Invoice:", styles: [:bold] }], :at => [col1, y]
-        @pdf.formatted_text_box [{ text: credit_note.credit_note_number }], :at => [col2, y]
+        @pdf.formatted_text_box [{ text: "Credit Note:", styles: [:bold] }], :at => [col1, y]
+        @pdf.formatted_text_box [{ text: credit_note.credit_note_number.upcase }], :at => [col2, y]
 
         y = @pdf.cursor - 30
-        @pdf.formatted_text_box [{ text: "Delivery date:", size: 10}], :at => [col1, y]
-        @pdf.formatted_text_box [{ text: credit_note.delivery_date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
+        @pdf.formatted_text_box [{ text: "Date:", size: 10}], :at => [col1, y]
+        @pdf.formatted_text_box [{ text: credit_note.date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
 
         y = @pdf.cursor - 45
-        @pdf.formatted_text_box [{ text: "Due date:", size: 10}], :at => [col1, y]
-        @pdf.formatted_text_box [{ text: credit_note.due_date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
-
-        y = @pdf.cursor - 60
         @pdf.bounding_box([col1, y], :width => 50, :height => 20) do
-         @pdf.formatted_text_box [{ text: "Ship to:", size: 10}], :valign => :bottom
+         @pdf.formatted_text_box [{ text: "Credit for:", size: 10}], :valign => :bottom
         end
 
         @pdf.bounding_box([col2, y], :width => 300, :height => 20) do
-         name = "#{credit_note.location.company.name} - #{credit_note.location.name} - #{credit_note.location.id}"
+         name = "#{credit_note.location.code.upcase} - #{credit_note.location.name} - #{credit_note.location.company.name}"
          @pdf.formatted_text_box [{ text: name, size: 12, styles: [:bold, :italic] }], :valign => :bottom
         end
 
         y = @pdf.cursor - 5
         @pdf.bounding_box([col2, y], :width => 300, :height => 30) do
-          # address = "#{credit_note.location.address.street}\n#{credit_note.location.address.city}, #{credit_note.location.address.state} #{credit_note.location.address.zip}"
           @pdf.formatted_text_box [{ text: credit_note.location.address.to_s, size: 10 }]
-          # transparent(0.5) { stroke_bounds }
         end
       end
 
@@ -88,7 +86,7 @@ module Pdf
       end
 
       @pdf.bounding_box([450, y], :width => 35, :height => height) do
-       @pdf.formatted_text_box [{ text: "PRICE", styles: [:bold], size: 9 }], :align => :right
+       @pdf.formatted_text_box [{ text: "CREDIT", styles: [:bold], size: 9 }], :align => :right
       end
 
       @pdf.bounding_box([500, y], :width => 35, :height => height) do
@@ -101,7 +99,7 @@ module Pdf
       height = 17
 
       @pdf.line_width = 0.5
-      # dash(8, :space => 20, :phase => 5)
+
       @pdf.transparent(0.5) { @pdf.stroke_horizontal_line 0, 540, :at => y + 2 }
 
       @pdf.bounding_box([-10, y], :width => 30, :height => height) do
@@ -135,62 +133,65 @@ module Pdf
     end
 
     def total(val)
-      # guide_y
       y = @pdf.cursor
-      @pdf.line_width = 1
+      @pdf.line_width = 0.25
 
       @pdf.dash(1, :space => 0, :phase => 0)
       @pdf.stroke_horizontal_line 380, 540
 
       @pdf.bounding_box([340, y], :width => 100, :height => 20) do
-       @pdf.formatted_text_box [{ text: 'Total', size: 9, styles:[:bold]}], :align => :right, :valign => :center
+       @pdf.formatted_text_box [{ text: 'Total credit', size: 9, styles:[:bold]}], :align => :right, :valign => :center
       end
 
       @pdf.bounding_box([500, y], :width => 35, :height => 20) do
        @pdf.formatted_text_box [{ text: val.to_s, size: 11}], :align => :right, :valign => :center
       end
-
     end
 
     def pod(credit_note)
       size = 30
-      y = 210
-      x = 540/2-(size*4)/2
+      y = 730
+      x = 440
+      rotation = -90
 
-      signature = Maybe(credit_note).fulfillment.pod.signature._
+      pod = Maybe(credit_note).fulfillment.pod._
+      signature = Maybe(pod).signature._
 
       if signature.present?
         img = StringIO.new(Base64.decode64(signature['data:image/png;base64,'.length .. -1]))
 
-        @pdf.bounding_box([x, y], :width => size*4, :height => size) do
-          @pdf.formatted_text_box [{ text: 'Received', size: size/3}], :align => :left, :valign => :bottom
-        end
+        @pdf.rotate(rotation, :origin => [x, y]) do
 
-        y = @pdf.cursor
-        @pdf.bounding_box([x, y], :width => size*4, :height => size) do
-         @pdf.image img, :height => size, :position => :center, :vposition => :bottom
+          @pdf.bounding_box([x, y], :width => size*4, :height => size) do
+            @pdf.formatted_text_box [{ text: 'Confirmed', size: size/3}], :align => :left, :valign => :bottom
+          end
 
-         @pdf.stroke_color "FF5500"
-         @pdf.line_width = 2
-         @pdf.join_style = :miter
-         @pdf.stroke_bounds
+          y = @pdf.cursor
+          @pdf.bounding_box([x, y], :width => size*4, :height => size) do
+           @pdf.image img, :height => size, :position => :center, :vposition => :bottom
 
-         @pdf.stroke_color "000000"
+           @pdf.stroke_color "FF5500"
+           @pdf.line_width = 1
+           @pdf.join_style = :miter
+           @pdf.stroke_bounds
+
+           @pdf.stroke_color "000000"
+         end
+
+         y = @pdf.cursor - 5
+         @pdf.bounding_box([x, y], :width => size*4, :height => size/3) do
+           name = pod.name
+           date = pod.signed_at.strftime('%d/%m/%y - %l:%m%P')
+           @pdf.formatted_text_box [{ text: "#{date} - #{name}", size: size/4.5, styles: [:italic, :bold]}], :align => :left, :valign => :top
+         end
+
        end
 
-       y = @pdf.cursor - 5
-       @pdf.bounding_box([x, y], :width => size*4, :height => size/3) do
-         name = Maybe(credit_note).fulfillment.pod.name.fetch('')
-         date = '01/12/16 - 10:42am'
-         @pdf.formatted_text_box [{ text: "#{date} - #{name}", size: size/4.5, styles: [:italic, :bold]}], :align => :left, :valign => :top
-       end
-
-       @pdf.image "app/assets/images/stamp_icon.png", :at => [x + size*3.5, y+size], :width => size/2
       end
     end
 
     def footer
-      @pdf.image "app/assets/images/footer.png", :at => [0, 140], :width => 540
+      @pdf.svg IO.read("app/assets/images/credit_note_footer.svg"), :at => [0, 140], :width => 540
     end
 
   end

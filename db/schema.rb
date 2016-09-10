@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160717202524) do
+ActiveRecord::Schema.define(version: 20160908223925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,19 +28,21 @@ ActiveRecord::Schema.define(version: 20160717202524) do
   end
 
   create_table "companies", force: :cascade do |t|
-    t.string   "xero_id",       limit: 255
-    t.integer  "xero_state",                default: 0,     null: false
-    t.string   "name",          limit: 255,                 null: false
-    t.integer  "terms",                     default: 14,    null: false
-    t.boolean  "is_customer",               default: true,  null: false
-    t.boolean  "is_vendor",                 default: false, null: false
+    t.string   "xero_id",              limit: 255
+    t.integer  "xero_state",                       default: 0,     null: false
+    t.string   "name",                 limit: 255,                 null: false
+    t.integer  "terms",                            default: 14,    null: false
+    t.boolean  "is_customer",                      default: true,  null: false
+    t.boolean  "is_vendor",                        default: false, null: false
     t.integer  "price_tier_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "location_code_prefix", limit: 10,                  null: false
   end
 
   add_index "companies", ["is_customer"], name: "index_companies_on_is_customer", using: :btree
   add_index "companies", ["is_vendor"], name: "index_companies_on_is_vendor", using: :btree
+  add_index "companies", ["location_code_prefix"], name: "index_companies_on_location_code_prefix", unique: true, using: :btree
   add_index "companies", ["name"], name: "name", unique: true, using: :btree
   add_index "companies", ["price_tier_id"], name: "index_companies_on_price_tier_id", using: :btree
   add_index "companies", ["xero_id"], name: "index_companies_on_xero_id", unique: true, using: :btree
@@ -136,7 +138,7 @@ ActiveRecord::Schema.define(version: 20160717202524) do
     t.string   "unit_of_measure", limit: 255
     t.string   "description"
     t.integer  "company_id"
-    t.integer  "position"
+    t.decimal  "position",                    default: 0.0
     t.decimal  "default_price",               default: 0.0,          null: false
     t.boolean  "is_sold",                     default: false,        null: false
     t.boolean  "is_purchased",                default: true,         null: false
@@ -163,24 +165,45 @@ ActiveRecord::Schema.define(version: 20160717202524) do
     t.integer  "address_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "code",          limit: 10,                 null: false
   end
 
   add_index "locations", ["active"], name: "index_locations_on_active", using: :btree
   add_index "locations", ["address_id"], name: "index_locations_on_address_id", using: :btree
+  add_index "locations", ["code"], name: "index_locations_on_code", unique: true, using: :btree
   add_index "locations", ["company_id"], name: "index_locations_on_company_id", using: :btree
 
   create_table "notification_rules", force: :cascade do |t|
-    t.string   "first_name",  limit: 255
-    t.string   "last_name",   limit: 255
-    t.string   "email",       limit: 255,                null: false
-    t.integer  "location_id",                            null: false
-    t.boolean  "enabled",                 default: true, null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.string   "first_name",   limit: 255
+    t.string   "last_name",    limit: 255
+    t.string   "email",        limit: 255,                 null: false
+    t.integer  "location_id",                              null: false
+    t.boolean  "enabled",                  default: true,  null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.boolean  "wants_order",              default: false, null: false
+    t.boolean  "wants_credit",             default: false, null: false
   end
 
   add_index "notification_rules", ["enabled"], name: "index_notification_rules_on_enabled", using: :btree
   add_index "notification_rules", ["location_id"], name: "index_notification_rules_on_location_id", using: :btree
+
+  create_table "notifications", force: :cascade do |t|
+    t.integer  "order_id"
+    t.integer  "credit_note_id"
+    t.integer  "notification_rule_id",             null: false
+    t.datetime "processed_at"
+    t.integer  "notification_state",   default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.string   "renderer",                         null: false
+    t.integer  "fulfillment_id"
+  end
+
+  add_index "notifications", ["credit_note_id"], name: "index_notifications_on_credit_note_id", using: :btree
+  add_index "notifications", ["fulfillment_id"], name: "index_notifications_on_fulfillment_id", using: :btree
+  add_index "notifications", ["notification_rule_id"], name: "index_notifications_on_notification_rule_id", using: :btree
+  add_index "notifications", ["order_id"], name: "index_notifications_on_order_id", using: :btree
 
   create_table "order_items", force: :cascade do |t|
     t.integer  "order_id",                 null: false
@@ -206,6 +229,7 @@ ActiveRecord::Schema.define(version: 20160717202524) do
     t.datetime "updated_at"
     t.datetime "submitted_at"
     t.decimal  "shipping",                       default: 0.0
+    t.integer  "order_state",                    default: 0,             null: false
   end
 
   add_index "orders", ["location_id"], name: "index_orders_on_location_id", using: :btree
@@ -380,6 +404,10 @@ ActiveRecord::Schema.define(version: 20160717202524) do
   add_foreign_key "locations", "addresses"
   add_foreign_key "locations", "companies"
   add_foreign_key "notification_rules", "locations"
+  add_foreign_key "notifications", "credit_notes"
+  add_foreign_key "notifications", "fulfillments"
+  add_foreign_key "notifications", "notification_rules"
+  add_foreign_key "notifications", "orders"
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "locations"

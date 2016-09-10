@@ -8,6 +8,7 @@ class OrdersController < ApplicationJsonApiResourcesController
     delivery_date = Date.parse(params['deliveryDate'])
 
     allLocations = Location
+      .active
       .customer
       .with_valid_address
       .scheduled_for_delivery_on?(delivery_date.cwday)
@@ -29,6 +30,29 @@ class OrdersController < ApplicationJsonApiResourcesController
     }
 
     render json: serializer.serialize_to_hash(resources)
+  end
+
+  def duplicate_sales_orders
+    authorize Order
+
+    is_valid = params['fromDate'].present? && params['toDate'].present?
+
+    if is_valid
+      from_date = Date.parse(params['fromDate'])
+      to_date = Date.parse(params['toDate'])
+
+      resources = Order
+        .sales_order
+        .where(delivery_date:from_date)
+        .has_active_location
+        .each { |so|
+          so.clone(to_date: to_date)
+        }
+
+      render json: { status: true }
+    else
+      render json: { status: false, message: "Request not valid" }
+    end
   end
 
   def generate_pdf

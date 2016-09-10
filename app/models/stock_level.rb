@@ -26,4 +26,11 @@ class StockLevel < ActiveRecord::Base
 
   belongs_to :stock
   belongs_to :item
+
+  def ending_level
+    order = Maybe(stock).fulfillment.order.fetch(nil)
+    dropped = Maybe(order).quantity_of_item(item).fetch(0)
+
+    starting + dropped - returns
+  end
 end

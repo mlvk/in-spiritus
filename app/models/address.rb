@@ -7,4 +7,8 @@ class Address < ActiveRecord::Base
   def to_s
     "#{street.titleize}\n#{city.titleize}"
   end
+
+  def street_and_city
+    "#{street.titleize} #{city.titleize}"
+  end
 end
