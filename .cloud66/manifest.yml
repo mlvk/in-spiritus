@@ -1,5 +1,0 @@
-production:
-    postgresql:
-        server: external
-    redis:
-        server: external

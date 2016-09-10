@@ -1,0 +1,18 @@
+FROM ruby:2.3.1
+MAINTAINER Aram Zadikian <if@else.run>
+
+RUN apt-get update && apt-get install -y \
+	postgresql-client \
+	--no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV RACK_ENV=production RAILS_ENV=production APP_PATH=/app/in-spiritus
+RUN mkdir -p $APP_PATH
+WORKDIR $APP_PATH
+
+COPY Gemfile Gemfile.lock $APP_PATH/
+ONBUILD RUN chown app:app Gemfile Gemfile.lock && \
+  chpst -u app bundle install --deployment --jobs 4 --without development test && \
+  find vendor/bundle -name *.gem -delete
+
+COPY . $APP_PATH/
