@@ -142,12 +142,15 @@ class BaseSyncer
         begin
           model = find_model(record)
           if model.present?
+            log "Matching local model found for #{record} - #{model}"
             pre_flight_check(record, model)
             if should_update_model?(model, record)
+              log "Will update local model to record state #{record} - #{model}"
               update_model(model, record)
             end
             record
           else
+            log "No matching local model found for record #{record}"
             nil
           end
         rescue => e

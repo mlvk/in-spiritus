@@ -93,7 +93,7 @@ class CreditNotesSyncer < BaseSyncer
           quantity:credit_note_item.quantity,
           unit_amount:credit_note_item.unit_price.round(2),
           tax_type:'NONE',
-          account_code: '400')
+          account_code: ENV['SPOILAGE_ACCOUNT_CODE'] || '400')
       end
 
       def create_model_credit_note_item(model, line_item)

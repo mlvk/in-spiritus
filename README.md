@@ -61,6 +61,8 @@ Add in the following env vars to the stack
   1. __MAIL_GUN_API_KEY__       : *required*
   1. __MAIL_GUN_DOMAIN__        : *required*
   1. __MAPBOX_API_TOKEN__       : *required*
+  1. __SPOILAGE_ACCOUNT_CODE__  : *required* `Used to book credit note items against xero account`
+
 
 **Note** The private key needs to be converted to a single line with newlines replaced with `\n`
 Example:

@@ -42,6 +42,12 @@ class Location < ActiveRecord::Base
 			.where(item_id: item.id)
 	end
 
+	def previous_stock_level(stock_level)
+		stock_levels_for_item(stock_level.item)
+			.where("stocks.taken_at < ?", stock_level.stock.taken_at)
+			.first
+	end
+
 	private
 	def pre_process_code
 		generate_code unless valid_code?
