@@ -1,9 +1,10 @@
 class Company < ActiveRecord::Base
   include AASM
+  include StringUtils
 
   validates :name, presence: true
 
-  before_save :pre_process_location_code_prefix
+  before_save :pre_process_saving_data
 
   aasm :company, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
@@ -53,9 +54,13 @@ class Company < ActiveRecord::Base
   scope :vendor, -> { where(is_vendor: true) }
 
   private
-  def pre_process_location_code_prefix
+  def pre_process_saving_data
+    # Generate location code prefix
+    self.location_code_prefix = trim_and_downcase location_code_prefix
     generate_prefix unless valid_prefix?
-    self.location_code_prefix = location_code_prefix.downcase
+
+    # trim data
+    self.name = trim name
   end
 
   def valid_prefix?

@@ -1,10 +1,11 @@
 class Item < ActiveRecord::Base
 	include AASM
+	include StringUtils
 
 	PRODUCT_TYPE = 'product'
   INGREDIENT_TYPE = 'ingredient'
 
-	before_save :generate_item_code
+	before_save :pre_process_saving_data
 
 	aasm :item, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
@@ -40,12 +41,16 @@ class Item < ActiveRecord::Base
   scope :ingredient, -> { where(tag:INGREDIENT_TYPE)}
 
 	private
-	def generate_item_code
+	def pre_process_saving_data
 		if code.nil?
 			initials = Maybe(company).initials
 			prefix = initials.empty? ? "" : "#{initials.fetch()} - "
 			new_code = "#{prefix}#{SecureRandom.hex(3)}"
 			update_attributes(code:new_code)
 		end
+
+		# trim data
+    self.code = trim code
+		self.name = trim name
 	end
 end
