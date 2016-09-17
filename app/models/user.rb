@@ -3,10 +3,10 @@ class User < ActiveRecord::Base
   after_initialize :set_default_role!, :if => :new_record?
   before_save :ensure_authentication_token
 
-  has_many :route_plans
-  has_many :stocks
-  has_many :pods
-  has_many :route_plan_blueprints
+  has_many :route_plans, dependent: :nullify, autosave: true
+  has_many :stocks, dependent: :nullify, autosave: true
+  has_many :pods, dependent: :nullify, autosave: true
+  has_many :route_plan_blueprints, dependent: :nullify, autosave: true
 
   def name
     "#{self.first_name} #{self.last_name}"

@@ -3,7 +3,8 @@ class UserResource < JSONAPI::Resource
              :first_name,
              :last_name,
              :phone,
-             :role
+             :role,
+             :password
 
   has_many   :route_plan_blueprints
 end
