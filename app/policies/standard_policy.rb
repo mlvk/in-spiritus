@@ -15,6 +15,10 @@ class StandardPolicy
     @current_user.admin? or @current_user.driver? or @current_user.accountant?
   end
 
+  def is_admin_or_driver?
+    @current_user.admin? or @current_user.driver?
+  end
+
   def index?
     is_admin?
   end

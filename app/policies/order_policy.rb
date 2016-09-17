@@ -10,4 +10,9 @@ class OrderPolicy < StandardPolicy
   def generate_pdf?
     @current_user.admin?
   end
+
+  def update?
+  	is_admin_or_driver?
+  end
+  
 end
