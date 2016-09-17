@@ -15,29 +15,33 @@ class RoutePlanResource < JSONAPI::Resource
              :id
 
   def start_time
-    @model
+    Maybe(@model)
       .route_visits
       .first
       .arrive_at
+      ._
   end
 
   def end_time
-    @model
+    Maybe(@model)
       .route_visits
       .last
       .arrive_at
+      ._
   end
 
   def drop_off_count
-    @model
+    Maybe(@model)
       .delivery_visits
       .count
+      ._
   end
 
   def pick_up_count
-    @model
+    Maybe(@model)
       .pickup_visits
       .count
+      ._
   end
 
   paginator  :offset
