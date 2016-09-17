@@ -18,11 +18,19 @@ class RoutePlan < ActiveRecord::Base
   enum published_state: [ :pending, :completed ]
 
 	belongs_to :user
-	has_many :route_visits, :dependent => :nullify, autosave: true
+	has_many :route_visits, -> { order('position') }, :dependent => :nullify, autosave: true
 
 	def renderer
     Pdf::RoutePlan
   end
 
 	default_scope { order 'date DESC' }
+
+	def delivery_visits
+		route_visits.select {|rv| rv.has_delivery?}
+	end
+
+	def pickup_visits
+		route_visits.select {|rv| rv.has_pickup?}
+	end
 end

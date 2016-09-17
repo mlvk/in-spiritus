@@ -28,6 +28,12 @@ class RouteVisit < ActiveRecord::Base
 		fulfillments.size > 1
 	end
 
+	def has_delivery?
+		fulfillments
+			.flat_map {|f| f.order}
+			.any? {|o| o.sales_order?}
+	end
+
 	def has_pickup?
 		fulfillments
 			.flat_map {|f| f.order}
