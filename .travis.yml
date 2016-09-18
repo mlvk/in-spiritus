@@ -19,9 +19,9 @@ deploy:
   provider: cloud66
   redeployment_hook: ${CLOUD66_PRODUCTION_REDEPLOYMENT_HOOK}
   on:
-    condition: $TRAVIS_BRANCH == master
-    tags: true
+    all_branches: true
     repo: mlvk/in-spiritus
+    condition: $TRAVIS_BRANCH = master
 addons:
   hosts:
     - db
