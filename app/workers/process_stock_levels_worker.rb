@@ -14,11 +14,9 @@ class ProcessStockLevelsWorker
         item = stock_level.item
         ending_level = stock_level.ending_level
 
-        last_stock_levels = location.stock_levels_for_item(item).limit(2)
-        index_of_current = last_stock_levels.index { |sl| sl.id == stock_level.id }
-        previous_stock_level = last_stock_levels[index_of_current - 1]
-
+        previous_stock_level = location.previous_stock_level(stock_level)
         previous_ending_level = Maybe(previous_stock_level).ending_level.fetch(0)
+
         sold = previous_ending_level - (stock_level.starting + stock_level.returns)
 
         timestamp = fulfillment.submitted_at.to_i

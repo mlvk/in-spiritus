@@ -1,7 +1,8 @@
 class Location < ActiveRecord::Base
+	include StringUtils
 	# validates :name, presence: true
 
-	before_save :pre_process_code
+	before_save :pre_process_saving_data
 
 	belongs_to :company
 	belongs_to :address
@@ -42,10 +43,20 @@ class Location < ActiveRecord::Base
 			.where(item_id: item.id)
 	end
 
+	def previous_stock_level(stock_level)
+		stock_levels_for_item(stock_level.item)
+			.where("stocks.taken_at < ?", stock_level.stock.taken_at)
+			.first
+	end
+
 	private
-	def pre_process_code
+	def pre_process_saving_data
+		# Generate location code
+		self.code = trim_and_downcase code
 		generate_code unless valid_code?
-		self.code = code.downcase
+
+		# trim data
+    self.name = trim name
 	end
 
 	def valid_code?

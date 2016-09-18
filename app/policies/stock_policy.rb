@@ -1,5 +1,11 @@
 class StockPolicy < StandardPolicy
+
   def create?
-  	@current_user.admin? or @current_user.driver? or @current_user.accountant?
+  	is_standard?
   end
+
+  def update?
+  	is_standard?
+  end
+
 end

@@ -10,5 +10,9 @@ FactoryGirl.define do
       xero_state { Item.xero_states[:synced] }
       xero_id { SecureRandom.hex(10) }
     end
+
+    trait :product do
+      tag Item::PRODUCT_TYPE
+    end
   end
 end

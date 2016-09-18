@@ -19,6 +19,11 @@ class UsersController < ApplicationJsonApiResourcesController
     super
   end
 
+  def destroy
+    authorize User
+    super
+  end
+
   def get_related_resource
     authorize User
     super

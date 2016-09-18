@@ -1,10 +1,11 @@
 class Order < ActiveRecord::Base
   include AASM
+  include StringUtils
 
   SALES_ORDER_TYPE = 'sales-order'
   PURCHASE_ORDER_TYPE = 'purchase-order'
 
-  before_save :setup_defaults
+  before_save :pre_process_saving_data
   after_save :update_fulfillment_structure
   before_destroy :clear_fulfillment_structure
 
@@ -150,9 +151,10 @@ class Order < ActiveRecord::Base
   end
 
   private
-  def setup_defaults
+  def pre_process_saving_data
+    # Generate order number
+    self.order_number = trim_and_downcase order_number
     generate_order_number unless valid_order_number?
-    self.order_number = order_number.downcase
 
     set_default_shipping unless shipping.present?
   end
