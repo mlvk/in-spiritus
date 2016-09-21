@@ -19,7 +19,7 @@ deploy:
   provider: cloud66
   redeployment_hook: ${CLOUD66_PRODUCTION_REDEPLOYMENT_HOOK}
   on:
-    branch: master
+    all_branches: true
     condition: -n "${TRAVIS_TAG}"
 addons:
   hosts:
