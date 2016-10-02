@@ -43,4 +43,24 @@ class CompanyTest < ActiveSupport::TestCase
     company2 = create(:company)
     assert_equal(company2.location_code_prefix, company2.location_code_prefix.downcase)
   end
+
+  test "should invalid when it is customer and missed price tier" do
+    company = build(:company, price_tier: nil)
+    assert company.invalid?
+  end
+
+  test "should valid when it is customer and price tier is present" do
+    company = build(:company)
+    assert company.valid?
+  end
+
+  test "should valid when it is vendor and missed price tier" do
+    company = build(:company, :vendor, price_tier: nil)
+    assert company.valid?
+  end
+
+  test "should valid when it is vendor and price tier is present" do
+    company = build(:company, :vendor)
+    assert company.valid?
+  end
 end

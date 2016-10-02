@@ -19,7 +19,7 @@ class CompaniesSyncerTest < ActiveSupport::TestCase
   end
 
   test "Should sync local model (add xero_id) when matching name found" do
-    company = Company.create(name:'Nature Well')
+    company = create(:company, name:'Nature Well')
 
     VCR.use_cassette('contacts/002') do
       CompaniesSyncer.new.sync_remote(100.years.ago)

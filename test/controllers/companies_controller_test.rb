@@ -73,7 +73,7 @@ class CompaniesControllerTest < ActionController::TestCase
   test "admin can create companies" do
     sign_in_as_admin
 
-    post :create, build_jr_hash(:company)
+    post :create, build_jr_hash(:company, :vendor)
     assert_response :created
   end
 

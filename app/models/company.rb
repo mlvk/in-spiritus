@@ -3,6 +3,7 @@ class Company < ActiveRecord::Base
   include StringUtils
 
   validates :name, presence: true
+  validates :price_tier, presence: true, if: :is_customer
 
   before_save :pre_process_saving_data
 

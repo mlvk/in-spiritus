@@ -5,10 +5,10 @@ module Helpers
     # Models should be passed in as symbols
     # This will attempt to build the jr resource and factory girl build a model
     # Then deletes the links and relationships in the hash so it can be posted
-    def build_jr_hash(model)
+    def build_jr_hash(model, trait = nil)
       clazz = eval("#{model.to_s.capitalize}Resource")
 
-      hash = JSONAPI::ResourceSerializer.new(clazz).serialize_to_hash(clazz.new(build(model), nil))
+      hash = JSONAPI::ResourceSerializer.new(clazz).serialize_to_hash(clazz.new(build(model, trait), nil))
       hash[:data].delete("relationships")
       hash[:data].delete("links")
       return hash
