@@ -4,4 +4,8 @@ class StockLevelPolicy < StandardPolicy
   	is_admin_or_driver?
   end
 
+  def update?
+  	is_admin_or_driver?
+  end
+
 end
