@@ -19,7 +19,7 @@ class OrdersController < ApplicationJsonApiResourcesController
     serializer = JSONAPI::ResourceSerializer.new(OrderResource, include: include_resources)
 
     resources = missingLocations.map { |location|
-      order = Order.new(location:location, delivery_date:delivery_date)
+      order = Order.new(location:location, delivery_date:delivery_date, shipping:location.delivery_rate)
       location.item_desires.where(enabled:true).each do |item_desire|
         item_price = location.company.price_for_item(item_desire.item)
         order.order_items << OrderItem.new(item:item_desire.item, quantity:0, unit_price:item_price)
