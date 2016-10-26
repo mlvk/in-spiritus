@@ -11,12 +11,12 @@ script:
 - rake
 deploy:
   - provider: cloud66
-    redeployment_hook: ${CLOUD66_STAGING_REDEPLOYMENT_HOOK}
+    redeployment_hook: "${CLOUD66_STAGING_REDEPLOYMENT_HOOK}"
     on:
       all_branches: true
       repo: mlvk/in-spiritus
   - provider: cloud66
-    redeployment_hook: ${CLOUD66_PRODUCTION_REDEPLOYMENT_HOOK}
+    redeployment_hook: "${CLOUD66_PRODUCTION_REDEPLOYMENT_HOOK}"
     on:
       all_branches: true
       condition: -n "${TRAVIS_TAG}"
