@@ -10,8 +10,6 @@ class DocumentsController < ApplicationJsonApiResourcesController
 
     pdf_url = RoutePlanUtils.new.generate_and_upload_packing_documents route_plans
 
-    p "pdf_url"
-
     render json: {url:pdf_url}
   end
 end

@@ -109,7 +109,7 @@ class SalesOrdersSyncer < BaseSyncer
           quantity:order_item.quantity,
           unit_amount:order_item.unit_price,
           tax_type:'NONE',
-          account_code: '400')
+          account_code: ENV['SALES_ACCOUNT_CODE'])
       end
     end
 
@@ -124,7 +124,7 @@ class SalesOrdersSyncer < BaseSyncer
           quantity: 1,
           unit_amount: model.shipping,
           tax_type: 'NONE',
-          account_code:  '400')
+          account_code:  ENV['SALES_ACCOUNT_CODE'])
       end
     end
 end
