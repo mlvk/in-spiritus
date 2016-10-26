@@ -105,4 +105,5 @@ If you have trouble using the CLI tool, you can manage the docker-compose manual
 ![alt tag](https://github.com/brancusi/in-spiritus/blob/master/erd.png)
 
 ### Building docker images
-1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile -t brancusi/in-spiritus:0.0.4 .`
+1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile -t mlvk/in-spiritus:0.0.6 .`
+2. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.6`

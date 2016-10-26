@@ -332,6 +332,7 @@ DEPENDENCIES
   rails-erd
   rake (= 10.4.2)
   redis
+  rest-client
   sidekiq
   sidekiq-unique-jobs
   sinatra

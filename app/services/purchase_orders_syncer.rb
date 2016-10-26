@@ -88,7 +88,7 @@ class PurchaseOrdersSyncer < BaseSyncer
           quantity:order_item.quantity,
           unit_amount:order_item.unit_price,
           tax_type:'NONE',
-          account_code: '500')
+          account_code: ENV['COGS_ACCOUNT_CODE'])
       end
     end
 

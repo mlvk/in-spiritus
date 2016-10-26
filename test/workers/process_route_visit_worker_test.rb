@@ -6,7 +6,9 @@ class ProcessRouteVisitWorkerTest < ActiveSupport::TestCase
     route_visit = create(:route_visit_with_fulfilled_fulfillments, :fulfilled)
 
     VCR.use_cassette('mail_gun/001') do
-      ProcessRouteVisitWorker.new.perform
+      VCR.use_cassette('slack/001') do
+        ProcessRouteVisitWorker.new.perform
+      end
     end
 
     assert_equal(route_visit.fulfillments.first.notifications.pending.count, 1)

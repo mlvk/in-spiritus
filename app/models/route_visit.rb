@@ -43,4 +43,8 @@ class RouteVisit < ActiveRecord::Base
 	def has_route_plan?
 		has_route_plan.present?
 	end
+
+	def to_string
+		Maybe(fulfillments.first).order.to_string.fetch("")
+	end
 end

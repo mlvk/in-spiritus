@@ -150,6 +150,10 @@ class Order < ActiveRecord::Base
     delivery_date + location.company.terms
   end
 
+  def to_string
+    "#{location.company.name} - #{location.code} - #{location.name}"
+  end
+
   private
   def pre_process_saving_data
     # Generate order number

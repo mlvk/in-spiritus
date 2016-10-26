@@ -10,9 +10,23 @@ class Log
     Rails.logger.error message
   end
 
-  def self.alert message
-    self.error message
-    self.alert_slack message unless ENV["SLACK_CHANNEL_URL"].nil?
+  def self.notify_distribution_event(message)
+    payload = {
+      'text' => message,
+      'username' => 'distribution-bot',
+      'icon_emoji' => ':minibus:'
+    }
+
+    self.post_slack_message(payload, ENV["DISTRIBUTION_SLACK_CHANNEL_URL"])
+  end
+
+  def self.notify_admins(message)
+    payload = {
+      'text' => message,
+      'username' => 'mlvk-bot'
+    }
+
+    self.post_slack_message(payload, ENV["SLACK_CHANNEL_URL"])
   end
 
   private
@@ -20,20 +34,7 @@ class Log
     "#{ Time.now.strftime("%Y/%m/%d %H:%M:%S") } #{ message }"
   end
 
-  def self.alert_slack message
-    uri = URI.parse(ENV["SLACK_CHANNEL_URL"])
-    header = {
-      'Content-Type': 'application/json'
-    }
-    data = { text: message }
-
-    # Create the HTTP objects
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    request = Net::HTTP::Post.new(uri.request_uri, header)
-    request.body = JSON.generate(data)
-
-    # Send the request
-    http.request(request)
+  def self.post_slack_message(message, channel = ENV["SLACK_CHANNEL_URL"])
+    RestClient.post(channel, message.to_json, content_type: :json, accept: :json)
   end
 end

@@ -19,6 +19,7 @@ gem 'aws-sdk'
 gem 'firebase'
 gem 'hamster'
 gem 'globalid'
+gem 'rest-client'
 
 # Job scheduling
 gem 'sidekiq'
