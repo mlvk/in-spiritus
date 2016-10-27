@@ -69,7 +69,7 @@ class CreditNote < ActiveRecord::Base
   private
     def generate_credit_note_number
       if self.credit_note_number.nil?
-        self.credit_note_number = "CR-#{date.strftime('%y%m%d')}-#{SecureRandom.hex(5)}"
+        self.credit_note_number = "CR-#{date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
         save
       end
     end
