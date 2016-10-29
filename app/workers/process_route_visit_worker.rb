@@ -23,7 +23,7 @@ class ProcessRouteVisitWorker
       end
     end
 
-    Log.notify_distribution_event "Delivered: route_visit.to_string"
+    Log.notify_distribution_event "Delivered: #{route_visit.to_string}"
 
     route_visit.mark_processed!
   end
