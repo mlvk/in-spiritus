@@ -26,6 +26,10 @@ class StockLevel < ActiveRecord::Base
 
   belongs_to :stock
   belongs_to :item
+  has_one :fulfillment, through: :stock
+
+  scope :fulfillment_fulfilled, -> { joins(:fulfillment).where(fulfillments: {delivery_state: Fulfillment.delivery_states[:fulfilled]}) }
+  scope :fulfillment_processed, -> { joins(:fulfillment).where(fulfillments: {delivery_state: Fulfillment.delivery_states[:processed]}) }
 
   def ending_level
     order = Maybe(stock).fulfillment.order.fetch(nil)
