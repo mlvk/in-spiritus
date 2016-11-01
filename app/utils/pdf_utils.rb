@@ -3,11 +3,14 @@ module PdfUtils
 
 	def generate_pdfs(records)
 		pdf = build_pdf records
-		local_url = "tmp/pdfs/#{SecureRandom.hex}.pdf"
-    pdf.render_file local_url
 
 		# For Testing Only
-		# pdf.render_file 'public/testing.pdf'
+		# local_url = 'public/testing.pdf'
+
+		# For production
+		local_url = "tmp/pdfs/#{SecureRandom.hex}.pdf"
+
+		pdf.render_file local_url
 
     return local_url
 	end
