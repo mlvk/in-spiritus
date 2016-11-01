@@ -117,51 +117,52 @@ module Pdf
         .sort {|x,y| x.position <=> y.position}
         .flat_map(&:fulfillments)
         .flat_map(&:order)
+        .select(&:sales_order?)
         .select(&:has_quantity?)
         .flat_map(&:order_items)
         .reduce({}) {|acc, cur|
           item = cur.item
-          prev_data = acc[item.id] || {qty:0, name:item.name, position:item.position}
+          prev_data = acc[item.id] || {qty:0, item:item}
           prev_data[:qty] = prev_data[:qty] + cur.quantity
           acc[item.id] = prev_data
           acc
         }
         .map {|kv_pair| kv_pair[1]}
-        .sort {|x,y| x[:position] <=> y[:position]}
+        .sort {|x,y| Maybe(x[:item].position).fetch(10000) <=> Maybe(y[:item].position).fetch(10000)}
         .each_with_index do |obj, index|
-          item_quantity_row(obj[:name], obj[:qty], index)
+          item_quantity_row(obj[:qty], obj[:item], index)
         end
       end
 
-    def item_quantity_row(name, qty, index)
-      y = @pdf.cursor
-      height = 17
-      col1 = -10
-      col2 = 30
-      col3 = 140
-      col4 = 270
-      col5 = 500
+      def item_quantity_row(qty, item, index)
+        y = @pdf.cursor
+        height = 17
 
-      @pdf.line_width = 0.5
-      # dash(8, :space => 20, :phase => 5)
-      @pdf.transparent(0.5) { @pdf.stroke_horizontal_line 0, 540, :at => y + 2 }
+        @pdf.line_width = 0.5
 
-      @pdf.bounding_box([col1, y], :width => 20, :height => height) do
-       @pdf.formatted_text_box [{ text: "#{index + 1}.", size: 8, styles: [:italic]}], :align => :right, :valign => :center
+        @pdf.transparent(0.5) { @pdf.stroke_horizontal_line 0, 540, :at => y + 2 }
+
+        @pdf.bounding_box([-10, y], :width => 30, :height => height) do
+         @pdf.formatted_text_box [{ text: "#{index + 1}.", size: 8, styles: [:italic]}], :align => :right, :valign => :center
+        end
+
+        @pdf.bounding_box([20, y], :width => 30, :height => height) do
+         @pdf.formatted_text_box [{ text: qty.to_s, size: 11}], :align => :right, :valign => :center
+        end
+
+        @pdf.bounding_box([60, y], :width => 100, :height => height) do
+         @pdf.formatted_text_box [{ text: item.name, size: 9}], :align => :left, :valign => :center
+        end
+
+        @pdf.bounding_box([170, y], :width => 290, :height => height) do
+          desc = Maybe(item.description)._.truncate(61)
+          @pdf.formatted_text_box [{ text: desc, size: 9}], :align => :left, :valign => :center
+        end
+
+        @pdf.move_down 4
+
+        @pdf.start_new_page if @pdf.cursor < 20
       end
-
-      @pdf.bounding_box([col2, y], :width => 100, :height => height) do
-        @pdf.formatted_text_box [{ text: name, size: 11}], :align => :left, :valign => :center
-      end
-
-      @pdf.bounding_box([col4, y], :width => 200, :height => height) do
-        @pdf.formatted_text_box [{ text: qty.to_s, size: 9}], :align => :left, :valign => :center
-      end
-
-      @pdf.move_down 4
-
-      @pdf.start_new_page if @pdf.cursor < 0
-    end
 
   end
 end
