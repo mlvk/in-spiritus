@@ -82,7 +82,15 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
   end
 
   def process_order(data)
+    return if data.nil?
+
     order = Order.find(data[:id])
+
+    order.order_items.each do |oi|
+      oi.quantity = 0
+      oi.unit_price = 0
+      oi.save
+    end
 
     order_items_data = Maybe(data[:order_items]).fetch([])
 
@@ -110,6 +118,12 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
 
     credit_note = CreditNote.find(data[:id])
 
+    credit_note.credit_note_items.each do |cni|
+      cni.quantity = 0
+      cni.unit_price = 0
+      cni.save
+    end
+
     credit_note_items_data = Maybe(data[:credit_note_items]).fetch([])
 
     credit_note_items_data.each do |cnid|
@@ -136,6 +150,13 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
 
     stock = Stock.find(data[:id])
     stock.taken_at = data[:taken_at]
+
+    stock.stock_levels.each do |sl|
+      sl.starting = 0
+      sl.returns = 0
+      sl.save
+    end
+
     stock.save
 
     stock_levels_data = Maybe(data[:stock_levels]).fetch([])
@@ -149,7 +170,6 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
       target = match || StockLevel.create(
         stock:stock,
         item:item)
-
 
       target.starting = sld[:starting]
       target.returns = sld[:returns]
@@ -170,5 +190,4 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
 
     pod.save
   end
-
 end

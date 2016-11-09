@@ -112,4 +112,38 @@ class RouteVisitsControllerTest < ActionController::TestCase
     end
   end
 
+  test "missing items are zeroed out" do
+    sign_in_as_driver
+
+    order = create(:sales_order_with_items)
+    fulfillment = create(:fulfillment, order:order)
+    route_visit = create(:route_visit, fulfillments:[fulfillment])
+
+    payload = build_submit_payload(route_visit)
+
+    payload[:data][:fulfillments].first[:order].delete(:order_items)
+    payload[:data][:fulfillments].first[:credit_note].delete(:credit_note_items)
+    payload[:data][:fulfillments].first[:stock].delete(:stock_levels)
+
+    post :submit, payload
+
+    route_visit.reload
+
+    route_visit.fulfillments.each do |f|
+      f.order.order_items.each do |oi|
+        assert_equal(0, oi.unit_price)
+        assert_equal(0, oi.quantity)
+      end
+
+      f.credit_note.credit_note_items.each do |cni|
+        assert_equal(0, cni.unit_price)
+        assert_equal(0, cni.quantity)
+      end
+
+      f.stock.stock_levels.each do |sl|
+        assert_equal(0, sl.starting)
+        assert_equal(0, sl.returns)
+      end
+    end
+  end
 end
