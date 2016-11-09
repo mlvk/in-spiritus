@@ -17,9 +17,8 @@ module FirebaseUtils
 		sold = previous_ending_level - (stock_level.starting + stock_level.returns)
 
 		timestamp = stock.taken_at.to_i
-		uuid = SecureRandom.uuid
 
-		data_key = "locations/#{location.code}/#{item.code}/#{uuid}"
+		data_key = "locations/#{location.code}/#{item.code}/#{stock_level.id}"
 		data_payload = {
 			starting: stock_level.starting,
 			returns: stock_level.returns,

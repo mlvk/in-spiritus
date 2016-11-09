@@ -7,7 +7,7 @@ class Fulfillment < ActiveRecord::Base
     state :processed
 
     event :mark_fulfilled do
-      transitions :from => :pending, :to => :fulfilled
+      transitions :from => [:pending, :fulfilled, :processed], :to => :fulfilled
     end
 
     event :mark_processed do
@@ -15,28 +15,7 @@ class Fulfillment < ActiveRecord::Base
     end
   end
 
-  aasm :notification, :column => :notification_state, :skip_validation_on_save => true do
-    state :awaiting, :initial => true
-    state :notified
-    state :awaiting_updated
-
-    event :mark_awaiting do
-      transitions :from => :notified, :to => :awaiting
-    end
-
-    event :mark_notified do
-      transitions :from => :awaiting, :to => :notified
-      transitions :from => :awaiting_updated, :to => :notified
-      transitions :from => :notified, :to => :notified
-    end
-
-    event :mark_awaiting_updated do
-      transitions :from => :notified, :to => :awaiting_updated
-    end
-  end
-
   enum delivery_state: [ :pending, :fulfilled, :processed ]
-  enum notification_state: [ :awaiting, :notified, :awaiting_updated ]
 
   belongs_to :route_visit
   belongs_to :order

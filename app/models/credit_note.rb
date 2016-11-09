@@ -1,7 +1,7 @@
 class CreditNote < ActiveRecord::Base
   include AASM
 
-  after_create :generate_credit_note_number
+  before_save :generate_credit_note_number
 
   aasm :credit_note, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
@@ -10,13 +10,11 @@ class CreditNote < ActiveRecord::Base
     state :voided
 
     event :mark_submitted do
-      transitions :from => :pending, :to => :submitted
-      transitions :from => :synced, :to => :submitted
+      transitions :from => [:pending, :submitted, :synced], :to => :submitted
     end
 
     event :mark_synced do
-      transitions :from => :submitted, :to => :synced
-      transitions :from => :synced, :to => :synced
+      transitions :from => [:submitted, :synced], :to => :synced
     end
 
     event :void do
@@ -72,5 +70,16 @@ class CreditNote < ActiveRecord::Base
         self.credit_note_number = "CR-#{date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
         save
       end
+    end
+
+    def generate_credit_note_number
+      self.credit_note_number = "CR-#{date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
+
+      generate_credit_note_number unless valid_credit_note_number?
+    end
+
+    def valid_credit_note_number?
+      match = CreditNote.find_by(credit_note_number: credit_note_number)
+      (match.nil? || match == self) && credit_note_number.present?
     end
 end

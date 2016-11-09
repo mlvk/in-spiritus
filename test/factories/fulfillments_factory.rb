@@ -2,6 +2,7 @@ FactoryGirl.define do
   factory :fulfillment do
     route_visit
     pod
+    association :stock, factory: :stock_with_stock_levels
     association :order, factory: :order_with_items
     association :credit_note, factory: :credit_note_with_credit_note_items
 

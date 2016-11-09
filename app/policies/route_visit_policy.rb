@@ -8,4 +8,8 @@ class RouteVisitPolicy < StandardPolicy
     is_admin_or_driver?
   end
 
+  def submit?
+    is_admin_or_driver?
+  end
+
 end

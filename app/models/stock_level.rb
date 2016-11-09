@@ -9,12 +9,12 @@ class StockLevel < ActiveRecord::Base
     state :tracked
     state :processed
 
-    event :mark_tracked do
-      transitions :from => :pending, :to => :tracked
-    end
-
     event :mark_pending do
       transitions :from => :tracked, :to => :pending
+    end
+
+    event :mark_tracked do
+      transitions :from => [:pending, :tracked, :processed], :to => :tracked
     end
 
     event :mark_processed do

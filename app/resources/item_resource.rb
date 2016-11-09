@@ -5,7 +5,6 @@ class ItemResource < JSONAPI::Resource
              :unit_of_measure,
              :tag,
              :position,
-             :xero_state,
              :is_purchased,
              :is_sold,
              :default_price,

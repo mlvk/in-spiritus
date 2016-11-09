@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161107130456) do
+ActiveRecord::Schema.define(version: 20161107130457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,21 +78,19 @@ ActiveRecord::Schema.define(version: 20161107130456) do
   add_index "credit_notes", ["xero_state"], name: "index_credit_notes_on_xero_state", using: :btree
 
   create_table "fulfillments", force: :cascade do |t|
-    t.integer  "route_visit_id",                 null: false
+    t.integer  "route_visit_id",             null: false
     t.integer  "order_id"
     t.integer  "stock_id"
     t.integer  "credit_note_id"
     t.integer  "pod_id"
-    t.integer  "delivery_state",     default: 0, null: false
-    t.integer  "notification_state", default: 0, null: false
+    t.integer  "delivery_state", default: 0, null: false
     t.datetime "submitted_at"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
   add_index "fulfillments", ["credit_note_id"], name: "index_fulfillments_on_credit_note_id", using: :btree
   add_index "fulfillments", ["delivery_state"], name: "index_fulfillments_on_delivery_state", using: :btree
-  add_index "fulfillments", ["notification_state"], name: "index_fulfillments_on_notification_state", using: :btree
   add_index "fulfillments", ["order_id"], name: "index_fulfillments_on_order_id", using: :btree
   add_index "fulfillments", ["route_visit_id"], name: "index_fulfillments_on_route_visit_id", using: :btree
   add_index "fulfillments", ["stock_id"], name: "index_fulfillments_on_stock_id", using: :btree
@@ -219,23 +217,21 @@ ActiveRecord::Schema.define(version: 20161107130456) do
   add_index "order_items", ["order_id"], name: "index_order_items_on_order_id", using: :btree
 
   create_table "orders", force: :cascade do |t|
-    t.string   "xero_id",            limit: 255
-    t.string   "order_number",       limit: 255
-    t.integer  "xero_state",                     default: 0,             null: false
-    t.integer  "notification_state",             default: 0,             null: false
-    t.string   "order_type",                     default: "sales-order", null: false
-    t.integer  "location_id",                                            null: false
-    t.date     "delivery_date",                                          null: false
+    t.string   "xero_id",       limit: 255
+    t.string   "order_number",  limit: 255
+    t.integer  "xero_state",                default: 0,             null: false
+    t.string   "order_type",                default: "sales-order", null: false
+    t.integer  "location_id",                                       null: false
+    t.date     "delivery_date",                                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "submitted_at"
-    t.decimal  "shipping",                       default: 0.0
-    t.integer  "order_state",                    default: 0,             null: false
+    t.decimal  "shipping",                  default: 0.0
+    t.integer  "order_state",               default: 0,             null: false
     t.text     "note"
   end
 
   add_index "orders", ["location_id"], name: "index_orders_on_location_id", using: :btree
-  add_index "orders", ["notification_state"], name: "index_orders_on_notification_state", using: :btree
   add_index "orders", ["order_number"], name: "index_orders_on_order_number", unique: true, using: :btree
   add_index "orders", ["order_type"], name: "index_orders_on_order_type", using: :btree
   add_index "orders", ["xero_id"], name: "index_orders_on_xero_id", unique: true, using: :btree

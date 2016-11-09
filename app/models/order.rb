@@ -16,13 +16,11 @@ class Order < ActiveRecord::Base
     state :voided
 
     event :mark_submitted do
-      transitions :from => :pending, :to => :submitted
-      transitions :from => :synced, :to => :submitted
+      transitions :from => [:pending, :synced], :to => :submitted
     end
 
     event :mark_synced do
-      transitions :from => :synced, :to => :synced
-      transitions :from => :submitted, :to => :synced
+      transitions :from => [:synced, :submitted], :to => :synced
     end
 
     # TODO: Is there a way to trap in voided once void state is set?
@@ -30,40 +28,6 @@ class Order < ActiveRecord::Base
     # out of voided by resubmitting
     event :void do
       transitions :from => [:pending, :submitted, :synced], :to => :voided
-    end
-  end
-
-  aasm :notification, :column => :notification_state, :skip_validation_on_save => true do
-    state :pending_notification, :initial => true
-    state :pending_updated_notification
-    state :awaiting_notification
-    state :notified
-    state :awaiting_updated_notification
-
-    event :mark_pending do
-      transitions :from => :awaiting_notification, :to => :pending
-      transitions :from => :awaiting_updated_notification, :to => :pending
-      transitions :from => :notified, :to => :pending
-    end
-
-    event :mark_pending_updated do
-      transitions :from => :awaiting_notification, :to => :pending_updated_notification
-      transitions :from => :awaiting_updated_notification, :to => :pending_updated_notification
-      transitions :from => :notified, :to => :pending_updated_notification
-    end
-
-    event :mark_awaiting_notification do
-      transitions :from => :pending_notification, :to => :awaiting_notification
-    end
-
-    event :mark_notified do
-      transitions :from => :awaiting_notification, :to => :notified
-      transitions :from => :awaiting_updated_notification, :to => :notified
-      transitions :from => :notified, :to => :notified
-    end
-
-    event :mark_awaiting_updated_notification do
-      transitions :from => :notified, :to => :awaiting_updated_notification
     end
   end
 
@@ -83,7 +47,6 @@ class Order < ActiveRecord::Base
   # State machine settings
   enum order_state: [ :draft, :approved ]
   enum xero_state: [ :pending, :submitted, :synced, :voided ]
-  enum notification_state: [ :pending_notification, :pending_updated_notification, :awaiting_notification, :notified, :awaiting_updated_notification ]
 
   belongs_to :location
   has_one :address, through: :location
@@ -95,6 +58,18 @@ class Order < ActiveRecord::Base
   scope :purchase_order, -> { where(order_type:PURCHASE_ORDER_TYPE)}
   scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
   scope :has_active_location, -> { joins(:location).where(locations: {active: true}) }
+
+  def has_processed_notification?
+    notifications.processed.present?
+  end
+
+  def has_pending_notification?
+    notifications.pending.present?
+  end
+
+  def never_notified?
+    notifications.empty?
+  end
 
   def clone(to_date: nil)
     raise "Must specify a to date" if to_date.nil?

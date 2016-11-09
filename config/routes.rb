@@ -35,6 +35,9 @@ Rails.application.routes.draw do
   post 'orders/stub_orders'
   post 'orders/duplicate_sales_orders'
   post 'orders/generate_pdf'
+
+  post 'route_visits/submit'
+
   post 'documents/generate_packing_documents'
 
   post 'custom/unique_check'

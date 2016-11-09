@@ -1,6 +1,5 @@
 class FulfillmentResource < JSONAPI::Resource
   attributes :delivery_state,
-             :notification_state,
              :submitted_at
 
   has_one    :route_visit

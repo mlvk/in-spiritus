@@ -6,13 +6,11 @@ class Notification < ActiveRecord::Base
     state :processed
 
     event :mark_pending do
-      transitions :from => :pending, :to => :pending
-      transitions :from => :processed, :to => :pending
+      transitions :from => [:pending, :processed], :to => :pending
     end
 
     event :mark_processed do
-      transitions :from => :pending, :to => :processed
-      transitions :from => :processed, :to => :processed
+      transitions :from => [:pending, :processed], :to => :processed
     end
   end
 

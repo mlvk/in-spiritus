@@ -2,6 +2,8 @@ version: '2'
 
 services:
   web:
+    tty: true
+    stdin_open: true
     image: mlvk/in-spiritus:0.0.6
     command: bash -c "rm -f tmp/pids/* && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
@@ -13,6 +15,8 @@ services:
 
   db:
     image: postgres
+    ports:
+      - "5432:5432"
     networks:
      - backend
 

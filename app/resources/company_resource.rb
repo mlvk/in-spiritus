@@ -3,7 +3,6 @@ class CompanyResource < JSONAPI::Resource
               :is_customer,
               :is_vendor,
               :terms,
-              :xero_state,
               :location_code_prefix
 
   has_one  :price_tier

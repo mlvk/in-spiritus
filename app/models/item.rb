@@ -12,13 +12,11 @@ class Item < ActiveRecord::Base
     state :synced
 
 		event :mark_pending do
-      transitions :from => :pending, :to => :pending
-      transitions :from => :synced, :to => :pending
+      transitions :from => [:pending, :synced], :to => :pending
     end
 
     event :mark_synced do
-      transitions :from => :pending, :to => :synced
-      transitions :from => :synced, :to => :synced
+      transitions :from => [:pending, :synced], :to => :synced
     end
   end
 
