@@ -32,7 +32,7 @@ class Location < ActiveRecord::Base
 	scope :active, -> { where(active:true) }
 
 	def full_name
-		"#{id} - #{name}"
+		"#{code} - #{name}"
 	end
 
 	def stock_levels_for_item(item)

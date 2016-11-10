@@ -84,7 +84,7 @@ class PurchaseOrdersSyncer < BaseSyncer
       if order_item.has_quantity?
         record.add_line_item(
           item_code:order_item.item.code,
-          description:order_item.item.description,
+          description:"#{order_item.item.name} - #{order_item.item.description}",
           quantity:order_item.quantity,
           unit_amount:order_item.unit_price,
           tax_type:'NONE',

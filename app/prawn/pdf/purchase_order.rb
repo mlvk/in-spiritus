@@ -33,23 +33,23 @@ module Pdf
         @pdf.formatted_text_box [{ text: order.order_number.upcase }], :at => [col2, y]
 
         y = @pdf.cursor - 30
-        @pdf.formatted_text_box [{ text: "Delivery date:", size: 10}], :at => [col1, y]
+        @pdf.formatted_text_box [{ text: "Pickup date:", size: 10}], :at => [col1, y]
         @pdf.formatted_text_box [{ text: order.delivery_date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
 
         y = @pdf.cursor - 45
-        @pdf.bounding_box([col1, y], :width => 50, :height => 20) do
-         @pdf.formatted_text_box [{ text: "Ship to:", size: 10}], :valign => :bottom
+        @pdf.bounding_box([col1, y], :width => 60, :height => 20) do
+         @pdf.formatted_text_box [{ text: "Pickup from:", size: 10}], :valign => :bottom
         end
 
         @pdf.bounding_box([col2, y], :width => 300, :height => 20) do
-         name = "For pickup"
+         name = "#{order.location.company.name} - #{order.location.name} - #{order.location.code.upcase}"
          @pdf.formatted_text_box [{ text: name, size: 12, styles: [:bold, :italic] }], :valign => :bottom
         end
 
-        # y = @pdf.cursor - 5
-        # @pdf.bounding_box([col2, y], :width => 300, :height => 30) do
-        #   @pdf.formatted_text_box [{ text: order.location.address.to_s, size: 10 }]
-        # end
+        y = @pdf.cursor - 5
+        @pdf.bounding_box([col2, y], :width => 300, :height => 30) do
+          @pdf.formatted_text_box [{ text: order.location.address.to_s, size: 10 }]
+        end
       end
 
       @pdf.image "app/assets/images/logo.png", :width => 120, :at => [ 430, start_y+10]

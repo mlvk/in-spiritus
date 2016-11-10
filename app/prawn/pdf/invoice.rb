@@ -46,7 +46,7 @@ module Pdf
         end
 
         @pdf.bounding_box([col2, y], :width => 300, :height => 20) do
-         name = "#{order.location.code.upcase} - #{order.location.name} - #{order.location.company.name}"
+         name = "#{order.location.company.name} - #{order.location.name} - #{order.location.code.upcase}"
          @pdf.formatted_text_box [{ text: name, size: 12, styles: [:bold, :italic] }], :valign => :bottom
         end
 
