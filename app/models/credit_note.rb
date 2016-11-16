@@ -53,7 +53,7 @@ class CreditNote < ActiveRecord::Base
   end
 
   def is_valid?
-    has_quantity?
+    has_credit?
   end
 
   def total

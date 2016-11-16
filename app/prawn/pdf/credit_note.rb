@@ -61,7 +61,7 @@ module Pdf
 
       @pdf.move_down 5
       credit_note.credit_note_items
-        .select{|oi| oi.has_quantity?}
+        .select{|cni| cni.has_credit?}
         .each_with_index do |credit_note_item, index|
           credit_note_row(credit_note_item, index)
         end
