@@ -24,7 +24,7 @@ class NotifyAdminWorker
   end
 
   def build_route_plan_message(pdf_url)
-    date_fmt = DateTime.now.strftime('%d/%m/%y')
+    date_fmt = Time.current.strftime('%d/%m/%y')
 
     recipients = ENV['ADMIN_EMAILS']
       .split(',')

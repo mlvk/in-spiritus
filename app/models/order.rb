@@ -7,7 +7,6 @@ class Order < ActiveRecord::Base
 
   before_save :pre_process_saving_data
   after_save :update_fulfillment_structure
-  before_destroy :clear_fulfillment_structure
 
   aasm :order, :column => :xero_state, :skip_validation_on_save => true do
     state :pending, :initial => true
@@ -27,7 +26,7 @@ class Order < ActiveRecord::Base
     # Since we allow direct set, the client may be able to get a model
     # out of voided by resubmitting
     event :void do
-      transitions :from => [:pending, :submitted, :synced], :to => :voided
+      transitions :from => [:pending, :submitted, :synced, :voided], :to => :voided
     end
   end
 
@@ -50,7 +49,7 @@ class Order < ActiveRecord::Base
 
   belongs_to :location
   has_one :address, through: :location
-  has_one :fulfillment
+  has_one :fulfillment, dependent: :destroy, autosave: true
   has_one :route_visit, through: :fulfillment
   has_many :order_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
   has_many :notifications, dependent: :nullify, autosave: true
@@ -58,6 +57,10 @@ class Order < ActiveRecord::Base
   scope :purchase_order, -> { where(order_type:PURCHASE_ORDER_TYPE)}
   scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
   scope :has_active_location, -> { joins(:location).where(locations: {active: true}) }
+
+  def has_synced_with_xero?
+    xero_id.present?
+  end
 
   def has_processed_notification?
     notifications.processed.present?
@@ -106,14 +109,6 @@ class Order < ActiveRecord::Base
 
   def has_shipping?
     shipping > 0
-  end
-
-  def fulfillment_id=(_value)
-     # TODO: Remove once it's fixed
-  end
-
-  def fulfillment_id
-    fulfillment.id
   end
 
   def total
@@ -185,12 +180,4 @@ class Order < ActiveRecord::Base
       stock: stock
     )
   end
-
-  def clear_fulfillment_structure
-    single_fulfillment_for_route_visit = Maybe(fulfillment).route_visit.fulfillments.size.fetch(1) == 1
-
-    Maybe(fulfillment).route_visit._.destroy if single_fulfillment_for_route_visit
-    Maybe(fulfillment)._.destroy
-  end
-
 end

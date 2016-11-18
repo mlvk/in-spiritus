@@ -104,8 +104,8 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
         order:order,
         item:item)
 
-      target.unit_price = oid[:unit_price]
-      target.quantity = oid[:quantity]
+      target.unit_price = oid[:unit_price] || 0
+      target.quantity = oid[:quantity] || 0
 
       target.save
     end
@@ -136,8 +136,8 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
         credit_note:credit_note,
         item:item)
 
-      target.unit_price = cnid[:unit_price]
-      target.quantity = cnid[:quantity]
+      target.unit_price = cnid[:unit_price] || 0
+      target.quantity = cnid[:quantity] || 0
 
       target.save
     end
@@ -171,8 +171,8 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
         stock:stock,
         item:item)
 
-      target.starting = sld[:starting]
-      target.returns = sld[:returns]
+      target.starting = sld[:starting] || 0
+      target.returns = sld[:returns] || 0
       target.save
 
       target.mark_tracked!

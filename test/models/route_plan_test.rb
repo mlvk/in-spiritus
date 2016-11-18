@@ -43,6 +43,6 @@ class RoutePlanTest < ActiveSupport::TestCase
 
     route_plan.reload
 
-    assert(route_plan.route_visits.first.has_multiple?, "Should be has_multiple? true")
+    assert(route_plan.route_visits.first.has_multiple_fulfillments?, "Should be has_multiple_fulfillments? true")
   end
 end

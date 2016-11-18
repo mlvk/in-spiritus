@@ -67,17 +67,6 @@ class OrdersController < ApplicationJsonApiResourcesController
     render json: {url:pdf_url}
   end
 
-  # def email_purchase_orders
-  #   orders = Order.where(id: params['orders'])
-  #
-  #   orders.each do |order|
-  #     EmailPurchaseOrderWorker.perform_async(order.id)
-  #     order.mark_notified!
-  #   end
-  #
-  #   render
-  # end
-
   def index
     authorize Order
     super
@@ -100,7 +89,17 @@ class OrdersController < ApplicationJsonApiResourcesController
 
   def destroy
     authorize Order
-    super
+
+    order = Order.find(params['id'])
+
+    if order.has_synced_with_xero?
+      order.void!
+
+      render json: { status: true }
+    else
+      order.fulfillment.route_visit.destroy if !order.fulfillment.route_visit.has_multiple_fulfillments?
+      super
+    end
   end
 
   def get_related_resource

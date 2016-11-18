@@ -13,7 +13,7 @@ class NotificationWorker
 
   def process(n)
     send_notification n
-    n.processed_at = DateTime.now
+    n.processed_at = Time.current
     n.save
     n.mark_processed!
   end

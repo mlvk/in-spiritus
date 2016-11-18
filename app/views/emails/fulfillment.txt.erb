@@ -2,7 +2,7 @@ Your order has been delivered!
 
 Hello <%= context[:notification_rule].full_name %>,
 
-Please find the attached document for your recent delivery: <%= DateTime.now.strftime('%A, %d/%m/%y') %>.
+Please find the attached document for your recent delivery: <%= Time.current.strftime('%A, %d/%m/%y') %>.
 
 Thank you.
 

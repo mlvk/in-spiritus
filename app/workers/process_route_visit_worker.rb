@@ -1,5 +1,9 @@
 class ProcessRouteVisitWorker
   include Sidekiq::Worker
+  include AwsUtils
+  include PdfUtils
+  include FirebaseUtils
+  include UrlUtils
 
   sidekiq_options :retry => false, unique: :until_executed
 
@@ -14,20 +18,40 @@ class ProcessRouteVisitWorker
       .fulfillments
       .belongs_to_sales_order
       .each do |f|
-        if !f.has_pending_notification? && f.is_valid?
-          renderer = f.never_notified? ? "Fulfillment" : "UpdatedFulfillment"
+        build_notifications f
+        publish_documents f
 
-          f.location.notification_rules.each do |nr|
-            Notification.create(
-              fulfillment:f,
-              renderer:renderer,
-              notification_rule:nr)
-          end
-        end
+        Log.notify_distribution_event "Delivered: #{f.to_string}"
     end
 
-    Log.notify_distribution_event "Delivered: #{route_visit.to_string}"
-
     route_visit.mark_processed!
+  end
+
+  private
+  def build_notifications(f)
+    if !f.has_pending_notification? && f.is_valid?
+      renderer = f.never_notified? ? "Fulfillment" : "UpdatedFulfillment"
+
+      f.location.notification_rules.each do |nr|
+        Notification.create(
+          fulfillment:f,
+          renderer:renderer,
+          notification_rule:nr)
+      end
+    end
+  end
+
+  def publish_documents(f)
+    key = "fulfillment_docs/#{f.id}"
+		payload = {
+			status: "processing"
+		}
+
+    push_payload(key, payload)
+
+    records = [f.order, f.credit_note].select {|r| r.is_valid?}
+    url = generate_and_upload_pdfs(records, f.id)
+
+    publish_fulfillment_documents(f, shorten_url(url))
   end
 end

@@ -74,7 +74,7 @@ module Pdf
       @pdf.bounding_box([col3, y], :width => 200, :height => height) do
         location_code = route_visit.fulfillments.first.order.location.code.upcase
         location_name = route_visit.fulfillments.first.order.location.name
-        label = route_visit.has_multiple? ? 'Multiple orders' : "#{location_code} - #{location_name}"
+        label = route_visit.has_multiple_fulfillments? ? 'Multiple orders' : "#{location_code} - #{location_name}"
         @pdf.formatted_text_box [{ text: label, size: 9}], :align => :left, :valign => :center
       end
 
@@ -89,7 +89,7 @@ module Pdf
         @pdf.image "app/assets/images/ic_local_shipping_black_24dp_2x.png", :at => [514, y-2], :width => 15
       end
 
-      if route_visit.has_multiple?
+      if route_visit.has_multiple_fulfillments?
         y = @pdf.cursor + 4
         route_visit
           .fulfillments

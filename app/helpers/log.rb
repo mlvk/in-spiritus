@@ -31,7 +31,7 @@ class Log
 
   private
   def self.format_message message
-    "#{ Time.now.strftime("%Y/%m/%d %H:%M:%S") } #{ message }"
+    "#{ Time.current.strftime("%Y/%m/%d %H:%M:%S") } #{ message }"
   end
 
   def self.post_slack_message(message, channel = ENV["SLACK_CHANNEL_URL"])

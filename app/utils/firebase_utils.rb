@@ -3,6 +3,20 @@ module FirebaseUtils
 		@fb_client ||= Firebase::Client.new(uri)
   end
 
+	def push_payload(key, payload)
+		fb.update("", {key => payload})
+	end
+
+	def publish_fulfillment_documents(fulfillment, docs_url)
+		key = "fulfillment_docs/#{fulfillment.id}"
+		payload = {
+			status: "published",
+			pdf_url: docs_url
+		}
+
+		push_payload(key, payload)
+	end
+
 	def build_stock_level_data_point(stock_level)
 		stock = stock_level.stock
 		fulfillment = stock.fulfillment
@@ -18,8 +32,8 @@ module FirebaseUtils
 
 		timestamp = stock.taken_at.to_i
 
-		data_key = "locations/#{location.code}/#{item.code}/#{stock_level.id}"
-		data_payload = {
+		key = "locations/#{location.code}/#{item.code}/#{stock_level.id}"
+		payload = {
 			starting: stock_level.starting,
 			returns: stock_level.returns,
 			ending: ending_level.to_i,
@@ -28,8 +42,6 @@ module FirebaseUtils
 			ts: timestamp
 		}
 
-		fb.update("", {
-			data_key => data_payload
-		})
+		push_payload(key, payload)
 	end
 end

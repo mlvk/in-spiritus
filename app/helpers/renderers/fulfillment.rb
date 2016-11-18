@@ -5,7 +5,7 @@ module Renderers
 
       resources = [fulfillment.order, fulfillment.credit_note].select { |r| r.is_valid? }
 
-      date_fmt = DateTime.now.strftime('%d/%m/%y')
+      date_fmt = Time.current.strftime('%d/%m/%y')
       context = {
         fulfillment: fulfillment,
         notification_rule: notification.notification_rule

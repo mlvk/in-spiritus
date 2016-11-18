@@ -19,9 +19,9 @@ class Fulfillment < ActiveRecord::Base
 
   belongs_to :route_visit
   belongs_to :order
-  belongs_to :stock
-  belongs_to :pod
-  belongs_to :credit_note
+  belongs_to :stock, dependent: :destroy, autosave: true
+  belongs_to :pod, dependent: :destroy, autosave: true
+  belongs_to :credit_note, dependent: :destroy, autosave: true
   has_many   :notifications, dependent: :nullify, autosave: true
 
   has_one :location, through: :order
@@ -47,4 +47,8 @@ class Fulfillment < ActiveRecord::Base
   def is_valid?
     order.is_valid? || credit_note.is_valid?
   end
+
+  def to_string
+		Maybe(order).to_string.fetch("")
+	end
 end

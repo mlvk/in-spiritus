@@ -181,7 +181,7 @@ module Pdf
          y = @pdf.cursor - 5
          @pdf.bounding_box([x, y], :width => size*4, :height => size/3) do
            name = pod.name
-           date = pod.signed_at.strftime('%d/%m/%y - %l:%m%P')
+           date = pod.signed_at.strftime('%a - %m/%d/%y - %I:%M%P')
            @pdf.formatted_text_box [{ text: "#{date} - #{name}", size: size/4.5, styles: [:italic, :bold]}], :align => :left, :valign => :top
          end
 

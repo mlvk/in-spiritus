@@ -1,26 +1,26 @@
 module PdfUtils
 	include AwsUtils
 
-	def generate_pdfs(records)
+	def generate_pdfs(records, key = SecureRandom.hex)
 		pdf = build_pdf records
 
 		# For Testing Only
 		# local_url = 'public/testing.pdf'
 
 		# For production
-		local_url = "tmp/pdfs/#{SecureRandom.hex}.pdf"
+		local_url = "tmp/pdfs/#{key}.pdf"
 
 		pdf.render_file local_url
 
     return local_url
 	end
 
-	def generate_and_upload_pdfs(records)
+	def generate_and_upload_pdfs(records, key = SecureRandom.hex)
 		pdf = build_pdf records
-		key = "#{SecureRandom.hex}.pdf"
-		path = "tmp/pdfs/#{key}"
+		file_name = "#{key}.pdf"
+		path = "tmp/pdfs/#{file_name}"
 		pdf.render_file path
-		s3_data = upload_file(key, path)
+		s3_data = upload_file(file_name, path)
 		File.delete(path)
 		return s3_data
 	end

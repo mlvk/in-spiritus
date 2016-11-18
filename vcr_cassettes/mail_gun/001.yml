@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api:FAKE_MAIL_GUN_KEY@api.mailgun.net/v3/mg.fakedomain.com/messages
+    uri: https://api.mailgun.net/v3/mg.fakedomain.com/messages
     body:
       encoding: ASCII-8BIT
       string: !binary |-

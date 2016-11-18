@@ -26,7 +26,7 @@ class CreditNote < ActiveRecord::Base
 
   belongs_to :location
 
-  has_one :fulfillment, dependent: :nullify, autosave: true
+  has_one :fulfillment
   has_many :credit_note_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
   has_many :notifications, dependent: :nullify, autosave: true
 
@@ -35,14 +35,6 @@ class CreditNote < ActiveRecord::Base
     .where('credit_note_items.quantity > ? AND credit_note_items.unit_price > ?', 0, 0)
     .distinct
   }
-
-  def fulfillment_id=(_value)
-     # TODO: Remove once it's fixed
-  end
-
-  def fulfillment_id
-    fulfillment.id
-  end
 
   def has_credit?
     credit_note_items.any? { |cni| cni.has_credit? }

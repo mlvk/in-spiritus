@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://www.googleapis.com/urlshortener/v1/url?fields=id,longUrl&key=<%= api_key %>
+    body:
+      encoding: UTF-8
+      string: '{"longUrl":"https://s3.amazonaws.com/fake-bucket-name/test.pdf"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '64'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+    headers:
+      Vary:
+      - Origin
+      - X-Origin
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Encoding:
+      - gzip
+      Date:
+      - Fri, 18 Nov 2016 18:25:57 GMT
+      Expires:
+      - Fri, 18 Nov 2016 18:25:57 GMT
+      Cache-Control:
+      - private, max-age=0
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      Server:
+      - GSE
+      Alt-Svc:
+      - quic=":443"; ma=2592000; v="36,35,34"
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAAKvmUlBKLSrKL1KyUqjmUoByioG8aCAPLAQUTMnPTczMAwoq
+        lRYnpqf6ZOZmlhQr6UAki1ITi/PBktmplZ55ZYk5mSkwudzUYpAGkKRTYopC
+        UGphaWpxiRJIshZIxIKUKSXnp4BUmBgYgLk49dRy1XIBAHbQcHGwAAAA
+    http_version:
+  recorded_at: Fri, 18 Nov 2016 18:25:57 GMT
+recorded_with: VCR 3.0.3

@@ -13,7 +13,7 @@ class BaseSyncer
 
   # Sync from xero to local
   def sync_remote(timestamp = fetch_last_remote_sync(self))
-    start_timestamp = DateTime.now
+    start_timestamp = Time.current
 
     result = process_records(find_records(timestamp))
 

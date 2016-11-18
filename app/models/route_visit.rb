@@ -23,7 +23,7 @@ class RouteVisit < ActiveRecord::Base
 	has_many 		:fulfillments, :dependent => :destroy, autosave: true
 	has_many 		:orders, through: :fulfillments
 
-	def has_multiple?
+	def has_multiple_fulfillments?
 		fulfillments.size > 1
 	end
 

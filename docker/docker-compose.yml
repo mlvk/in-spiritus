@@ -4,7 +4,7 @@ services:
   web:
     tty: true
     stdin_open: true
-    image: mlvk/in-spiritus:0.0.6
+    image: mlvk/in-spiritus:0.0.8
     command: bash -c "rm -f tmp/pids/* && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
       - "3000:3000"
@@ -26,7 +26,7 @@ services:
       - backend
 
   sidekiq:
-    image: mlvk/in-spiritus:0.0.6
+    image: mlvk/in-spiritus:0.0.8
     command: bundle exec sidekiq
     networks:
       - backend
@@ -34,7 +34,7 @@ services:
       - ..:/app/in-spiritus
 
   scheduler:
-    image: mlvk/in-spiritus:0.0.6
+    image: mlvk/in-spiritus:0.0.8
     command: bundle exec clockwork clock.rb
     networks:
       - backend

@@ -11,13 +11,6 @@ module InSpiritus
 
     config.middleware.use Rack::Deflater
 
-    # config.middleware.insert_before 0, "Rack::Cors" do
-    #   allow do
-    #     origins '*'
-    #     resource '*', :headers => :any, :methods => [:get, :post, :options]
-    #   end
-    # end
-
     config.middleware.insert_before 0, "Rack::Cors", :debug => true, :logger => (-> { Rails.logger }) do
       allow do
         origins '*'
@@ -44,6 +37,5 @@ module InSpiritus
 
     config.time_zone = 'Pacific Time (US & Canada)'
     Time.zone = "Pacific Time (US & Canada)"
-
   end
 end
