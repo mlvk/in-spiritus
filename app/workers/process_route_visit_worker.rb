@@ -50,7 +50,7 @@ class ProcessRouteVisitWorker
     push_payload(key, payload)
 
     records = [f.order, f.credit_note].select {|r| r.is_valid?}
-    url = generate_and_upload_pdfs(records, f.id)
+    url = generate_and_upload_pdfs(records)
 
     publish_fulfillment_documents(f, shorten_url(url))
   end

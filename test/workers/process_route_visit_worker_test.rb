@@ -6,7 +6,7 @@ class ProcessRouteVisitWorkerTest < ActiveSupport::TestCase
     route_visit = create(:route_visit_with_fulfilled_fulfillments, :fulfilled)
 
     aws_props = {
-      pdf_url: "https://#{ENV['PDF_BUCKET']}.s3.amazonaws.com/#{route_visit.fulfillments.first.id}.pdf"
+      pdf_url: "https://#{ENV['PDF_BUCKET']}.s3.amazonaws.com"
     }
 
     firebase_props = {
@@ -19,7 +19,7 @@ class ProcessRouteVisitWorkerTest < ActiveSupport::TestCase
 
     VCR.use_cassette('mail_gun/001') do
       VCR.use_cassette('slack/001') do
-        VCR.use_cassette('aws/put_pdf', erb: aws_props) do
+        VCR.use_cassette('aws/put_pdf', erb: aws_props, :match_requests_on => [:host]) do
             VCR.use_cassette('google/url_shortener/001', erb:google_props) do
               VCR.use_cassette('firebase/001', erb:firebase_props, allow_playback_repeats:true) do
 
