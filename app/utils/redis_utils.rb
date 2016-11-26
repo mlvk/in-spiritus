@@ -21,7 +21,7 @@ module RedisUtils
 	end
 
 	def fetch_last_remote_sync(instance)
-    last_sync_date_time = Maybe(redis.get(redis_remote_key(instance))).fetch(100.years.ago.to_s)
+    last_sync_date_time = Maybe(redis.get(redis_remote_key(instance))).fetch(Time.current.to_s)
     DateTime.parse(last_sync_date_time)
   end
 

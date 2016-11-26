@@ -31,6 +31,8 @@ module InSpiritus
     config.assets.enabled = true
     config.serve_static_files = true
 
+    config.autoload_paths << "#{Rails.root}/app/resources/concerns"
+
     config.generators do |g|
       g.factory_girl false
     end

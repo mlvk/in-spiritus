@@ -1,0 +1,30 @@
+# Request - Get contacts: since modified
+# Response - Result set with single contact: NW001 - Nature Well - Silverlake
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/Contacts/<%= id %>
+    headers:
+      If-Modified-Since:
+      - '2016-03-05T23:13:35'
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n
+          <Id>0f6273ac-b97a-4ab2-82e5-039abc39dba0</Id>
+          <Status>OK</Status>
+          <Contacts>
+            <Contact>
+              <ContactID><%= id %></ContactID>
+              <ContactStatus><%= status %></ContactStatus>
+              <Name><%= name %></Name>
+            </Contact>
+          </Contacts>
+        </Response>"
+    http_version:
+  recorded_at: Sat, 05 Mar 2016 23:16:16 GMT
+recorded_with: VCR 3.0.1

@@ -1,0 +1,18 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/CreditNotes?where=CreditNoteNumber==%22<%= credit_note_number %>%22
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+          <Id>8735153c-2fe8-4acb-ad41-ee4b53e71d0f</Id>
+          <Status>OK</Status>
+        </Response>"
+    http_version:
+  recorded_at: Fri, 11 Mar 2016 23:10:53 GMT
+recorded_with: VCR 3.0.1

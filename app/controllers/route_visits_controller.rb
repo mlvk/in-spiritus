@@ -64,7 +64,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
 
     {success:true, id:route_visit_id}
   rescue => error
-    {success:false, error:error.to_s}
+    {success:false, error:error.message}
   end
 
   def process_fulfillment(data, route_visit)
@@ -110,7 +110,8 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
       target.save
     end
 
-    order.mark_submitted!
+    order.mark_authorized!
+    order.mark_pending_sync!
   end
 
   def process_credit_note(data)
@@ -142,7 +143,8 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
       target.save
     end
 
-    credit_note.mark_submitted!
+    credit_note.mark_submitted! unless credit_note.authorized?
+    credit_note.mark_pending_sync!
   end
 
   def process_stock(data)

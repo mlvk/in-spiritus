@@ -34,8 +34,6 @@ gem 'prawn-svg'
 gem 'mailgun-ruby', require: 'mailgun'
 
 group :development do
-  gem 'hirb'
-  gem 'awesome_print'
   gem 'spring'
   gem 'rack-livereload'
   gem 'guard'
@@ -45,6 +43,7 @@ group :development do
 end
 
 group :development, :staging, :test do
+  gem 'zeus'
   gem 'dotenv-rails'
   gem 'factory_girl'
   gem 'factory_girl_rails'
@@ -54,6 +53,8 @@ group :development, :staging, :test do
   gem 'pry-byebug'
   gem 'pry-rails'
   gem 'rails-erd'
+  gem 'hirb'
+  gem 'awesome_print'
 end
 
 group :test do
@@ -61,5 +62,5 @@ group :test do
   gem 'webmock'
   gem 'fakeredis'
   gem 'spy'
-  gem 'codeclimate-test-reporter'
+  gem 'maxitest'
 end

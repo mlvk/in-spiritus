@@ -19,17 +19,13 @@ class ItemsSyncerTest < ActiveSupport::TestCase
   end
 
   test "Sync local item attributes when record exists in xero" do
-    item = create(:item, :synced)
+    item = create(:item, :synced, :with_xero_id)
 
     yaml_props = {
       item_id: item.xero_id,
       code: item.code,
       name: item.name,
       description: item.description,
-
-      code_changed: 'new_code',
-      name_changed: 'new_name',
-      description_changed: 'new_description'
     }
 
     item.code = yaml_props[:code_changed]
@@ -37,15 +33,15 @@ class ItemsSyncerTest < ActiveSupport::TestCase
     item.description = yaml_props[:description_changed]
     item.save
 
-    item.mark_pending!
+    item.mark_pending_sync!
 
     VCR.use_cassette('items/003', erb: yaml_props) do
       ItemsSyncer.new.sync_local
     end
 
-    assert_equal("#{yaml_props[:name_changed]}FORCE", Item.first.name)
-    assert_equal("#{yaml_props[:code_changed]}FORCE", Item.first.code)
-    assert_equal("#{yaml_props[:description_changed]}FORCE", Item.first.description)
+    assert_equal("#{yaml_props[:name]}", Item.first.name)
+    assert_equal("#{yaml_props[:code]}", Item.first.code)
+    assert_equal("#{yaml_props[:description]}", Item.first.description)
   end
 
   # Remote sync testing

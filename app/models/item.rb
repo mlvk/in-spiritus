@@ -1,26 +1,12 @@
 class Item < ActiveRecord::Base
-	include AASM
+	include XeroRecord
+	include SyncableModel
 	include StringUtils
 
 	PRODUCT_TYPE = 'product'
   INGREDIENT_TYPE = 'ingredient'
 
-	before_save :pre_process_saving_data
-
-	aasm :item, :column => :xero_state, :skip_validation_on_save => true do
-    state :pending, :initial => true
-    state :synced
-
-		event :mark_pending do
-      transitions :from => [:pending, :synced], :to => :pending
-    end
-
-    event :mark_synced do
-      transitions :from => [:pending, :synced], :to => :synced
-    end
-  end
-
-	enum xero_state: [ :pending, :synced ]
+	before_save :clean_fields
 
 	validates :name, presence: true
 
@@ -39,7 +25,7 @@ class Item < ActiveRecord::Base
   scope :ingredient, -> { where(tag:INGREDIENT_TYPE)}
 
 	private
-	def pre_process_saving_data
+	def clean_fields
 		if code.nil?
 			initials = Maybe(company).initials
 			prefix = initials.empty? ? "" : "#{initials.fetch()} - "

@@ -1,4 +1,7 @@
 class ItemResource < JSONAPI::Resource
+  include XeroResource
+  include SyncableResource
+
   attributes :name,
              :code,
              :description,
@@ -23,8 +26,4 @@ class ItemResource < JSONAPI::Resource
           :is_purchased,
           :company_id,
           :active
-
-  before_save do
-    @model.xero_state = Item.xero_states[:pending]
-  end
 end

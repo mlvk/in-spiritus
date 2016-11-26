@@ -45,26 +45,37 @@ Signup for the following services:
 
 ### Setup ENV vars
 Add in the following env vars to the stack
-  1. __XERO_API_KEY__           : *required* `Consumer Key`
-  1. __XERO_SECRET__            : *required* `Consumer Secret`
-  1. __XERO_PRIVATE_KEY__       : *required* `pbcopy < privatekey.pem`
-  1. __REDIS_URL__              : *required*
-  1. __SECRET_KEY_BASE__        : *required*
-  1. __POSTGRESQL_DATABASE__    : *required*
-  1. __POSTGRESQL_ADDRESS__     : *required*
-  1. __POSTGRESQL_USERNAME__    : *required*
-  1. __POSTGRESQL_PASSWORD__    : *required*
-  1. __AWS_ACCESS_KEY_ID__      : *required*
-  1. __AWS_SECRET_ACCESS_KEY__  : *required*
-  1. __AWS_REGION__             : *required*
-  1. __PDF_BUCKET__             : *required*
-  1. __MAIL_GUN_API_KEY__       : *required*
-  1. __MAIL_GUN_DOMAIN__        : *required*
-  1. __MAPBOX_API_TOKEN__       : *required*
-  1. __SPOILAGE_ACCOUNT_CODE__  : *required* `Used to book credit note items against xero account`
+XERO_API_KEY=APP_KEY
+XERO_SECRET=APP_SECRET
+XERO_PRIVATE_KEY=rsa_private_key
+SPOILAGE_ACCOUNT_CODE=400
+COGS_ACCOUNT_CODE=500
+SALES_ACCOUNT_CODE=400
 
+REDIS_URL=redis://localhost
+REDIS_ADDRESS=redis
 
-**Note** The private key needs to be converted to a single line with newlines replaced with `\n`
+AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY=SECRET
+AWS_REGION=us-east-1
+PDF_BUCKET=aws_bucket
+
+MAIL_GUN_API_KEY=mailgun_key
+MAIL_GUN_DOMAIN=mg.yourdomain.com
+SALES_FROM_EMAIL=sales@yourdomain.com
+
+ROUTIFIC_API_KEY=routific_api_key
+MAPBOX_API_TOKEN=mapbnox_api_key
+
+SLACK_CHANNEL_URL=https://hooks.slack.com/services/key
+DISTRIBUTION_SLACK_CHANNEL_URL=https://hooks.slack.com/services/key
+
+FIREBASE_URL=https://yourapp.firebaseio.com/
+GOOGLE_API_KEY=google_api_key
+
+FACTORY_NOTIFICATION_RULE_EMAIL=testing@yourdomain.com
+
+**Note** The XERO_PRIVATE_KEY needs to be converted to a single line with newlines replaced with `\n`
 Example:
 
 ```
@@ -80,7 +91,7 @@ The easiest way to get the project running is by using the CLI tool. This will m
 
 Read the [cli docs](https://github.com/mlvk/in-spiritus-cli) for more info.
 
-### Manage the containers with docker-compose
+### Manage the containers with docker-compose manually
 If you have trouble using the CLI tool, you can manage the docker-compose manually with these commands.
 
 ### Starting containers
@@ -105,5 +116,16 @@ If you have trouble using the CLI tool, you can manage the docker-compose manual
 ![alt tag](https://github.com/brancusi/in-spiritus/blob/master/erd.png)
 
 ### Building docker images
-1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.dev -t mlvk/in-spiritus:0.0.8 .`
-2. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.8`
+1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.app -t mlvk/in-spiritus:0.0.10 .`
+1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.python -t mlvk/in-spiritus-python:0.0.1 .`
+
+### Publishing docker hub
+1. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.10`
+1. Push to dockerhub registry: `docker push mlvk/in-spiritus-python:0.0.1`
+
+### Setup Atom for testing
+1. You can install the [ruby-test](https://atom.io/packages/ruby-test) Atom plugin
+1. For the setting in the mini test area use the following settings:
+  1. Minitest command: run all tests: `is zeus test`
+  1. Minitest command: run test file: `is zeus test {relative_path}`
+  1. Minitest command: run current test: `is zeus test {relative_path}:{line_number}`

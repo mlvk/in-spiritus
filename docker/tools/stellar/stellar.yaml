@@ -1,0 +1,4 @@
+project_name: 'in_spiritus'
+tracked_databases: ['in_spiritus']
+url: 'postgresql://postgres@db/template1'
+stellar_url: 'postgresql://postgres@db/stellar_data'

@@ -4,7 +4,7 @@ services:
   web:
     tty: true
     stdin_open: true
-    image: mlvk/in-spiritus:0.0.8
+    image: mlvk/in-spiritus:0.0.9
     command: bash -c "rm -f tmp/pids/* && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
       - "3000:3000"
@@ -12,6 +12,20 @@ services:
       - backend
     volumes:
       - ..:/app/in-spiritus
+    depends_on:
+      - db
+      - redis
+
+  python:
+    tty: true
+    stdin_open: true
+    image: mlvk/in-spiritus-python:0.0.1
+    command: tail -f /dev/null
+    networks:
+      - backend
+    depends_on:
+      - db
+      - redis
 
   db:
     image: postgres
@@ -19,27 +33,52 @@ services:
       - "5432:5432"
     networks:
      - backend
+    volumes:
+      - ../tmp/db/pg/db/postgresql/data:/var/lib/postgresql/data
+      - ../tmp/db/pg/db/dumps:/var/lib/dumps
 
   redis:
     image: redis
     networks:
       - backend
+    command: redis-server --appendonly yes
+    restart: always
 
   sidekiq:
-    image: mlvk/in-spiritus:0.0.8
+    image: mlvk/in-spiritus:0.0.9
     command: bundle exec sidekiq
     networks:
       - backend
     volumes:
       - ..:/app/in-spiritus
+    depends_on:
+      - db
+      - redis
+
+  zeus:
+    image: mlvk/in-spiritus:0.0.9
+    command: bash -c "rm -f /zeus/.zeus.sock && zeus start"
+    networks:
+      - backend
+    volumes:
+      - ..:/app/in-spiritus
+      - ../tmp/sockets/zeus:/zeus
+    environment:
+      ZEUSSOCK: /zeus/.zeus.sock
+    depends_on:
+      - db
+      - redis
 
   scheduler:
-    image: mlvk/in-spiritus:0.0.8
+    image: mlvk/in-spiritus:0.0.9
     command: bundle exec clockwork clock.rb
     networks:
       - backend
     volumes:
       - ..:/app/in-spiritus
+    depends_on:
+      - db
+      - redis
 
   logging:
     image: brancusi/remote_syslog:0.0.1

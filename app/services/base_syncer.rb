@@ -2,187 +2,185 @@ class BaseSyncer
   include XeroUtils
   include RedisUtils
 
-  # Sync from local to xero
   def sync_local
-    begin
-      process_local(find_models)
-    rescue => e
-      error e
-    end
+    process_local(find_models)
+  rescue => e
+    error e
   end
 
-  # Sync from xero to local
   def sync_remote(timestamp = fetch_last_remote_sync(self))
-    start_timestamp = Time.current
+    start_timestamp = Time.current.to_s
 
-    result = process_records(find_records(timestamp))
+    find_records(timestamp)
+      .each(&method(:process_record))
 
-    if result
-      set_last_remote_sync(self, start_timestamp)
-    end
-
-    return result
+    set_last_remote_sync(self, start_timestamp)
   end
 
   protected
-    # Try to find a single xero record by its xero id
-    def find_record(xero_id)
-      raise_must_override
-    end
+  # Try to find a single xero record by its xero id
+  def find_record(xero_id)
+    raise_must_override
+  end
 
-    # Try to find a single record by some other predicate
-    # Each record type may need a slightly different lookup
-    def find_record_by(model)
-      raise_must_override
-    end
+  # Try to find a single record by some other predicate
+  # Each record type may need a slightly different lookup
+  def find_record_by(model)
+    raise_must_override
+  end
 
-    # Query for a specific type of record using a predicate
-    def find_records(predicate)
-      raise_must_override
-    end
+  # Query for a specific type of record using a predicate
+  def find_records(predicate)
+    raise_must_override
+  end
 
-    # Update a record based on the diff with the local model
-    def update_record(record, model)
-      raise_must_override
-    end
+  # Update a record based on the diff with the local model
+  def update_record(record, model)
+    raise_must_override
+  end
 
-    # Create a new xero record. This is called when the find_xero methods
-    # return nil
-    def create_record
-      raise_must_override
-    end
+  # Create a new xero record. This is called when the find_xero methods
+  # return nil
+  def create_record
+    raise_must_override
+  end
 
-    # OPTIONAL - hook called before update_model or save_records is called.
-    # A good place to void an item or change state of a local model based
-    # on remote record state.
-    def pre_flight_check(record, model)
-      # Do nothing
-    end
+  # OPTIONAL - Check if this record should be included in the batch save
+    # We need to somehow still update the model even if the record should not be
+    # saved to xero. This is causing some items to not not archive or void
+    # since they the remote server is already voided
+  def should_save_record?(record, model)
+    true
+  end
 
-    # OPTIONAL - Check if this record should be included in the batch save
-    def should_save_record?(record, model)
-      true
-    end
+  # Responsible for finding the local model for this record
+  # It is up to the subclass to determine lookup logic
+  # or to create a new model if none is found.
+  # If nil is returned, the task won't attempt to process the record
+  def find_model(record)
+    raise_must_override
+  end
 
-    # OPTIONAL - Check if this model should be updated
-    def should_update_model?(model, record)
-      true
-    end
+  # Query local models based on last_updated timestamp
+  def find_models
+    raise_must_override
+  end
 
-    # Responsible for finding the local model for this record
-    # It is up to the subclass to determine lookup logic
-    # or to create a new model if none is found.
-    # If nil is returned, the task won't attempt to process the record
-    def find_model(record)
-      raise_must_override
-    end
+  # Update the local model based on the record
+  def update_model(model, record)
+    raise_must_override
+  end
 
-    # Query local models based on last_updated timestamp
-    def find_models
-      raise_must_override
-    end
+  # Handle post process model
+  def post_process_model(model)
+    model.mark_synced!
+  end
 
-    # Update the local model based on the record
-    def update_model(model, record)
-      raise_must_override
-    end
+  # Batch save xero record
+  def save_records(records)
+    raise_must_override
+  end
 
-    # Batch save xero record
-    def save_records(records)
-      raise_must_override
-    end
+  def log(message)
+    logger.info("[Syncer]: #{message}")
+  end
 
-    def log(message, level = 'info')
-      Rails.logger.info("[Syncer]: #{message}")
-    end
+  def warn(message)
+    logger.warn("[Syncer]: #{message}")
+  end
 
-    def warn(message)
-      log(message, 'warn')
-    end
-
-    def error(e)
-      Rails.logger.error { "[Syncer]: #{e.message} #{e.backtrace.join("\n")}" }
-    end
+  def error(e)
+    logger.error { "[Syncer]: #{e.message} #{e.backtrace.join("\n")}" }
+  end
 
   private
-    def raise_must_override
-      raise 'You must override this method in the concrete module'
+  def raise_must_override
+    raise 'You must override this method in the concrete module'
+  end
+
+  def process_local(models)
+    # We merge the model and record
+    zipped = models.map(&method(:zip_model_record))
+
+    # Filter only valid for save record. i.e. not voided, etc.
+    marked_for_save = zipped.select {|o| o[:should_save] }
+
+    # Update the xero record to the local model state
+    marked_for_save.each {|o| update_record(o[:record], o[:model])}
+
+    # Batch save to xero
+    response = batch_save marked_for_save.map {|o| o[:record]}
+
+    if response[:success]
+      # Process all zipped, included voided etc, to the latest record state
+      zipped.each {|o| process_record(o[:record], o[:model]) }
+    else
+      warn response[:errors]
+      raise response[:errors]
     end
+  end
 
-    def process_local(models)
-      records = models.map(&method(:prepare_record)).compact
-      if records.present?
-        if save_records(records)
-          begin
-            process_records(records)
-          rescue => e
-            error e
-          end
-        else
-          errors = records
-            .select {|r| r.errors.present?}
-            .map {|r| [r, r.errors]}
-          warn ("Failed to save records #{errors}")
-        end
-      end
+  def batch_save(records = [])
+    did_save_successfully = save_records(records)
+
+    errors = records
+      .select {|r| r.errors.present?}
+      .map {|r| [r, r.errors]}
+
+    { errors: errors, success: did_save_successfully }
+  end
+
+  def zip_model_record(model)
+    record = find_or_create_record(model)
+    should_save = should_save_record?(record, model)
+
+    { model:model, record:record, should_save: should_save }
+  end
+
+  def process_record(record, model = nil)
+    model = model || find_model(record)
+
+    if model.present?
+      update_model(model, record)
+      post_process_model(model)
     end
+  end
 
-    def prepare_record(model)
-      record = find_or_create_record(model)
-      pre_flight_check(record, model)
+  private
+  def logger
+    @@sync_logger ||= Logger.new("#{Rails.root}/log/xero_sync.log")
+  end
 
-      if should_save_record?(record, model)
-        update_record(record, model)
-        return record
-      end
+  def find_or_create_record(model)
+    match = find_record_by_id(model) || find_record_by_other(model)
+    if match.nil?
+      log "Creating a new record instead since no match found on xero"
+      return create_record
+    else
+      log "Found record for #{model}"
+      return match
     end
+  end
 
-    def process_records(records)
-      records.map {|record|
-        begin
-          model = find_model(record)
-          if model.present?
-            log "Matching local model found for #{record} - #{model}"
-            pre_flight_check(record, model)
-            if should_update_model?(model, record)
-              log "Will update local model to record state #{record} - #{model}"
-              update_model(model, record)
-            end
-            record
-          else
-            log "No matching local model found for record #{record}"
-            nil
-          end
-        rescue => e
-          error e
-          nil
-        end
-      }.compact
+  def find_record_by_id(model)
+    match = model.xero_id.present? ? find_record(model.xero_id) : nil
+    if match.present?
+      log "Found record by id for model: #{model}"
+      return match
     end
+  rescue => e
+    log e.message
+    nil
+  end
 
-    private
-    def find_or_create_record(model)
-      find_record_by_id_or_other(model) || create_record
+  def find_record_by_other(model)
+    match = find_record_by(model)
+    if match.present?
+      log "Found record by other means for model: #{model}"
+      return match
     end
-
-    def find_record_by_id_or_other(model)
-      record = nil
-      if model.xero_id.present?
-        begin
-          record = find_record(model.xero_id)
-        rescue => errors
-
-        end
-      end
-
-      if record.nil?
-        begin
-          record = find_record_by(model)
-        rescue => errors
-
-        end
-      end
-
-      return record
-    end
+  rescue => e
+    log e.message
+    nil
+  end
 end

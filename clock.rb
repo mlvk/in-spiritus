@@ -13,8 +13,8 @@ module Clockwork
   every(10.seconds, SyncLocalSalesOrdersWorker)
   every(10.seconds, SyncLocalPurchaseOrdersWorker)
   every(10.seconds, SyncLocalCreditNotesWorker)
-  every(10.seconds, ProcessRouteVisitWorker)
-  every(10.seconds, ProcessStockLevelsWorker)
+  every(5.seconds, ProcessRouteVisitWorker)
+  every(5.seconds, ProcessStockLevelsWorker)
   every(5.seconds, NotificationWorker)
 
   every(1.hour, SyncRemoteItemsWorker)

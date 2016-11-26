@@ -1,28 +1,9 @@
 class CreditNote < ActiveRecord::Base
-  include AASM
+  include SyncableModel
+  include XeroRecord
+  include XeroFinancialRecordModel
 
   before_save :generate_credit_note_number
-
-  aasm :credit_note, :column => :xero_state, :skip_validation_on_save => true do
-    state :pending, :initial => true
-    state :submitted
-    state :synced
-    state :voided
-
-    event :mark_submitted do
-      transitions :from => [:pending, :submitted, :synced], :to => :submitted
-    end
-
-    event :mark_synced do
-      transitions :from => [:submitted, :synced], :to => :synced
-    end
-
-    event :void do
-      transitions :from => [:pending, :submitted, :synced], :to => :voided
-    end
-  end
-
-  enum xero_state: [ :pending, :submitted, :synced, :voided ]
 
   belongs_to :location
 

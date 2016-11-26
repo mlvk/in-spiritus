@@ -4,9 +4,9 @@ class RoutePlanTest < ActiveSupport::TestCase
   test "returns sorted route_visits collection based on position" do
     route_plan = create(:route_plan)
 
-    route_visit2 = create(:route_visit, position: 2, route_plan:route_plan)
-    route_visit1 = create(:route_visit, position: 1, route_plan:route_plan)
-    route_visit3 = create(:route_visit, position: 3, route_plan:route_plan)
+    route_visit2 = create(:route_visit_with_unfulfilled_fulfillments, position: 2, route_plan:route_plan)
+    route_visit1 = create(:route_visit_with_unfulfilled_fulfillments, position: 1, route_plan:route_plan)
+    route_visit3 = create(:route_visit_with_unfulfilled_fulfillments, position: 3, route_plan:route_plan)
 
     route_plan.reload
 

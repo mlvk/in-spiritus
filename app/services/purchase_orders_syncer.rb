@@ -1,98 +1,108 @@
 class PurchaseOrdersSyncer < BaseSyncer
 
   protected
-    def find_record(xero_id)
-      xero.PurchaseOrder.find(xero_id)
-    end
+  def find_record(xero_id)
+    xero.PurchaseOrder.find(xero_id)
+  end
 
-    def find_record_by(model)
-      xero.PurchaseOrder.find(model.order_number)
-    end
+  def find_record_by(model)
+    xero.PurchaseOrder.find(model.order_number)
+  end
 
-    def find_records(timestamp)
-      xero.PurchaseOrder.all({:modified_since => timestamp})
-    end
+  def find_records(timestamp)
+    xero.PurchaseOrder.all({:modified_since => timestamp})
+  end
 
-    def should_save_record? (record, model)
-      model.submitted?
-    end
+  def should_save_record? (record, model)
+    is_locally_invalid = !model.has_synced_with_xero? && model.deleted?
+    is_remotely_unchangable = (record.status == 'VOIDED') ||
+                          (record.status == 'DELETED') ||
+                          (record.status == 'PAID') ||
+                          (record.status == 'BILLED')
 
-    def update_record(record, model)
-      record.purchase_order_number = model.order_number
-      record.date = model.delivery_date
-      record.delivery_date = model.delivery_date
-      record.status = 'AUTHORISED'
+    !is_locally_invalid && !is_remotely_unchangable
+  end
 
-      record.reference = model.location.full_name
-      record.build_contact(contact_id:model.location.company.xero_id, name:model.location.company.name)
+  def update_record(record, model)
+    record.purchase_order_number = model.order_number
+    record.date = model.delivery_date
+    record.status = model.xero_status_code
 
-      record.line_items.clear
-      model.order_items.each do | order_item |
-        create_record_line_item(record, order_item)
+    record.reference = model.location.full_name
+    record.build_contact(contact_id:model.location.company.xero_id, name:model.location.company.name)
+
+    create_record_line_items(record, model)
+  end
+
+  def create_record
+    xero.PurchaseOrder.build
+  end
+
+  def save_records(records)
+    xero.PurchaseOrder.save_records(records)
+  end
+
+  def find_model(record)
+    Order.find_by(xero_id:record.purchase_order_id) || Order.find_by(order_number:record.purchase_order_number)
+  end
+
+  def find_models
+    Order
+      .pending_sync
+      .purchase_order
+      .select { |o| !o.draft? }
+      .select { |o| o.is_valid? }
+  end
+
+  def update_model(model, record)
+    model.xero_id = record.purchase_order_id
+    model.save
+
+    record.line_items.each do |line_item|
+      item = Item.find_by(code: line_item.item_code)
+      if item.present?
+        order_item = model.order_items.find_by(item:item) || create_model_order_item(model, item)
+        order_item.quantity = line_item.quantity
+        order_item.unit_price = line_item.unit_amount
+        order_item.save
       end
     end
 
-    def create_record
-      xero.PurchaseOrder.build
+    # Clear missing order_items
+    model.order_items.each do |order_item|
+      has_match = record.line_items.any? {|line_item| line_item.item_code == order_item.item.code}
+      order_item.destroy if !has_match
     end
 
-    def save_records(records)
-      xero.PurchaseOrder.save_records(records)
+    model.sync_with_xero_status(record.status)
+  end
+
+  def post_process_model(model)
+    model.mark_synced!
+  end
+
+  private
+  def create_record_line_items(record, model)
+    record.line_items.clear
+    model
+      .order_items
+      .select { |oi| oi.has_quantity? }
+      .each { |oi| create_record_line_item(record, oi) }
+  end
+
+  def create_record_line_item(record, order_item)
+    if order_item.has_quantity?
+      record.add_line_item(
+        item_code:order_item.item.code,
+        description:"#{order_item.item.name} - #{order_item.item.description}",
+        quantity:order_item.quantity,
+        unit_amount:order_item.unit_price,
+        tax_type:'NONE',
+        account_code: ENV['COGS_ACCOUNT_CODE'])
     end
+  end
 
-    def find_model(record)
-      Order
-        .purchase_order
-        .find_by(xero_id:record.purchase_order_id) ||
-      Order
-        .purchase_order
-        .find_by(order_number:record.purchase_order_number)
-    end
-
-    def find_models
-      Order
-        .purchase_order
-        .submitted
-    end
-
-    def update_model(model, record)
-      model.xero_id = record.purchase_order_id
-
-      record.line_items.each do |line_item|
-        item = Item.find_by(code: line_item.item_code)
-        if item.present?
-          order_item = model.order_items.find_by(item:item) || create_model_order_item(model, item)
-          order_item.quantity = line_item.quantity
-          order_item.unit_price = line_item.unit_amount
-          order_item.save
-        end
-      end
-
-      # Clear missing order_items
-      model.order_items.each do |order_item|
-        has_match = record.line_items.any? {|line_item| line_item.item_code == order_item.item.code}
-        order_item.destroy if !has_match
-      end
-
-      model.save
-
-      model.mark_synced! if !model.voided?
-    end
-
-    private
-    def create_record_line_item(record, order_item)
-      if order_item.has_quantity?
-        record.add_line_item(
-          item_code:order_item.item.code,
-          description:"#{order_item.item.name} - #{order_item.item.description}",
-          quantity:order_item.quantity,
-          unit_amount:order_item.unit_price,
-          tax_type:'NONE',
-          account_code: ENV['COGS_ACCOUNT_CODE'])
-      end
-    end
-
-    def create_model_order_item(model, item)
-      OrderItem.create(item:item, order:model)
-    end
+  def create_model_order_item(model, item)
+    OrderItem.create(item:item, order:model)
+  end
 end

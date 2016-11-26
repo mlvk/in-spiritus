@@ -1,4 +1,6 @@
 class RouteVisitResource < JSONAPI::Resource
+  VALID_STATES = [0, 1, 2, 3, 4]
+
   attributes  :arrive_at,
               :depart_at,
               :position,
@@ -20,7 +22,10 @@ class RouteVisitResource < JSONAPI::Resource
   filter :status, default: 'with_valid_orders', apply: ->(records, value, _options) {
     case value.first
     when "with_valid_orders"
-      records.joins(orders: :order_items).where('order_items.quantity > ?', 0).distinct
+      records
+        .where("xero_financial_record_state = any (array#{VALID_STATES})")
+        .joins(orders: :order_items)
+        .where('order_items.quantity > ?', 0).distinct
     when "all"
       records
     else

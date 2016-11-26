@@ -20,6 +20,15 @@ class CompaniesController < ApplicationJsonApiResourcesController
     super
   end
 
+  def destroy
+    authorize Company
+    company = Company.find(params['id'])
+
+    company.mark_archived!
+
+    render :nothing => true, :status => 204
+  end
+
   def get_related_resource
     authorize Company
     super

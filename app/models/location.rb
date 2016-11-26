@@ -1,6 +1,5 @@
 class Location < ActiveRecord::Base
 	include StringUtils
-	# validates :name, presence: true
 
 	before_save :pre_process_saving_data
 
@@ -29,7 +28,7 @@ class Location < ActiveRecord::Base
 
 	scope :customer, -> { joins(:company).where(companies: {is_customer: true}) }
 	scope :with_valid_address, -> { where("address_id IS NOT NULL") }
-	scope :active, -> { where(active:true) }
+	scope :active, -> { joins(:company).where(companies: {active_state: Company.active_states[:active]}) }
 
 	def full_name
 		"#{code} - #{name}"

@@ -1,27 +1,31 @@
 class Company < ActiveRecord::Base
   include AASM
+  include SyncableModel
+  include XeroRecord
   include StringUtils
+
+  ACTIVE_STATUS = 'ACTIVE'
+  ARCHIVED_STATUS = 'ARCHIVED'
 
   validates :name, presence: true
   validates :price_tier, presence: true, if: :is_customer
 
-  before_save :pre_process_saving_data
+  before_save :clean_fields
 
-  aasm :company, :column => :xero_state, :skip_validation_on_save => true do
-    state :pending, :initial => true
-    state :synced
+  aasm :active_state, :column => :active_state, :skip_validation_on_save => true do
+    state :active, :initial => true
+    state :archived
 
-    event :mark_pending do
-      transitions :from => [:pending, :synced], :to => :pending
+    event :mark_active do
+      transitions :from => [:active, :archived], :to => :active
     end
 
-    event :mark_synced do
-      transitions :from => [:pending, :synced], :to => :synced
+    event :mark_archived do
+      transitions :from => [:active, :archived], :to => :archived
     end
   end
 
-  # State machine
-  enum xero_state: [ :pending, :synced ]
+  enum active_state: [ :active, :archived ]
 
   validates :name, uniqueness: { case_sensitive: false }
 
@@ -53,12 +57,11 @@ class Company < ActiveRecord::Base
   scope :vendor, -> { where(is_vendor: true) }
 
   private
-  def pre_process_saving_data
-    # Generate location code prefix
+  def clean_fields
     self.location_code_prefix = trim_and_downcase location_code_prefix
+
     generate_prefix unless valid_prefix?
 
-    # trim data
     self.name = trim name
   end
 

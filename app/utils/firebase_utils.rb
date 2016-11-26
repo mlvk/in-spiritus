@@ -30,7 +30,7 @@ module FirebaseUtils
 
 		sold = previous_ending_level - (stock_level.starting + stock_level.returns)
 
-		timestamp = stock.taken_at.to_i
+		timestamp = stock.fulfillment.route_visit.completed_at.to_i
 
 		key = "locations/#{location.code}/#{item.code}/#{stock_level.id}"
 		payload = {

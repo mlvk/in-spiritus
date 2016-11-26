@@ -1,16 +1,8 @@
-# Request - Get contacts: NW001 - Nature Well - Silverlake
-# Response - No match
-
-# Request - Get contacts: NW002 - Nature Well - Hollywood
-# Response - No match
-
-# Request - Put contacts: NW001, NW002
-# Response - Result set with new contacts
 ---
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Contacts?where=Name==%22Nature%20Well%22
+    uri: https://api.xero.com
   response:
     status:
       code: 200
@@ -24,7 +16,7 @@ http_interactions:
   recorded_at: Sun, 06 Mar 2016 23:56:59 GMT
 - request:
     method: put
-    uri: https://api.xero.com/api.xro/2.0/Contacts?summarizeErrors=false
+    uri: https://api.xero.com
     body:
       encoding: US-ASCII
       string: xml=%3CContacts%3E%0A%20%20%3CContact%3E%0A%20%20%20%20%3CName%3ENW001%20-%20Nature%20Well%20-%20Silverlake%3C%2FName%3E%0A%20%20%3C%2FContact%3E%0A%20%20%3CContact%3E%0A%20%20%20%20%3CName%3ENW002%20-%20Nature%20Well%20-%20Hollywood%3C%2FName%3E%0A%20%20%3C%2FContact%3E%0A%3C%2FContacts%3E%0A
@@ -39,9 +31,9 @@ http_interactions:
           <Status>OK</Status>
           <Contacts>
             <Contact status=\"OK\">
-              <ContactID><%= remote_contact_id %></ContactID>
+              <ContactID><%= contact_id %></ContactID>
+              <Name><%= contact_name %></Name>
               <ContactStatus>ACTIVE</ContactStatus>
-              <Name>Nature Well</Name>
               <IsSupplier>false</IsSupplier>
               <IsCustomer>true</IsCustomer>
             </Contact>

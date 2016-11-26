@@ -89,7 +89,7 @@ class RouteVisitsControllerTest < ActionController::TestCase
 
     route_visit.fulfillments.each do |f|
       assert f.fulfilled?, "fulfillment should have been fulfilled"
-      assert f.order.submitted?, "order should have been fulfilled"
+      assert f.order.authorized?, "order should have been fulfilled"
 
       f.stock.stock_levels.each do |sl|
         assert_equal(99, sl.starting)

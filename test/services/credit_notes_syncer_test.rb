@@ -2,18 +2,17 @@ require 'test_helper'
 
 class CreditNotesSyncerTest < ActiveSupport::TestCase
 
-  # Local sync testing
-  test "Remote voided credit_notes should update to voided locally" do
-    credit_note = create(:credit_note_with_credit_note_items, :synced)
-    credit_note.mark_submitted!
+  test "Remote voided credit_notes should update to voided locally when in state authorized locally" do
+    credit_note = create(:credit_note_with_credit_note_items, :with_xero_id)
+    credit_note.mark_authorized!
 
     yaml_props = {
-      credit_note_id: credit_note.xero_id,
-      credit_note_number: credit_note.credit_note_number,
-      remote_credit_note_status: 'VOIDED'
+      id: credit_note.xero_id,
+      number: credit_note.credit_note_number,
+      status: 'VOIDED'
     }
 
-    VCR.use_cassette('credit_notes/007', erb: yaml_props) do
+    VCR.use_cassette('credit_notes/query_credit_note_by_id', :erb => yaml_props, :match_requests_on => [:host]) do
       CreditNotesSyncer.new.sync_local
     end
 
@@ -22,23 +21,22 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     assert credit_note.voided?, 'Should have been voided'
   end
 
-  test "Remote deleted credit_notes should update to voided locally" do
-    credit_note = create(:credit_note_with_credit_note_items, :synced)
-    credit_note.mark_submitted!
+  test "Remote deleted credit_notes should update to deleted locally" do
+    credit_note = create(:credit_note_with_credit_note_items, :with_xero_id, :submitted)
 
     yaml_props = {
-      credit_note_id: credit_note.xero_id,
-      credit_note_number: credit_note.credit_note_number,
-      remote_credit_note_status: 'DELETED'
+      id: credit_note.xero_id,
+      number: credit_note.credit_note_number,
+      status: 'DELETED'
     }
 
-    VCR.use_cassette('credit_notes/007', erb: yaml_props) do
+    VCR.use_cassette('credit_notes/query_credit_note_by_id', :erb => yaml_props) do
       CreditNotesSyncer.new.sync_local
     end
 
     credit_note.reload
 
-    assert credit_note.voided?, 'Should have been deleted'
+    assert credit_note.deleted?, 'Should have been deleted'
   end
 
   test "Valid local credit_notes should be created in xero" do
@@ -50,7 +48,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
       credit_note_items: credit_note.credit_note_items
     }
 
-    VCR.use_cassette('credit_notes/002',  erb: yaml_props) do
+    VCR.use_cassette('credit_notes/002', erb: yaml_props) do
       CreditNotesSyncer.new.sync_local
     end
 
@@ -72,7 +70,9 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
   end
 
   test "should update a local credit when remote/local are out of sync and local model is in state synced" do
-    credit_note = create(:credit_note_with_credit_note_items, :synced, quantity:7)
+    credit_note = create(:credit_note_with_credit_note_items, quantity:7)
+
+    credit_note.mark_synced!
 
     yaml_props = {
       remote_credit_note_id: 'new_credit_note_id',
@@ -87,11 +87,13 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
 
     credit_note.reload
 
-    assert credit_note.credit_note_items.all? {|credit_note_item| credit_note_item.quantity == yaml_props[:quantity]}, 'Credit_note_items quantities did not match'
+    assert credit_note.credit_note_items.all? {|credit_note_item| credit_note_item.quantity == yaml_props[:remote_quantity]}, 'Credit_note_items quantities did not match'
   end
 
   test "should remove credit_note_item if missing from remote record and local model is synced?" do
-    credit_note = create(:credit_note_with_credit_note_items, :synced)
+    credit_note = create(:credit_note_with_credit_note_items)
+
+    credit_note.mark_synced!
 
     yaml_props = {
       remote_credit_note_id: 'new_credit_note_id',
@@ -108,26 +110,50 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     assert credit_note.credit_note_items.empty?, 'Credit note items found when expected none'
   end
 
-  test "should not create new credit note when credit total is 0" do
+  test "should still create new credit note when credit total is 0" do
     credit_note = create(:credit_note_with_credit_note_items, :submitted, unit_price:0, quantity:5)
 
     syncer = CreditNotesSyncer.new
 
-    prepare_record_spy = Spy.on(syncer, :prepare_record)
-    syncer.sync_local
+    should_save_record_spy = Spy.on(syncer, :should_save_record?).and_call_through
 
-    refute prepare_record_spy.has_been_called?, 'Should not have been prepared'
+    yaml_props = {
+      credit_note_number: credit_note.credit_note_number
+    }
+
+    VCR.use_cassette('credit_notes/query_no_result', erb: yaml_props) do
+      syncer.sync_local
+    end
+
+    first_call = should_save_record_spy.calls.first
+
+    assert first_call.result, 'Should have returned true for should_save_record?'
   end
 
   test "should create new credit note when credit total is greater than 0" do
     credit_note = create(:credit_note_with_credit_note_items, :submitted, unit_price:10, quantity:5)
 
+    yaml_props = {
+      remote_credit_note_id: 'new_credit_note_id',
+      credit_note_number: credit_note.credit_note_number,
+      credit_note_items: credit_note.credit_note_items
+    }
+
     syncer = CreditNotesSyncer.new
 
-    prepare_record_spy = Spy.on(syncer, :prepare_record)
-    syncer.sync_local
+    should_save_record_spy = Spy.on(syncer, :should_save_record?).and_call_through
 
-    assert prepare_record_spy.has_been_called?, 'Should have been prepared'
+    VCR.use_cassette('credit_notes/002', erb: yaml_props) do
+      syncer.sync_local
+    end
+
+    first_call = should_save_record_spy.calls.first
+
+    credit_note.reload
+
+    assert first_call.result, 'Should have returned true for should_save_record?'
+    assert credit_note.xero_id.present?, 'Should have a xero id'
+    assert credit_note.synced?, 'Should be in synced state'
   end
 
   test "should only sync items with quanity and unit_price greater than 0" do

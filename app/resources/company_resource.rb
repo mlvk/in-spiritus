@@ -1,9 +1,13 @@
 class CompanyResource < JSONAPI::Resource
+  include XeroResource
+  include SyncableResource
+
   attributes  :name,
               :is_customer,
               :is_vendor,
               :terms,
-              :location_code_prefix
+              :location_code_prefix,
+              :active_state
 
   has_one  :price_tier
   has_many :locations
@@ -11,8 +15,5 @@ class CompanyResource < JSONAPI::Resource
 
   filter   :is_customer
   filter   :is_vendor
-
-  before_save do
-    @model.xero_state = Company.xero_states[:pending]
-  end
+  filter   :active_state
 end

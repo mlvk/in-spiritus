@@ -1,9 +1,9 @@
 # A scale to use to build various records
-companies = 5
-locations = 3
+companies = 2
+locations = 2
 users = 3
-products = 12
-ingredients = 20
+products = 10
+ingredients = 2
 
 #### Users
 admin = User.create(first_name:'Tony', last_name:'Starks', email:'admin@wutang.com', authentication_token:'admin_token', password:'password')
@@ -14,7 +14,7 @@ FactoryGirl.create_list(:user, users, :driver)
 
 FactoryGirl.create_list(:item, products, tag: Item::PRODUCT_TYPE, is_sold: true, is_purchased: false)
 
-FactoryGirl.create_list(:price_tier, 5, items: Item.product)
+FactoryGirl.create_list(:price_tier, 2, items: Item.product)
 
 FactoryGirl.create_list(:company_with_locations, companies, location_count: locations)
 FactoryGirl.create_list(:company_with_locations, companies, :vendor, location_count: locations)

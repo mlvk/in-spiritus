@@ -40,9 +40,9 @@ http_interactions:
           <Items>
             <Item status=\"OK\">
               <ItemID><%= item_id %></ItemID>
-              <Code><%= code_changed %>FORCE</Code>
-              <Name><%= name_changed %>FORCE</Name>
-              <Description><%= description_changed %>FORCE</Description>
+              <Code><%= code %></Code>
+              <Name><%= name %></Name>
+              <Description><%= description %></Description>
               <IsSold>false</IsSold>
               <IsPurchased>true</IsPurchased>
             </Item>

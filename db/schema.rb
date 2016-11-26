@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161107130457) do
+ActiveRecord::Schema.define(version: 20161125193918) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,7 +29,6 @@ ActiveRecord::Schema.define(version: 20161107130457) do
 
   create_table "companies", force: :cascade do |t|
     t.string   "xero_id",              limit: 255
-    t.integer  "xero_state",                       default: 0,     null: false
     t.string   "name",                 limit: 255,                 null: false
     t.integer  "terms",                            default: 14,    null: false
     t.boolean  "is_customer",                      default: true,  null: false
@@ -38,15 +37,18 @@ ActiveRecord::Schema.define(version: 20161107130457) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "location_code_prefix", limit: 10,                  null: false
+    t.integer  "active_state",                     default: 0,     null: false
+    t.integer  "sync_state",                       default: 0,     null: false
   end
 
+  add_index "companies", ["active_state"], name: "index_companies_on_active_state", using: :btree
   add_index "companies", ["is_customer"], name: "index_companies_on_is_customer", using: :btree
   add_index "companies", ["is_vendor"], name: "index_companies_on_is_vendor", using: :btree
   add_index "companies", ["location_code_prefix"], name: "index_companies_on_location_code_prefix", unique: true, using: :btree
   add_index "companies", ["name"], name: "name", unique: true, using: :btree
   add_index "companies", ["price_tier_id"], name: "index_companies_on_price_tier_id", using: :btree
+  add_index "companies", ["sync_state"], name: "index_companies_on_sync_state", using: :btree
   add_index "companies", ["xero_id"], name: "index_companies_on_xero_id", unique: true, using: :btree
-  add_index "companies", ["xero_state"], name: "index_companies_on_xero_state", using: :btree
 
   create_table "credit_note_items", force: :cascade do |t|
     t.integer  "credit_note_id",               null: false
@@ -62,20 +64,22 @@ ActiveRecord::Schema.define(version: 20161107130457) do
   add_index "credit_note_items", ["item_id"], name: "index_items_on_item_id", using: :btree
 
   create_table "credit_notes", force: :cascade do |t|
-    t.string   "xero_id",            limit: 255
-    t.integer  "xero_state",                     default: 0, null: false
-    t.string   "credit_note_number", limit: 255
-    t.date     "date",                                       null: false
-    t.integer  "location_id",                                null: false
+    t.string   "xero_id",                     limit: 255
+    t.string   "credit_note_number",          limit: 255
+    t.date     "date",                                                null: false
+    t.integer  "location_id",                                         null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "submitted_at"
+    t.integer  "sync_state",                              default: 0, null: false
+    t.integer  "xero_financial_record_state",             default: 0, null: false
   end
 
   add_index "credit_notes", ["credit_note_number"], name: "index_credit_notes_on_credit_note_number", unique: true, using: :btree
   add_index "credit_notes", ["location_id"], name: "index_credit_notes_on_location_id", using: :btree
+  add_index "credit_notes", ["sync_state"], name: "index_credit_notes_on_sync_state", using: :btree
+  add_index "credit_notes", ["xero_financial_record_state"], name: "index_credit_notes_on_xero_financial_record_state", using: :btree
   add_index "credit_notes", ["xero_id"], name: "index_credit_notes_on_xero_id", unique: true, using: :btree
-  add_index "credit_notes", ["xero_state"], name: "index_credit_notes_on_xero_state", using: :btree
 
   create_table "fulfillments", force: :cascade do |t|
     t.integer  "route_visit_id",             null: false
@@ -130,7 +134,6 @@ ActiveRecord::Schema.define(version: 20161107130457) do
 
   create_table "items", force: :cascade do |t|
     t.string   "xero_id",         limit: 255
-    t.integer  "xero_state",                  default: 0,            null: false
     t.string   "name",            limit: 255,                        null: false
     t.string   "code",            limit: 255,                        null: false
     t.string   "unit_of_measure", limit: 255
@@ -144,6 +147,7 @@ ActiveRecord::Schema.define(version: 20161107130457) do
     t.string   "tag",             limit: 255, default: "ingredient", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sync_state",                  default: 0,            null: false
   end
 
   add_index "items", ["code"], name: "index_items_on_code", unique: true, using: :btree
@@ -151,9 +155,9 @@ ActiveRecord::Schema.define(version: 20161107130457) do
   add_index "items", ["is_purchased"], name: "index_items_on_is_purchased", using: :btree
   add_index "items", ["is_sold"], name: "index_items_on_is_sold", using: :btree
   add_index "items", ["name"], name: "index_items_on_name", using: :btree
+  add_index "items", ["sync_state"], name: "index_items_on_sync_state", using: :btree
   add_index "items", ["tag"], name: "index_items_on_tag", using: :btree
   add_index "items", ["xero_id"], name: "index_items_on_xero_id", unique: true, using: :btree
-  add_index "items", ["xero_state"], name: "index_items_on_xero_state", using: :btree
 
   create_table "locations", force: :cascade do |t|
     t.integer  "company_id",                               null: false
@@ -217,25 +221,28 @@ ActiveRecord::Schema.define(version: 20161107130457) do
   add_index "order_items", ["order_id"], name: "index_order_items_on_order_id", using: :btree
 
   create_table "orders", force: :cascade do |t|
-    t.string   "xero_id",       limit: 255
-    t.string   "order_number",  limit: 255
-    t.integer  "xero_state",                default: 0,             null: false
-    t.string   "order_type",                default: "sales-order", null: false
-    t.integer  "location_id",                                       null: false
-    t.date     "delivery_date",                                     null: false
+    t.string   "xero_id",                     limit: 255
+    t.string   "order_number",                limit: 255
+    t.string   "order_type",                              default: "sales-order", null: false
+    t.integer  "location_id",                                                     null: false
+    t.date     "delivery_date",                                                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "submitted_at"
-    t.decimal  "shipping",                  default: 0.0
-    t.integer  "order_state",               default: 0,             null: false
+    t.decimal  "shipping",                                default: 0.0
     t.text     "note"
+    t.integer  "published_state",                         default: 0,             null: false
+    t.integer  "sync_state",                              default: 0,             null: false
+    t.integer  "xero_financial_record_state",             default: 0,             null: false
   end
 
   add_index "orders", ["location_id"], name: "index_orders_on_location_id", using: :btree
   add_index "orders", ["order_number"], name: "index_orders_on_order_number", unique: true, using: :btree
   add_index "orders", ["order_type"], name: "index_orders_on_order_type", using: :btree
+  add_index "orders", ["published_state"], name: "index_orders_on_published_state", using: :btree
+  add_index "orders", ["sync_state"], name: "index_orders_on_sync_state", using: :btree
+  add_index "orders", ["xero_financial_record_state"], name: "index_orders_on_xero_financial_record_state", using: :btree
   add_index "orders", ["xero_id"], name: "index_orders_on_xero_id", unique: true, using: :btree
-  add_index "orders", ["xero_state"], name: "index_orders_on_xero_state", using: :btree
 
   create_table "pods", force: :cascade do |t|
     t.binary   "signature"

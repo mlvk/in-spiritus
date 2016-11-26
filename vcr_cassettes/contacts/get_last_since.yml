@@ -1,5 +1,3 @@
-# Request - Get contacts: since modified
-# Response - Result set with single contact: NW001 - Nature Well - Silverlake
 ---
 http_interactions:
 - request:
@@ -19,8 +17,9 @@ http_interactions:
           <Status>OK</Status>
           <Contacts>
             <Contact>
-              <ContactID>nature_well_contact_id</ContactID>
-              <Name>Nature Well</Name>
+              <ContactID><%= contact_id %></ContactID>
+              <Name><%= contact_name %></Name>
+              <ContactStatus>ACTIVE</ContactStatus>
             </Contact>
           </Contacts>
         </Response>"

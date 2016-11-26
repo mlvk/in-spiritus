@@ -1,5 +1,6 @@
 class RouteVisit < ActiveRecord::Base
 	include AASM
+	VALID_STATES = [0, 1, 2, 3, 4]
 
 	aasm :route_visit, :column => :route_visit_state, :skip_validation_on_save => true do
 		state :pending, :initial => true
@@ -22,6 +23,11 @@ class RouteVisit < ActiveRecord::Base
 	has_one 		:visit_windows, through: :address
 	has_many 		:fulfillments, :dependent => :destroy, autosave: true
 	has_many 		:orders, through: :fulfillments
+
+	default_scope {
+		joins(:orders)
+			.where("xero_financial_record_state = any (array#{VALID_STATES})")
+	}
 
 	def has_multiple_fulfillments?
 		fulfillments.size > 1

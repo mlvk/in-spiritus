@@ -6,12 +6,34 @@ class OrderTest < ActiveSupport::TestCase
     order = build(:sales_order_with_items, :submitted)
 
     assert order.fulfillment.nil?, "Fulfillment was present before create and save"
-    assert_equal(0, Fulfillment.all.count, "There was a fulfillment when there should't have been")
+    assert_equal(0, Fulfillment.all.count, "There was a fulfillment when there shouldn't have been")
+    assert_equal(0, CreditNote.all.count, "There was a credit note when there shouldn't have been")
+    assert_equal(0, Stock.all.count, "There was a stock when there shouldn't have been")
+    assert_equal(0, Pod.all.count, "There was a pod note when there shouldn't have been")
 
     order.save
 
     assert order.fulfillment.present?, "Fulfillment was not present after and save"
     assert_equal(1, Fulfillment.all.count, "Created the wrong number of fulfillments")
+    assert_equal(1, CreditNote.all.count, "Should have created a credit note on save")
+    assert_equal(1, Stock.all.count, "Should have created a credit note on save")
+    assert_equal(1, Pod.all.count, "Should have created a credit note on save")
+  end
+
+  test "should not create credit note for purchase orders" do
+    order = build(:purchase_order_with_items)
+
+    assert order.fulfillment.nil?, "Fulfillment was present before create and save"
+    assert_equal(0, Fulfillment.all.count, "There was a fulfillment when there should't have been")
+    assert_equal(0, CreditNote.all.count, "There was a credit note when there should't have been")
+    assert_equal(0, Stock.all.count, "There was a stock when there should't have been")
+
+    order.save
+
+    assert order.fulfillment.present?, "Fulfillment was not present after and save"
+    assert_equal(1, Fulfillment.all.count, "Created the wrong number of fulfillments")
+    assert_equal(0, CreditNote.all.count, "There was a credit note when there should't have been")
+    assert_equal(0, Stock.all.count, "There was a stock when there should't have been")
   end
 
   test "Should find or create route_visit when order date changes" do

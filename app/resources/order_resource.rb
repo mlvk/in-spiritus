@@ -1,12 +1,14 @@
 class OrderResource < JSONAPI::Resource
+  include XeroResource
+  include XeroFinancialResource
+  include SyncableResource
+  include PublishableResource
+
   attributes :delivery_date,
              :order_number,
-             :xero_id,
              :order_type,
              :submitted_at,
              :shipping,
-             :order_state,
-             :xero_state,
              :note
 
   filter     :delivery_date

@@ -3,16 +3,27 @@ FactoryGirl.define do
     date { Date.tomorrow }
     location
 
-    trait :pending do
-      xero_state { CreditNote.xero_states[:pending] }
+    trait :synced do
+      sync_state { CreditNote.sync_states[:synced] }
     end
 
     trait :submitted do
-      xero_state { CreditNote.xero_states[:submitted] }
+      xero_financial_record_state { CreditNote.xero_financial_record_states[:submitted] }
     end
 
-    trait :synced do
-      xero_state { CreditNote.xero_states[:synced] }
+    trait :authorized do
+      xero_financial_record_state { CreditNote.xero_financial_record_states[:authorized] }
+    end
+
+    trait :voided do
+      xero_financial_record_state { CreditNote.xero_financial_record_states[:voided] }
+    end
+
+    trait :deleted do
+      xero_financial_record_state { CreditNote.xero_financial_record_states[:deleted] }
+    end
+
+    trait :with_xero_id do
       xero_id { SecureRandom.hex(10) }
     end
 

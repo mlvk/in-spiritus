@@ -1,51 +1,15 @@
 class Order < ActiveRecord::Base
-  include AASM
   include StringUtils
+  include SyncableModel
+  include PublishableModel
+  include XeroRecord
+  include XeroFinancialRecordModel
 
   SALES_ORDER_TYPE = 'sales-order'
   PURCHASE_ORDER_TYPE = 'purchase-order'
 
   before_save :pre_process_saving_data
   after_save :update_fulfillment_structure
-
-  aasm :order, :column => :xero_state, :skip_validation_on_save => true do
-    state :pending, :initial => true
-    state :submitted
-    state :synced
-    state :voided
-
-    event :mark_submitted do
-      transitions :from => [:pending, :synced], :to => :submitted
-    end
-
-    event :mark_synced do
-      transitions :from => [:synced, :submitted], :to => :synced
-    end
-
-    # TODO: Is there a way to trap in voided once void state is set?
-    # Since we allow direct set, the client may be able to get a model
-    # out of voided by resubmitting
-    event :void do
-      transitions :from => [:pending, :submitted, :synced, :voided], :to => :voided
-    end
-  end
-
-  aasm :order_state, :column => :order_state, :skip_validation_on_save => true do
-    state :draft, :initial => true
-    state :approved
-
-    event :mark_draft do
-      transitions :from => [:approved, :draft], :to => :draft
-    end
-
-    event :mark_approved do
-      transitions :from => [:approved, :draft], :to => :approved
-    end
-  end
-
-  # State machine settings
-  enum order_state: [ :draft, :approved ]
-  enum xero_state: [ :pending, :submitted, :synced, :voided ]
 
   belongs_to :location
   has_one :address, through: :location
@@ -58,8 +22,9 @@ class Order < ActiveRecord::Base
   scope :sales_order, -> { where(order_type:SALES_ORDER_TYPE)}
   scope :has_active_location, -> { joins(:location).where(locations: {active: true}) }
 
+  # @TODO Refactor to just use synced?
   def has_synced_with_xero?
-    xero_id.present?
+    synced?
   end
 
   def has_processed_notification?
@@ -169,15 +134,26 @@ class Order < ActiveRecord::Base
   end
 
   def create_fulfillment_structure
-    credit_note = CreditNote.create(date:delivery_date, location:location)
-    stock = Stock.create(location:location)
     pod = Pod.create
-    fulfillment = Fulfillment.create(
-      route_visit:generate_parent_route_visit,
-      order:self,
-      pod:pod,
-      credit_note: credit_note,
-      stock: stock
-    )
+
+    if sales_order?
+      credit_note = CreditNote.create(date:delivery_date, location:location)
+      stock = Stock.create(location:location)
+
+      fulfillment = Fulfillment.create(
+        route_visit:generate_parent_route_visit,
+        order:self,
+        pod:pod,
+        credit_note: credit_note,
+        stock: stock
+      )
+    else
+      fulfillment = Fulfillment.create(
+        route_visit:generate_parent_route_visit,
+        order:self,
+        pod:pod
+      )
+    end
+
   end
 end

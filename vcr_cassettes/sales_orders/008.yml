@@ -97,7 +97,7 @@ http_interactions:
               <LineItems>
                 <% order_items.each do |order_item|%>
                   <LineItem>
-                    <ItemCode><%= order_item.item.name %></ItemCode>
+                    <ItemCode><%= order_item.item.code %></ItemCode>
                     <Description>No description</Description>
                     <UnitAmount><%= order_item.unit_price %></UnitAmount>
                     <TaxType>NONE</TaxType>

@@ -93,11 +93,16 @@ class OrdersController < ApplicationJsonApiResourcesController
     order = Order.find(params['id'])
 
     if order.has_synced_with_xero?
-      order.void!
+      if order.voided? || order.authorized?
+        order.mark_voided!
+      else
+        order.mark_deleted!
+      end
+
+      order.mark_pending_sync!
 
       render json: { status: true }
     else
-      order.fulfillment.route_visit.destroy if !order.fulfillment.route_visit.has_multiple_fulfillments?
       super
     end
   end

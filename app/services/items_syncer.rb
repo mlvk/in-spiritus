@@ -33,7 +33,7 @@ class ItemsSyncer < BaseSyncer
     end
 
     def find_models
-      Item.pending
+      Item.pending_sync
     end
 
     def update_model(model, record)
@@ -44,7 +44,9 @@ class ItemsSyncer < BaseSyncer
       model.default_price = Maybe(record).purchase_details.unit_price.fetch(model.default_price)
 
       model.save!
+    end
 
+    def post_process_model(model)
       model.mark_synced!
     end
 end

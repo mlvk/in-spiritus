@@ -7,7 +7,10 @@ FactoryGirl.define do
     price_tier
 
     trait :synced do
-      xero_state { Company.xero_states[:synced] }
+      sync_state { Company.sync_states[:synced] }
+    end
+
+    trait :with_xero_id do
       xero_id { SecureRandom.hex(10) }
     end
 

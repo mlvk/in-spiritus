@@ -1,0 +1,95 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/Invoices/so-161122-5ba2
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Charset:
+      - utf-8
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - OAuth gem v0.5.1
+      Authorization:
+      - OAuth oauth_consumer_key="FAKE_XERO_API_KEY", oauth_nonce="axoBxfu2Ya4Ayrf0tONxX7weEkkOyegJevYiEMVE",
+        oauth_signature="S72wkKtLxT3v04eG5ks%2FVOBNG2GRSlSeCnZnrcDKO4pvjZAWEtNmutBLfgz9QHay0IrOGU3RppArdwGjHrtAVvKcB5DSxcPjXAmT%2Blrl08Bg591J5mahgE8i5DpF7Cm1Ab99Qd1KeAa0xl4boSWkSm%2BORFMHlD%2FtmG2acNzTlYs%3D",
+        oauth_signature_method="RSA-SHA1", oauth_timestamp="1479779099", oauth_token="FAKE_XERO_API_KEY",
+        oauth_version="1.0"
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Cache-Control:
+      - private
+      Content-Type:
+      - text/html; charset=utf-8
+      Www-Authenticate:
+      - OAuth Realm="10.144.144.48"
+      X-S:
+      - WIN-35680D4645E
+      Strict-Transport-Security:
+      - max-age=31536000
+      Date:
+      - Tue, 22 Nov 2016 01:44:59 GMT
+      Content-Length:
+      - '95'
+    body:
+      encoding: UTF-8
+      string: oauth_problem=consumer_key_unknown&oauth_problem_advice=Consumer%20key%20was%20not%20recognised
+    http_version: 
+  recorded_at: Tue, 22 Nov 2016 01:45:00 GMT
+- request:
+    method: put
+    uri: https://api.xero.com/api.xro/2.0/Invoices?summarizeErrors=false
+    body:
+      encoding: US-ASCII
+      string: xml=%3CInvoices%3E%0A%20%20%3CInvoice%3E%0A%20%20%20%20%3CInvoiceNumber%3Eso-161122-5ba2%3C%2FInvoiceNumber%3E%0A%20%20%20%20%3CDate%3E2016-11-22%3C%2FDate%3E%0A%20%20%20%20%3CDueDate%3E2016-11-29%3C%2FDueDate%3E%0A%20%20%20%20%3CStatus%3EAUTHORISED%3C%2FStatus%3E%0A%20%20%20%20%3CType%3EACCREC%3C%2FType%3E%0A%20%20%20%20%3CReference%3Ehhah01%20-%20North%20Angelina%3C%2FReference%3E%0A%20%20%20%20%3CContact%3E%0A%20%20%20%20%20%20%3CName%3EHeidenreich%2C%20Hills%20and%20Hegmann%3C%2FName%3E%0A%20%20%20%20%3C%2FContact%3E%0A%20%20%20%20%3CLineItems%3E%0A%20%20%20%20%20%20%3CLineItem%3E%0A%20%20%20%20%20%20%20%20%3CItemCode%3E789dd2%3C%2FItemCode%3E%0A%20%20%20%20%20%20%20%20%3CDescription%3ESleek%20Wool%20Car%20-%20Error%20dolorem%20adipisci%20esse%20vel.%3C%2FDescription%3E%0A%20%20%20%20%20%20%20%20%3CQuantity%3E5.0%3C%2FQuantity%3E%0A%20%20%20%20%20%20%20%20%3CUnitAmount%3E0.0%3C%2FUnitAmount%3E%0A%20%20%20%20%20%20%20%20%3CTaxType%3ENONE%3C%2FTaxType%3E%0A%20%20%20%20%20%20%20%20%3CAccountCode%3E400%3C%2FAccountCode%3E%0A%20%20%20%20%20%20%3C%2FLineItem%3E%0A%20%20%20%20%20%20%3CLineItem%3E%0A%20%20%20%20%20%20%20%20%3CItemCode%3E0494b5%3C%2FItemCode%3E%0A%20%20%20%20%20%20%20%20%3CDescription%3EFantastic%20Copper%20Clock%20-%20Molestiae%20qui%20officiis%20et%20suscipit%20est%20quo.%3C%2FDescription%3E%0A%20%20%20%20%20%20%20%20%3CQuantity%3E5.0%3C%2FQuantity%3E%0A%20%20%20%20%20%20%20%20%3CUnitAmount%3E0.0%3C%2FUnitAmount%3E%0A%20%20%20%20%20%20%20%20%3CTaxType%3ENONE%3C%2FTaxType%3E%0A%20%20%20%20%20%20%20%20%3CAccountCode%3E400%3C%2FAccountCode%3E%0A%20%20%20%20%20%20%3C%2FLineItem%3E%0A%20%20%20%20%20%20%3CLineItem%3E%0A%20%20%20%20%20%20%20%20%3CItemCode%3Eba36c2%3C%2FItemCode%3E%0A%20%20%20%20%20%20%20%20%3CDescription%3ERustic%20Cotton%20Wallet%20-%20Nobis%20distinctio%20repudiandae%20et%20occaecati%20ullam%20quasi%20explicabo%20aut.%3C%2FDescription%3E%0A%20%20%20%20%20%20%20%20%3CQuantity%3E5.0%3C%2FQuantity%3E%0A%20%20%20%20%20%20%20%20%3CUnitAmount%3E0.0%3C%2FUnitAmount%3E%0A%20%20%20%20%20%20%20%20%3CTaxType%3ENONE%3C%2FTaxType%3E%0A%20%20%20%20%20%20%20%20%3CAccountCode%3E400%3C%2FAccountCode%3E%0A%20%20%20%20%20%20%3C%2FLineItem%3E%0A%20%20%20%20%20%20%3CLineItem%3E%0A%20%20%20%20%20%20%20%20%3CItemCode%3E3b48ba%3C%2FItemCode%3E%0A%20%20%20%20%20%20%20%20%3CDescription%3EAerodynamic%20Silk%20Bag%20-%20Ratione%20non%20est%20magni%20natus.%3C%2FDescription%3E%0A%20%20%20%20%20%20%20%20%3CQuantity%3E5.0%3C%2FQuantity%3E%0A%20%20%20%20%20%20%20%20%3CUnitAmount%3E0.0%3C%2FUnitAmount%3E%0A%20%20%20%20%20%20%20%20%3CTaxType%3ENONE%3C%2FTaxType%3E%0A%20%20%20%20%20%20%20%20%3CAccountCode%3E400%3C%2FAccountCode%3E%0A%20%20%20%20%20%20%3C%2FLineItem%3E%0A%20%20%20%20%20%20%3CLineItem%3E%0A%20%20%20%20%20%20%20%20%3CItemCode%3E930d1b%3C%2FItemCode%3E%0A%20%20%20%20%20%20%20%20%3CDescription%3EEnormous%20Leather%20Keyboard%20-%20Qui%20eos%20dignissimos%20facilis%20consequuntur%20minima%20reprehenderit.%3C%2FDescription%3E%0A%20%20%20%20%20%20%20%20%3CQuantity%3E5.0%3C%2FQuantity%3E%0A%20%20%20%20%20%20%20%20%3CUnitAmount%3E0.0%3C%2FUnitAmount%3E%0A%20%20%20%20%20%20%20%20%3CTaxType%3ENONE%3C%2FTaxType%3E%0A%20%20%20%20%20%20%20%20%3CAccountCode%3E400%3C%2FAccountCode%3E%0A%20%20%20%20%20%20%3C%2FLineItem%3E%0A%20%20%20%20%3C%2FLineItems%3E%0A%20%20%3C%2FInvoice%3E%0A%3C%2FInvoices%3E%0A
+    headers:
+      Charset:
+      - utf-8
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - OAuth gem v0.5.1
+      Content-Length:
+      - '0'
+      Authorization:
+      - OAuth oauth_consumer_key="FAKE_XERO_API_KEY", oauth_nonce="uLyXEVgg65U7nf2xCQmoNdQ3j0eOQeCv060VkjYXo",
+        oauth_signature="M7aitED8Kc6GS%2FgrNX%2FCLDC9qPsE6q0k5V28wkQ2nA1eLMexBOULuv%2ByuAdxPWNS2NpqgpxcuFi98RbuMaEGwHob65u77n%2BQggOUnIDmwj%2BD3c%2BRd7DS8lLHwm%2Bw3T3APKYKaQhTjL%2FeXD0mSrB5q%2BmONjgr2ZoOF3qZTymYAzQ%3D",
+        oauth_signature_method="RSA-SHA1", oauth_timestamp="1479779100", oauth_token="FAKE_XERO_API_KEY",
+        oauth_version="1.0"
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Cache-Control:
+      - private
+      Content-Type:
+      - text/html; charset=utf-8
+      Www-Authenticate:
+      - OAuth Realm="10.144.144.48"
+      X-S:
+      - WIN-35680D4645E
+      Strict-Transport-Security:
+      - max-age=31536000
+      Date:
+      - Tue, 22 Nov 2016 01:45:00 GMT
+      Content-Length:
+      - '95'
+    body:
+      encoding: UTF-8
+      string: oauth_problem=consumer_key_unknown&oauth_problem_advice=Consumer%20key%20was%20not%20recognised
+    http_version: 
+  recorded_at: Tue, 22 Nov 2016 01:45:00 GMT
+recorded_with: VCR 3.0.3

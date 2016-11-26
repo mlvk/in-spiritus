@@ -5,8 +5,9 @@ require File.expand_path('../helpers/auth_helpers', __FILE__)
 require File.expand_path('../helpers/request_helpers', __FILE__)
 require File.expand_path('../helpers/resource_helpers', __FILE__)
 
-require 'rails/test_help'
+require "maxitest/autorun"
 require 'spy/integration'
+require 'rails/test_help'
 
 class ActiveSupport::TestCase
   include FactoryGirl::Syntax::Methods
