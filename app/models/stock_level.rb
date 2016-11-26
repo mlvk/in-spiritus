@@ -35,6 +35,6 @@ class StockLevel < ActiveRecord::Base
     order = Maybe(stock).fulfillment.order.fetch(nil)
     dropped = Maybe(order).quantity_of_item(item).fetch(0)
 
-    starting + dropped - returns
+    [starting + dropped - returns, 0].max
   end
 end

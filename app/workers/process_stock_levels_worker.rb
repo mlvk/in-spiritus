@@ -7,10 +7,11 @@ class ProcessStockLevelsWorker
   def perform
     StockLevel
       .tracked
-      .each do |stock_level|
-        build_stock_level_data_point stock_level
+      .select {|sl| sl.stock.fulfillment.route_visit.present? }
+      .each do |sl|
+        build_stock_level_data_point sl
 
-        stock_level.mark_processed!
+        sl.mark_processed!
       end
   end
 end

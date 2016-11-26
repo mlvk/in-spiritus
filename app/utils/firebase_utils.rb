@@ -23,22 +23,21 @@ module FirebaseUtils
 		order = fulfillment.order
 		location = stock.location
 		item = stock_level.item
-		ending_level = stock_level.ending_level
 
 		previous_stock_level = location.previous_stock_level(stock_level)
-		previous_ending_level = Maybe(previous_stock_level).ending_level.fetch(0)
+		previous_ending_level = [Maybe(previous_stock_level).ending_level.fetch(0), 0].max
 
-		sold = previous_ending_level - (stock_level.starting + stock_level.returns)
+		sold = [previous_ending_level - (stock_level.starting + stock_level.returns), 0].max
 
 		timestamp = stock.fulfillment.route_visit.completed_at.to_i
 
 		key = "locations/#{location.code}/#{item.code}/#{stock_level.id}"
 		payload = {
-			starting: stock_level.starting,
-			returns: stock_level.returns,
-			ending: ending_level.to_i,
+			starting: [stock_level.starting, 0].max,
+			returns: [stock_level.returns, 0].max,
+			ending: stock_level.ending_level.to_i,
 			previous_ending: previous_ending_level.to_i,
-			sold: [sold.to_i, 0].max,
+			sold: sold.to_i,
 			ts: timestamp
 		}
 
