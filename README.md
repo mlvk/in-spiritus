@@ -45,41 +45,34 @@ Signup for the following services:
 
 ### Setup ENV vars
 Add in the following env vars to the stack
-XERO_API_KEY=APP_KEY
-XERO_SECRET=APP_SECRET
-XERO_PRIVATE_KEY=rsa_private_key
-SPOILAGE_ACCOUNT_CODE=400
-COGS_ACCOUNT_CODE=500
-SALES_ACCOUNT_CODE=400
 
-REDIS_URL=redis://localhost
-REDIS_ADDRESS=redis
-
-AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY
-AWS_SECRET_ACCESS_KEY=SECRET
-AWS_REGION=us-east-1
-PDF_BUCKET=aws_bucket
-
-MAIL_GUN_API_KEY=mailgun_key
-MAIL_GUN_DOMAIN=mg.yourdomain.com
-SALES_FROM_EMAIL=sales@yourdomain.com
-
-ROUTIFIC_API_KEY=routific_api_key
-MAPBOX_API_TOKEN=mapbnox_api_key
-
-SLACK_CHANNEL_URL=https://hooks.slack.com/services/key
-DISTRIBUTION_SLACK_CHANNEL_URL=https://hooks.slack.com/services/key
-
-FIREBASE_URL=https://yourapp.firebaseio.com/
-GOOGLE_API_KEY=google_api_key
-
-FACTORY_NOTIFICATION_RULE_EMAIL=testing@yourdomain.com
+1. `XERO_API_KEY=APP_KEY`
+1. `XERO_SECRET=APP_SECRET`
+1. `XERO_PRIVATE_KEY=rsa_private_key`
+1. `SPOILAGE_ACCOUNT_CODE=400`
+1. `COGS_ACCOUNT_CODE=500`
+1. `SALES_ACCOUNT_CODE=400`
+1. `REDIS_URL=redis://localhost`
+1. `REDIS_ADDRESS=redis`
+1. `AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY`
+1. `AWS_SECRET_ACCESS_KEY=SECRET`
+1. `AWS_REGION=us-east-1`
+1. `PDF_BUCKET=aws_bucket`
+1. `MAIL_GUN_DOMAIN=mg.yourdomain.com`
+1. `SALES_FROM_EMAIL=sales@yourdomain.com`
+1. `ROUTIFIC_API_KEY=routific_api_key`
+1. `MAPBOX_API_TOKEN=mapbnox_api_key`
+1. `SLACK_CHANNEL_URL=https://hooks.slack.com/services/key`
+1. `DISTRIBUTION_SLACK_CHANNEL_URL=https://hooks.slack.com/services/key`
+1. `FIREBASE_URL=https://yourapp.firebaseio.com/`
+1. `GOOGLE_API_KEY=google_api_key`
+1. `FACTORY_NOTIFICATION_RULE_EMAIL=testing@yourdomain.com`
 
 **Note** The XERO_PRIVATE_KEY needs to be converted to a single line with newlines replaced with `\n`
 Example:
 
 ```
-"-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQC7yxBqf5NnEFeyNkNIj+1EIFK4NDsOSITYkNh7kQSKbyUmHes1\nAE29ePg7+S8mYhMBfQy0U/2IGI9RDsQKsZLpEj0iiBpBLtl0N1sg90Nc+RjEAPaR\nA63bKVDi1fCstilaQbXN7dQeGEOg83Zh/5WzNtdJlC823iDoWwCWVhK63wIDAQAB\nAoGARZCKazkJDHO0WLLbJ8URGlxy6AOJINhiRasaVmO47+MOOpl2Xx9RrLPkvKtM\n+QX5jmKZUu+NsqhOZrN2kZOIHKS7lV/+6HkxCVhmkWFN1Y0oapaZ8Gggp7OJ2uwP\nv3eXeOzZnlqY/cwjDzntgyO5Gyek47rwh319q62VRxwJ/wECQQD5LRCRfQryrYgu\nVO2wjOeWX3bfHI8wk+8wjwQ7BSdROME2N+/opUuWUZ5pmjaowEYuSuEqdakkDIfU\n1EseYwFfAkEAwO+nYRrMIW9Jv7zWB0sHK3f01rQqL0uRudRkZoaMKRu+CzODOdHX\n3PMqgPlip9OypK/uDRL1teQ8zj+QDTs2gQJBALOmxSJQSFttuBjHjNPU04g8bhRU\nnvyEPFkDVCaFcbKCu/MuY1+WBahsU22LLUt/zVnFDRDC4l8mVayiH0LaWPsCQH2i\nkWgWPx71jruiJ+0P2ldgAbteDqpFl1tfBxIMQ3Dxc8tve+BG2T4zylW6D5ghro63\nUViKJB6RxVa45WD4UgECQFWqHSe84+hoNgel5gZw2nIF8kNvnT0mI6EQRTfXqFcG\nXlR1tb04Ega6LrgXD7W120NXPKK+R3GO2AxIi7vg9qU=\n-----END RSA PRIVATE KEY-----"
+XERO_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQC7yxBqf5NnEFeyNkNIj+1EIFK4NDsOSITYkNh7kQSKbyUmHes1\nAE29ePg7+S8mYhMBfQy0U/2IGI9RDsQKsZLpEj0iiBpBLtl0N1sg90Nc+RjEAPaR\nA63bKVDi1fCstilaQbXN7dQeGEOg83Zh/5WzNtdJlC823iDoWwCWVhK63wIDAQAB\nAoGARZCKazkJDHO0WLLbJ8URGlxy6AOJINhiRasaVmO47+MOOpl2Xx9RrLPkvKtM\n+QX5jmKZUu+NsqhOZrN2kZOIHKS7lV/+6HkxCVhmkWFN1Y0oapaZ8Gggp7OJ2uwP\nv3eXeOzZnlqY/cwjDzntgyO5Gyek47rwh319q62VRxwJ/wECQQD5LRCRfQryrYgu\nVO2wjOeWX3bfHI8wk+8wjwQ7BSdROME2N+/opUuWUZ5pmjaowEYuSuEqdakkDIfU\n1EseYwFfAkEAwO+nYRrMIW9Jv7zWB0sHK3f01rQqL0uRudRkZoaMKRu+CzODOdHX\n3PMqgPlip9OypK/uDRL1teQ8zj+QDTs2gQJBALOmxSJQSFttuBjHjNPU04g8bhRU\nnvyEPFkDVCaFcbKCu/MuY1+WBahsU22LLUt/zVnFDRDC4l8mVayiH0LaWPsCQH2i\nkWgWPx71jruiJ+0P2ldgAbteDqpFl1tfBxIMQ3Dxc8tve+BG2T4zylW6D5ghro63\nUViKJB6RxVa45WD4UgECQFWqHSe84+hoNgel5gZw2nIF8kNvnT0mI6EQRTfXqFcG\nXlR1tb04Ega6LrgXD7W120NXPKK+R3GO2AxIi7vg9qU=\n-----END RSA PRIVATE KEY-----"
 ```
 
 ### Install the [in-spiritus-cli](https://github.com/mlvk/in-spiritus-cli) tool

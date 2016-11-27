@@ -136,7 +136,7 @@ module Pdf
 
       def item_quantity_row(qty, item, index)
         y = @pdf.cursor
-        height = 17
+        height = 19
 
         @pdf.line_width = 0.5
 
@@ -150,13 +150,17 @@ module Pdf
          @pdf.formatted_text_box [{ text: qty.to_s, size: 11}], :align => :right, :valign => :center
         end
 
-        @pdf.bounding_box([60, y], :width => 100, :height => height) do
+        @pdf.bounding_box([80, y], :width => 40, :height => height) do
+         @pdf.formatted_text_box [{ text: item.code, size: 9, styles: [:italic, :bold]}], :align => :left, :valign => :center
+        end
+
+        @pdf.bounding_box([140, y], :width => 150, :height => height) do
          @pdf.formatted_text_box [{ text: item.name, size: 9}], :align => :left, :valign => :center
         end
 
-        @pdf.bounding_box([170, y], :width => 290, :height => height) do
-          desc = Maybe(item.description)._.truncate(61)
-          @pdf.formatted_text_box [{ text: desc, size: 9}], :align => :left, :valign => :center
+        @pdf.bounding_box([310, y], :width => 220, :height => height) do
+          desc = Maybe(item.description)._.truncate(150)
+          @pdf.formatted_text_box [{ text: desc, size: 7}], :align => :left, :valign => :center
         end
 
         @pdf.move_down 4

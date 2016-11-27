@@ -11,10 +11,6 @@ class ItemsController < ApplicationJsonApiResourcesController
 
   def update
     authorize Item
-
-    item = Item.find(params[:id])
-    item.mark_pending!
-
     super
   end
 
