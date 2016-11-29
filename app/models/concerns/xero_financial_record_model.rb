@@ -1,6 +1,8 @@
 module XeroFinancialRecordModel
   extend ActiveSupport::Concern
 
+  VALID_STATES = [:draft, :submitted, :authorized, :paid, :billed]
+
   XERO_STATUS_MAPPING = {
     draft: "DRAFT",
     submitted: "SUBMITTED",
@@ -58,6 +60,10 @@ module XeroFinancialRecordModel
   def xero_status_code
     key = aasm(:xero_financial_record_state).current_state
     XERO_STATUS_MAPPING[key]
+  end
+
+  def valid_state?
+    VALID_STATES.any? { |state| state == aasm(:xero_financial_record_state).current_state }
   end
 
   def sync_with_xero_status(status)

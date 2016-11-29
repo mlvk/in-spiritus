@@ -14,14 +14,12 @@ module Pdf
       shipping(order.shipping, pdf)
       total(order.total, pdf)
 
-      pdf.start_new_page if pdf.cursor < 175
-
       footer("app/assets/images/invoice_footer.svg", pdf)
     end
 
     def header(order, pdf)
       start_y = 720
-      col1 = 10
+      col1 = 0
       col2 = 80
 
       pdf.bounding_box([0, start_y], :width => 540, :height => 120) do
@@ -30,15 +28,15 @@ module Pdf
         pdf.formatted_text_box [{ text: "Invoice:", styles: [:bold] }], :at => [col1, y]
         pdf.formatted_text_box [{ text: order.order_number.upcase }], :at => [col2, y]
 
-        y = pdf.cursor - 30
+        y = pdf.cursor - 20
         pdf.formatted_text_box [{ text: "Delivery date:", size: 10}], :at => [col1, y]
         pdf.formatted_text_box [{ text: order.delivery_date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
 
-        y = pdf.cursor - 45
+        y = pdf.cursor - 32
         pdf.formatted_text_box [{ text: "Due date:", size: 10}], :at => [col1, y]
         pdf.formatted_text_box [{ text: order.due_date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
 
-        y = pdf.cursor - 60
+        y = pdf.cursor - 45
         pdf.bounding_box([col1, y], :width => 50, :height => 20) do
          pdf.formatted_text_box [{ text: "Ship to:", size: 10}], :valign => :bottom
         end
@@ -54,21 +52,21 @@ module Pdf
         end
       end
 
-      pdf.move_cursor_to start_y - 130
+      pdf.move_cursor_to start_y - 110
     end
 
     def build_line_items(order)
       order
         .order_items
-        .select {|oi| oi.has_quantity? }
+        .select(&:has_quantity?)
         .each_with_index
         .map {|oi, index|
           [
             {x:5,     label:"#",      width:30,  align: :left, content:{ text: "#{index + 1}.", size: 8, styles: [:italic]}},
             {x:10,    label:"QTY",    width:30,  align: :right, content:{ text: oi.quantity.to_i.to_s, size: 11}},
-            {x:60,    label:"CODE",   width:50,  align: :left,  content:{ text: oi.item.code, size: 11, styles: [:italic]}},
-            {x:120,   label:"NAME",   width:120, align: :left,  content:{ text: oi.item.name, size: 9}},
-            {x:260,   label:"DESC",   width:200, align: :left,  content:{ text: Maybe(oi.item.description).fetch("").truncate(121), size: 7}},
+            {x:60,    label:"CODE",   width:70,  align: :left,  content:{ text: oi.item.code, size: 11, styles: [:italic]}},
+            {x:140,   label:"NAME",   width:110, align: :left,  content:{ text: oi.item.name, size: 9}},
+            {x:270,   label:"DESC",   width:190, align: :left,  content:{ text: Maybe(oi.item.description).fetch("").truncate(121), size: 7}},
             {x:450,   label:"PRICE",  width:35,  align: :right, content:{ text: oi.unit_price.to_s, size: 9}},
             {x:500,   label:"TOTAL",  width:35,  align: :right, content:{ text: oi.total.to_s, size: 9}}
           ]

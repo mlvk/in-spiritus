@@ -53,7 +53,7 @@ module Pdf
 
     def table_header(row, pdf)
       return unless row.present?
-      
+
       y = pdf.cursor
       height = 12
 
@@ -78,7 +78,7 @@ module Pdf
 
     def line_item(row, pdf)
       y = pdf.cursor
-      height = 19
+      height = 18
 
       pdf.line_width = 0.5
 
@@ -90,44 +90,15 @@ module Pdf
         end
       end
 
-      #
-      #
-      # pdf.bounding_box([-10, y], :width => 30, :height => height) do
-      #  pdf.formatted_text_box [{ text: "#{index + 1}.", size: 8, styles: [:italic]}], :align => :right, :valign => :center
-      # end
-      #
-      # pdf.bounding_box([20, y], :width => 30, :height => height) do
-      #  pdf.formatted_text_box [{ text: line_item.quantity.to_i.to_s, size: 11}], :align => :right, :valign => :center
-      # end
-      #
-      # pdf.bounding_box([60, y], :width => 50, :height => height) do
-      #  pdf.formatted_text_box [{ text: line_item.item.code, size: 11, styles: [:italic]}], :align => :left, :valign => :center
-      # end
-      #
-      # pdf.bounding_box([120, y], :width => 120, :height => height) do
-      #  pdf.formatted_text_box [{ text: line_item.item.name, size: 9}], :align => :left, :valign => :center
-      # end
-      #
-      # pdf.bounding_box([260, y], :width => 200, :height => height) do
-      #   desc = Maybe(line_item).item.description._.truncate(121)
-      #   pdf.formatted_text_box [{ text: desc, size: 7}], :align => :left, :valign => :center
-      # end
-      #
-      # pdf.bounding_box([450, y], :width => 35, :height => height) do
-      #  pdf.formatted_text_box [{ text: line_item.unit_price.to_s, size: 9}], :align => :right, :valign => :center
-      # end
-      #
-      # pdf.bounding_box([500, y], :width => 35, :height => height) do
-      #  pdf.formatted_text_box [{ text: line_item.total.to_s, size: 9}], :align => :right, :valign => :center
-      # end
-
       pdf.move_down 4
 
       pdf.start_new_page if pdf.cursor < 20
     end
 
     def footer(svg, pdf)
-      pdf.svg IO.read(svg), :at => [0, 140], :width => 540
+      y = 140
+      pdf.start_new_page if pdf.cursor < y
+      pdf.svg IO.read(svg), :at => [0, y], :width => 540
     end
 
     def shipping(val, pdf)
@@ -163,7 +134,7 @@ module Pdf
     end
 
     def logo(pdf)
-      pdf.image "app/assets/images/logo.png", :width => 120, :at => [ 430, 730]
+      pdf.image "app/assets/images/logo.png", :width => 100, :at => [ 440, 730]
     end
 
   end

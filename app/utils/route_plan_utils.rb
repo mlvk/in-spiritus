@@ -22,7 +22,8 @@ class RoutePlanUtils
 			.concat route_plan.route_visits
 			.sort {|x,y| y.position <=> x.position}
 			.flat_map(&:fulfillments)
-			.flat_map(&:order)
+			.flat_map {|f| [f.order, f.credit_note]}
+      .select(&:present?)
 			.select(&:has_quantity?)
 	end
 end

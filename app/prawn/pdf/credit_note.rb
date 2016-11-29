@@ -13,14 +13,12 @@ module Pdf
 
       total(credit_note.total, pdf)
 
-      pdf.start_new_page if pdf.cursor < 175
-
       footer("app/assets/images/credit_note_footer.svg", pdf)
     end
 
     def header(credit_note, pdf)
       start_y = 720
-      col1 = 10
+      col1 = 0
       col2 = 110
 
       pdf.bounding_box([0, start_y], :width => 540, :height => 120) do
@@ -29,11 +27,11 @@ module Pdf
         pdf.formatted_text_box [{ text: "Credit Note:", styles: [:bold] }], :at => [col1, y]
         pdf.formatted_text_box [{ text: credit_note.credit_note_number.upcase }], :at => [col2, y]
 
-        y = pdf.cursor - 30
+        y = pdf.cursor - 20
         pdf.formatted_text_box [{ text: "Date:", size: 10}], :at => [col1, y]
         pdf.formatted_text_box [{ text: credit_note.date.strftime('%m/%d/%y'), size: 10 }], :at => [col2, y]
 
-        y = pdf.cursor - 45
+        y = pdf.cursor - 30
         pdf.bounding_box([col1, y], :width => 50, :height => 20) do
          pdf.formatted_text_box [{ text: "Credit for:", size: 10}], :valign => :bottom
         end
@@ -61,9 +59,9 @@ module Pdf
             {x:5,     label:"#",      width:30,  align: :left, content:{ text: "#{index + 1}.", size: 8, styles: [:italic]}},
             {x:10,    label:"QTY",    width:30,  align: :right, content:{ text: cni.quantity.to_i.to_s, size: 11}},
             {x:60,    label:"CODE",   width:50,  align: :left,  content:{ text: cni.item.code, size: 11, styles: [:italic]}},
-            {x:120,   label:"NAME",   width:120, align: :left,  content:{ text: cni.item.name, size: 9}},
-            {x:260,   label:"DESC",   width:200, align: :left,  content:{ text: Maybe(cni.item.description).fetch("").truncate(121), size: 7}},
-            {x:450,   label:"PRICE",  width:35,  align: :right, content:{ text: cni.unit_price.to_s, size: 9}},
+            {x:140,   label:"NAME",   width:120, align: :left,  content:{ text: cni.item.name, size: 9}},
+            {x:270,   label:"DESC",   width:200, align: :left,  content:{ text: Maybe(cni.item.description).fetch("").truncate(121), size: 7}},
+            {x:450,   label:"CREDIT",  width:35,  align: :right, content:{ text: cni.unit_price.to_s, size: 9}},
             {x:500,   label:"TOTAL",  width:35,  align: :right, content:{ text: cni.total.to_s, size: 9}}
           ]
         }

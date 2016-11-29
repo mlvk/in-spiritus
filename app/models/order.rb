@@ -8,6 +8,8 @@ class Order < ActiveRecord::Base
   SALES_ORDER_TYPE = 'sales-order'
   PURCHASE_ORDER_TYPE = 'purchase-order'
 
+  VALID_STATES = [0, 1, 2, 3, 4]
+
   before_save :pre_process_saving_data
   after_save :update_fulfillment_structure
 
@@ -69,7 +71,7 @@ class Order < ActiveRecord::Base
   end
 
   def is_valid?
-    has_quantity?
+    has_quantity? && valid_state?
   end
 
   def has_shipping?

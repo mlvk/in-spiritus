@@ -4,8 +4,7 @@ class NotifyAdminWorker
 
   sidekiq_options :retry => false, unique: :until_executed
 
-  def perform
-    date = Date.today
+  def perform(date = Date.today)
 
     # Send route plan documents
     email_route_plan_documents date
@@ -13,9 +12,11 @@ class NotifyAdminWorker
 
   private
   def email_route_plan_documents(date)
+    return unless ENV['ADMIN_EMAILS'].present?
+
     route_plans = RoutePlan.where(:date => date)
 
-    if route_plans.count != 0 then
+    if route_plans.present?
       pdf_url = RoutePlanUtils.new.generate_packing_documents route_plans
 
       options = build_route_plan_message pdf_url
