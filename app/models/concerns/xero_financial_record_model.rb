@@ -38,11 +38,11 @@ module XeroFinancialRecordModel
       end
 
       event :mark_paid do
-        transitions :from => [:draft, :submitted, :authorized], :to => :paid
+        transitions :from => [:draft, :submitted, :authorized, :paid], :to => :paid
       end
 
       event :mark_billed do
-        transitions :from => [:draft, :submitted, :authorized], :to => :billed
+        transitions :from => [:draft, :submitted, :authorized, :billed], :to => :billed
       end
 
       event :mark_deleted do
