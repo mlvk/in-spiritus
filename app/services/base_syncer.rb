@@ -11,7 +11,14 @@ class BaseSyncer
   def sync_remote(timestamp = fetch_last_remote_sync(self))
     start_timestamp = Time.current.to_s
 
-    find_records(timestamp).each{|record| process_after_remote_sync(record, timestamp)}
+    log("Staring remote sync since: #{start_timestamp}")
+    changed_since_records = find_records(timestamp)
+    log("Found the following record since timestamp: #{changed_since_records}")
+
+    changed_since_records
+      .each{|record|
+        process_after_remote_sync(record, timestamp)
+      }
 
     set_last_remote_sync(self, start_timestamp)
   end
@@ -148,7 +155,8 @@ class BaseSyncer
     model = find_model(record)
 
     if model.present?
-      if model.updated_at < timestamp
+      last_updated = record.respond_to?(:updated_date_utc) ? Maybe(record).updated_date_utc.to_time.fetch(timestamp) : timestamp
+      if model.updated_at < last_updated
         log("#{model.class.to_s} - #{model.id} will be updated by remote sync")
         update_model(model, record)
         post_process_model(model)

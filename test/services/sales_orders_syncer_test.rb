@@ -71,11 +71,12 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
       invoice_id: order.xero_id,
       invoice_number: order.order_number,
       item_code: order.order_items.first.item.code,
-      item_quantity: 4
+      item_quantity: 4,
+      updated_date_utc: 10.minutes.from_now
     }
 
     VCR.use_cassette('sales_orders/006', erb: yaml_props) do
-      SalesOrdersSyncer.new.sync_remote(10.minutes.from_now)
+      SalesOrdersSyncer.new.sync_remote
     end
 
     assert order.order_items.all? {|order_item| order_item.quantity == 4}, 'Order item quantities did not match'
@@ -91,7 +92,8 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     yaml_props = {
       record_id: order.xero_id,
       record_number: order.order_number,
-      record_status: 'AUTHORISED'
+      record_status: 'AUTHORISED',
+      updated_date_utc: 10.minutes.from_now
     }
 
     assert_equal(order.order_items.count, 5, "Wrong number of order items created")
@@ -106,7 +108,7 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     assert order.order_items.all? {|oi| oi.quantity == 0}, "orderitem quantities should have become 0"
   end
 
-  test "should not update local model if local has been updated since the last remote timestamp" do
+  test "should not update local model if local has been updated since sooner than remote record" do
     order = create(:sales_order_with_items, :synced, order_items_count: 5)
     order.order_items.each {|oi|
       oi.quantity = 15
@@ -116,7 +118,8 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     yaml_props = {
       record_id: order.xero_id,
       record_number: order.order_number,
-      record_status: 'AUTHORISED'
+      record_status: 'AUTHORISED',
+      updated_date_utc: 10.minutes.ago
     }
 
     assert_equal(order.order_items.count, 5, "Wrong number of order items created")

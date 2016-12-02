@@ -78,7 +78,8 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
       remote_credit_note_id: 'new_credit_note_id',
       remote_credit_note_number: credit_note.credit_note_number,
       remote_quantity: 10,
-      credit_note_items: credit_note.credit_note_items
+      credit_note_items: credit_note.credit_note_items,
+      updated_date_utc: 10.minutes.from_now
     }
 
     VCR.use_cassette('credit_notes/004', erb: yaml_props) do
@@ -98,7 +99,8 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     yaml_props = {
       remote_credit_note_id: 'new_credit_note_id',
       remote_credit_note_number: credit_note.credit_note_number,
-      credit_note_items: []
+      credit_note_items: [],
+      updated_date_utc: 10.minutes.from_now
     }
 
     VCR.use_cassette('credit_notes/004', erb: yaml_props) do
