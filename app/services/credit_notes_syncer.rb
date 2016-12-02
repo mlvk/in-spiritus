@@ -6,7 +6,7 @@ class CreditNotesSyncer < BaseSyncer
     end
 
     def find_record_by(model)
-      xero.CreditNote.first(:where => {:credit_note_number => model.credit_note_number})
+      xero.CreditNote.find(model.credit_note_number)
     end
 
     def find_records(timestamp)

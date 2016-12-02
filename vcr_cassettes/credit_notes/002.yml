@@ -7,7 +7,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/CreditNotes?where=CreditNoteNumber==%22<%= credit_note_number %>%22
+    uri: https://api.xero.com/api.xro/2.0/CreditNotes/<%= credit_note_number %>
   response:
     status:
       code: 200

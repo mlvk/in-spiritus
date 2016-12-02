@@ -23,6 +23,8 @@ services:
     command: tail -f /dev/null
     networks:
       - backend
+    volumes:
+      - ../tmp/debug/:/var/lib/debug
     depends_on:
       - db
       - redis
