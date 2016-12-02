@@ -75,7 +75,7 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     }
 
     VCR.use_cassette('sales_orders/006', erb: yaml_props) do
-      SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
+      SalesOrdersSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     assert order.order_items.all? {|order_item| order_item.quantity == 4}, 'Order item quantities did not match'
@@ -97,13 +97,38 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     assert_equal(order.order_items.count, 5, "Wrong number of order items created")
 
     VCR.use_cassette('sales_orders/query_changed_query_record', :erb => yaml_props) do
-      SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
+      SalesOrdersSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     assert_equal order.order_items.count, 5, 'Wrong number of order items found'
 
     order.reload
     assert order.order_items.all? {|oi| oi.quantity == 0}, "orderitem quantities should have become 0"
+  end
+
+  test "should not update local model if local has been updated since the last remote timestamp" do
+    order = create(:sales_order_with_items, :synced, order_items_count: 5)
+    order.order_items.each {|oi|
+      oi.quantity = 15
+      oi.save
+    }
+
+    yaml_props = {
+      record_id: order.xero_id,
+      record_number: order.order_number,
+      record_status: 'AUTHORISED'
+    }
+
+    assert_equal(order.order_items.count, 5, "Wrong number of order items created")
+
+    VCR.use_cassette('sales_orders/query_changed_query_record', :erb => yaml_props) do
+      SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
+    end
+
+    assert_equal order.order_items.count, 5, 'Wrong number of order items found'
+
+    order.reload
+    assert order.order_items.all? {|oi| oi.quantity == 15}, "orderitem quantities should not have become 0"
   end
 
   test "should always honor xero's order_item attrs even when creating new record remotely" do

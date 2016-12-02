@@ -51,7 +51,9 @@ class CreditNotesSyncer < BaseSyncer
     end
 
     def find_models
-      CreditNote.pending_sync.select { |cn| !cn.draft? }
+      CreditNote
+        .pending_sync
+        .select { |cn| !cn.draft? }
     end
 
     def update_model(model, record)

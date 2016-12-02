@@ -63,7 +63,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     assert CreditNote.all.empty?
 
     VCR.use_cassette('credit_notes/003') do
-      CreditNotesSyncer.new.sync_remote
+      CreditNotesSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     assert CreditNote.all.empty?
@@ -82,7 +82,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     }
 
     VCR.use_cassette('credit_notes/004', erb: yaml_props) do
-      CreditNotesSyncer.new.sync_remote(10.minutes.ago)
+      CreditNotesSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     credit_note.reload
@@ -102,7 +102,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     }
 
     VCR.use_cassette('credit_notes/004', erb: yaml_props) do
-      CreditNotesSyncer.new.sync_remote(10.minutes.ago)
+      CreditNotesSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     credit_note.reload

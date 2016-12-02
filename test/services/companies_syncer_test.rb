@@ -46,7 +46,7 @@ class CompaniesSyncerTest < ActiveSupport::TestCase
     }
 
     VCR.use_cassette('contacts/get_last_since', erb: yaml_props) do
-      CompaniesSyncer.new.sync_remote(100.years.ago)
+      CompaniesSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     company.reload

@@ -54,7 +54,7 @@ class ItemsSyncerTest < ActiveSupport::TestCase
     }
 
     VCR.use_cassette('items/002', erb: yaml_props) do
-      ItemsSyncer.new.sync_remote(10.minutes.ago)
+      ItemsSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     assert_equal(yaml_props[:item_id], Item.first.xero_id)

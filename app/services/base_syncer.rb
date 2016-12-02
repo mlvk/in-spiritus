@@ -11,8 +11,7 @@ class BaseSyncer
   def sync_remote(timestamp = fetch_last_remote_sync(self))
     start_timestamp = Time.current.to_s
 
-    find_records(timestamp)
-      .each(&method(:process_record))
+    find_records(timestamp).each{|record| process_after_remote_sync(record, timestamp)}
 
     set_last_remote_sync(self, start_timestamp)
   end
@@ -125,7 +124,7 @@ class BaseSyncer
     save_records(records_marked_for_save)
 
     # Process all zipped, included voided etc, to the latest record state
-    zipped.each {|o| process_record(o[:record], o[:model]) }
+    zipped.each {|o| process_after_local_sync(o[:record], o[:model]) }
   end
 
   def zip_model_record(model)
@@ -136,15 +135,25 @@ class BaseSyncer
     { model:model, record:record, should_save: should_save }
   end
 
-  def process_record(record, model = nil)
+  def process_after_local_sync(record, model)
     if record.errors.present?
       record.errors.each{|e| error e}
     else
-      model = model || find_model(record)
+      update_model(model, record)
+      post_process_model(model)
+    end
+  end
 
-      if model.present?
+  def process_after_remote_sync(record, timestamp)
+    model = find_model(record)
+
+    if model.present?
+      if model.updated_at < timestamp
+        log("#{model.class.to_s} - #{model.id} will be updated by remote sync")
         update_model(model, record)
         post_process_model(model)
+      else
+        log("#{model.class.to_s} - #{model.id} was updated after #{timestamp}. Therefor not processing")
       end
     end
   end

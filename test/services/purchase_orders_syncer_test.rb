@@ -37,7 +37,7 @@ class PurchaseOrdersSyncerTest < ActiveSupport::TestCase
     }
 
     VCR.use_cassette('purchase_orders/002', erb: yaml_props) do
-      PurchaseOrdersSyncer.new.sync_remote(10.minutes.ago)
+      PurchaseOrdersSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     purchase_order.reload
@@ -48,7 +48,7 @@ class PurchaseOrdersSyncerTest < ActiveSupport::TestCase
 
   test "Should not sync remote PO if no local matching PO is found" do
     VCR.use_cassette('purchase_orders/003') do
-      PurchaseOrdersSyncer.new.sync_remote(10.minutes.ago)
+      PurchaseOrdersSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     assert_equal 0, Order.purchase_order.count
@@ -78,7 +78,7 @@ class PurchaseOrdersSyncerTest < ActiveSupport::TestCase
     }
 
     VCR.use_cassette('purchase_orders/004', erb: yaml_props) do
-      PurchaseOrdersSyncer.new.sync_remote(10.minutes.ago)
+      PurchaseOrdersSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     purchase_order.reload
