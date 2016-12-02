@@ -13,6 +13,10 @@ class PurchaseOrdersSyncer < BaseSyncer
     xero.PurchaseOrder.all({:modified_since => timestamp})
   end
 
+  def sync_local_model_status(model, record)
+    model.sync_with_xero_status(record.status)
+  end
+
   def should_save_record? (record, model)
     is_locally_invalid = !model.has_synced_with_xero? && model.deleted?
     is_remotely_unchangable = (record.status == 'VOIDED') ||

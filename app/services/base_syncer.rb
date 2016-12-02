@@ -45,10 +45,22 @@ class BaseSyncer
     raise_must_override
   end
 
+  # OPTIONAL - Update the local status code of the model to match what is in xero.
+  # This is needed to avoid status changes that will later cause failure
+  # when trying to sync. Example CreditNote:
+  # 1. Local status: submitted
+  # 2. Remote status: authorized
+  #
+  # This will be flagged for remote save, but will be updated with the local status
+  # of submitted, which will fail xero sync
+  def sync_local_model_status(model, record)
+    true
+  end
+
   # OPTIONAL - Check if this record should be included in the batch save
-    # We need to somehow still update the model even if the record should not be
-    # saved to xero. This is causing some items to not not archive or void
-    # since they the remote server is already voided
+  # We need to somehow still update the model even if the record should not be
+  # saved to xero. This is causing some items to not not archive or void
+  # since they the remote server is already voided
   def should_save_record?(record, model)
     true
   end
@@ -109,40 +121,31 @@ class BaseSyncer
     marked_for_save.each {|o| update_record(o[:record], o[:model])}
 
     # Batch save to xero
-    response = batch_save marked_for_save.map {|o| o[:record]}
+    records_marked_for_save = marked_for_save.map {|o| o[:record]}
+    save_records(records_marked_for_save)
 
-    if response[:success]
-      # Process all zipped, included voided etc, to the latest record state
-      zipped.each {|o| process_record(o[:record], o[:model]) }
-    else
-      warn response[:errors]
-      raise response[:errors]
-    end
-  end
-
-  def batch_save(records = [])
-    did_save_successfully = save_records(records)
-
-    errors = records
-      .select {|r| r.errors.present?}
-      .map {|r| [r, r.errors]}
-
-    { errors: errors, success: did_save_successfully }
+    # Process all zipped, included voided etc, to the latest record state
+    zipped.each {|o| process_record(o[:record], o[:model]) }
   end
 
   def zip_model_record(model)
     record = find_or_create_record(model)
+    sync_local_model_status(model, record)
     should_save = should_save_record?(record, model)
 
     { model:model, record:record, should_save: should_save }
   end
 
   def process_record(record, model = nil)
-    model = model || find_model(record)
+    if record.errors.present?
+      record.errors.each{|e| error e}
+    else
+      model = model || find_model(record)
 
-    if model.present?
-      update_model(model, record)
-      post_process_model(model)
+      if model.present?
+        update_model(model, record)
+        post_process_model(model)
+      end
     end
   end
 

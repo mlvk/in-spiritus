@@ -69,19 +69,23 @@ module XeroFinancialRecordModel
   def sync_with_xero_status(status)
     case status
     when 'DRAFT'
-      mark_draft!
+      mark_draft! if can_transition_to?(:draft)
     when 'SUBMITTED'
-      mark_submitted!
+      mark_submitted! if can_transition_to?(:submitted)
     when 'AUTHORISED'
-      mark_authorized!
+      mark_authorized! if can_transition_to?(:authorized)
     when 'PAID'
-      mark_paid!
+      mark_paid! if can_transition_to?(:paid)
     when 'BILLED'
-      mark_billed!
+      mark_billed! if can_transition_to?(:billed)
     when 'DELETED'
-      mark_deleted!
+      mark_deleted! if can_transition_to?(:deleted)
     when 'VOIDED'
-      mark_voided!
+      mark_voided! if can_transition_to?(:voided)
     end
+  end
+
+  def can_transition_to?(state)
+    aasm(:xero_financial_record_state).states(:permitted => true).map{|s| s.name}.include?(state)
   end
 end
