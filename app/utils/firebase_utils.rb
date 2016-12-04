@@ -18,7 +18,7 @@ module FirebaseUtils
 	end
 
 	def build_stock_level_data_point(stock_level)
-		return unless stock.fulfillment.route_visit.completed_at.present?
+		return unless stock_level.stock.fulfillment.route_visit.completed_at.present?
 
 		log("Crunching sales data for stock_level: #{stock_level.id}")
 
