@@ -52,11 +52,12 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
     fulfillments_data = Maybe(data[:fulfillments]).fetch([])
 
     ActiveRecord::Base.transaction do
-      route_visit.completed_at = data[:completed_at]
+      completed_at = data[:completed_at] || Time.current
+      route_visit.completed_at = completed_at
       route_visit.save
 
       fulfillments_data.each do |fulfillment_data|
-        process_fulfillment(fulfillment_data, route_visit)
+        process_fulfillment(fulfillment_data, route_visit, completed_at)
       end
 
       route_visit.mark_fulfilled!
@@ -67,7 +68,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
     {success:false, error:error.message}
   end
 
-  def process_fulfillment(data, route_visit)
+  def process_fulfillment(data, route_visit, completed_at)
     fulfillment = route_visit.fulfillments.find(data[:id])
     if fulfillment.nil?
       raise "Fulfillment with id #{data[:id]} not found on route_visit #{route_visit.id}"
@@ -75,7 +76,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
 
     process_order data[:order]
     process_credit_note data[:credit_note]
-    process_stock data[:stock]
+    process_stock(data[:stock], completed_at)
     process_pod data[:pod]
 
     fulfillment.mark_fulfilled!
@@ -147,11 +148,11 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
     credit_note.mark_pending_sync!
   end
 
-  def process_stock(data)
+  def process_stock(data, completed_at)
     return if data.nil?
 
     stock = Stock.find(data[:id])
-    stock.taken_at = data[:taken_at]
+    stock.taken_at = completed_at
 
     stock.stock_levels.each do |sl|
       sl.starting = 0
