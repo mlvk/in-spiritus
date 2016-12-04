@@ -18,6 +18,10 @@ module FirebaseUtils
 	end
 
 	def build_stock_level_data_point(stock_level)
+		return unless stock.fulfillment.route_visit.completed_at.present?
+
+		log("Crunching sales data for stock_level: #{stock_level.id}")
+
 		stock = stock_level.stock
 		fulfillment = stock.fulfillment
 		order = fulfillment.order
@@ -43,4 +47,13 @@ module FirebaseUtils
 
 		push_payload(key, payload)
 	end
+
+	private
+	def log(message)
+    logger.info("[SalesDataCalc]: #{message}")
+  end
+
+  def logger
+    @@sync_logger ||= Logger.new("#{Rails.root}/log/sales_data_calc.log")
+  end
 end
