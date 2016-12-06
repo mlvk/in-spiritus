@@ -4,7 +4,7 @@ services:
   web:
     tty: true
     stdin_open: true
-    image: mlvk/in-spiritus:0.0.9
+    image: mlvk/in-spiritus:0.0.11
     command: bash -c "rm -f tmp/pids/* && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
       - "3000:3000"
@@ -47,7 +47,7 @@ services:
     restart: always
 
   zeus:
-    image: mlvk/in-spiritus:0.0.9
+    image: mlvk/in-spiritus:0.0.11
     command: bash -c "rm -f /zeus/.zeus.sock && zeus start"
     networks:
       - backend

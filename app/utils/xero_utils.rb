@@ -4,10 +4,11 @@ module XeroUtils
 	end
 
 	def xero
-		@xero_client ||= Xeroizer::PrivateApplication.new(ENV['XERO_API_KEY'],
-																		 ENV['XERO_SECRET'],
-																		 '| echo "$XERO_PRIVATE_KEY" ',
-																		 :rate_limit_sleep => 2,
-																		 :logger => logger)
+		@xero_client ||= Xeroizer::PrivateApplication.new(
+			ENV['XERO_API_KEY'],
+			ENV['XERO_SECRET'],
+			'| echo "$XERO_PRIVATE_KEY" ',
+			:rate_limit_sleep => 2,
+			:logger => logger)
   end
 end
