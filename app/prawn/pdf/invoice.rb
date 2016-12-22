@@ -64,7 +64,7 @@ module Pdf
           [
             {x:5,     label:"#",      width:30,  align: :left, content:{ text: "#{index + 1}.", size: 8, styles: [:italic]}},
             {x:10,    label:"QTY",    width:30,  align: :right, content:{ text: oi.quantity.to_i.to_s, size: 11}},
-            {x:60,    label:"CODE",   width:70,  align: :left,  content:{ text: oi.item.code, size: 11, styles: [:italic]}},
+            {x:60,    label:"CODE",   width:75,  align: :left,  content:{ text: oi.item.code, size: 9, styles: [:italic]}},
             {x:140,   label:"NAME",   width:110, align: :left,  content:{ text: oi.item.name, size: 9}},
             {x:270,   label:"DESC",   width:190, align: :left,  content:{ text: Maybe(oi.item.description).fetch("").truncate(121), size: 7}},
             {x:450,   label:"PRICE",  width:35,  align: :right, content:{ text: oi.unit_price.to_s, size: 9}},

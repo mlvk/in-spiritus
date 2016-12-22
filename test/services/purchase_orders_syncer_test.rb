@@ -17,13 +17,49 @@ class PurchaseOrdersSyncerTest < ActiveSupport::TestCase
       remote_purchase_order_id: 'new_order_id'
     }
 
-    VCR.use_cassette('purchase_orders/001', erb: yaml_props) do
+    VCR.use_cassette('purchase_orders/query_not_found_create', erb: yaml_props) do
       PurchaseOrdersSyncer.new.sync_local
     end
 
     purchase_order.reload
 
     assert_equal(yaml_props[:remote_purchase_order_id], purchase_order.xero_id)
+  end
+
+  test "Should not create xero record if order is draft and greater than or equal to current day" do
+    purchase_order = create(:purchase_order_with_items, delivery_date:1.day.from_now.to_date)
+
+    yaml_props = {
+      purchase_order_number: purchase_order.order_number,
+      remote_purchase_order_id: 'new_order_id'
+    }
+
+    VCR.use_cassette('purchase_orders/query_not_found_create', erb: yaml_props) do
+      PurchaseOrdersSyncer.new.sync_local
+    end
+
+    purchase_order.reload
+
+    refute purchase_order.has_synced_with_xero?, 'PurchaseOrder has a xero id when it should not'
+    refute purchase_order.synced?, 'PurchaseOrder was marked as synced'
+  end
+
+  test "Should create xero record if order is draft but also 1 day old" do
+    purchase_order = create(:purchase_order_with_items, delivery_date:1.day.ago.to_date)
+
+    yaml_props = {
+      purchase_order_number: purchase_order.order_number,
+      remote_purchase_order_id: 'new_order_id'
+    }
+
+    VCR.use_cassette('purchase_orders/query_not_found_create', erb: yaml_props) do
+      PurchaseOrdersSyncer.new.sync_local
+    end
+
+    purchase_order.reload
+
+    assert purchase_order.has_synced_with_xero?, 'PurchaseOrder does not have a xero id when it should not'
+    assert purchase_order.synced?, 'PurchaseOrder not marked as synced'
   end
 
   test "Should update local PO when there are remote changes with a matching local PO and local PO is in state synced" do

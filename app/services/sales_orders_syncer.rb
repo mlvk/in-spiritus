@@ -57,8 +57,11 @@ class SalesOrdersSyncer < BaseSyncer
     Order
       .sales_order
       .pending_sync
-      .select { |o| !o.draft? }
       .select { |o| o.is_valid? }
+      .select { |o|
+        is_past = (Time.current.to_date - o.delivery_date).to_i > 0
+        !o.draft? || is_past
+      }
   end
 
   def update_model(model, record)
@@ -123,7 +126,7 @@ class SalesOrdersSyncer < BaseSyncer
         quantity: 1,
         unit_amount: model.shipping,
         tax_type: 'NONE',
-        account_code:  ENV['SALES_ACCOUNT_CODE'])
+        account_code:  (ENV['DISTRIBUTION_ACCOUNT_CODE'] || ENV['SALES_ACCOUNT_CODE']))
     end
   end
 end

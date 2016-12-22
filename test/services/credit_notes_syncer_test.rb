@@ -48,13 +48,13 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
       credit_note_items: credit_note.credit_note_items
     }
 
-    VCR.use_cassette('credit_notes/002', erb: yaml_props) do
+    VCR.use_cassette('credit_notes/query_not_found_create', erb: yaml_props) do
       CreditNotesSyncer.new.sync_local
     end
 
     credit_note.reload
 
-    assert credit_note.xero_id.present?, 'Xero id not present'
+    assert credit_note.has_synced_with_xero?, 'Should have synced with xero'
     assert credit_note.synced?, 'credit_note was not marked as synced'
   end
 
@@ -145,7 +145,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
 
     should_save_record_spy = Spy.on(syncer, :should_save_record?).and_call_through
 
-    VCR.use_cassette('credit_notes/002', erb: yaml_props) do
+    VCR.use_cassette('credit_notes/query_not_found_create', erb: yaml_props) do
       syncer.sync_local
     end
 
@@ -154,7 +154,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
     credit_note.reload
 
     assert first_call.result, 'Should have returned true for should_save_record?'
-    assert credit_note.xero_id.present?, 'Should have a xero id'
+    assert credit_note.has_synced_with_xero?, 'Should have synced with xero'
     assert credit_note.synced?, 'Should be in synced state'
   end
 
@@ -185,7 +185,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
       credit_note_items: valid_credit_note_items
     }
 
-    VCR.use_cassette('credit_notes/002', erb: yaml_props) do
+    VCR.use_cassette('credit_notes/query_not_found_create', erb: yaml_props) do
       syncer.sync_local
     end
 

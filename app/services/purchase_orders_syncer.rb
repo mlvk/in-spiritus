@@ -54,8 +54,11 @@ class PurchaseOrdersSyncer < BaseSyncer
     Order
       .pending_sync
       .purchase_order
-      .select { |o| !o.draft? }
       .select { |o| o.is_valid? }
+      .select { |o|
+        is_past = (Time.current.to_date - o.delivery_date).to_i > 0
+        !o.draft? || is_past
+      }
   end
 
   def update_model(model, record)

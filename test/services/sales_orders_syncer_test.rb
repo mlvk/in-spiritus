@@ -46,7 +46,7 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
       invoice_number: order.order_number
     }
 
-    VCR.use_cassette('sales_orders/003', erb: yaml_props) do
+    VCR.use_cassette('sales_orders/query_not_found_create', erb: yaml_props) do
       SalesOrdersSyncer.new.sync_local
     end
 
@@ -182,6 +182,38 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     order.reload
 
     assert_equal(Order.first.xero_id, yaml_props[:record_id], "Xero id didn't match")
+    assert Order.first.synced?, 'order was not marked as synced'
+  end
+
+  test "Should not create xero record if order is draft and greater than or equal to current day" do
+    order = create(:sales_order_with_items, delivery_date:1.day.from_now.to_date)
+
+    yaml_props = {
+      response_invoice_id: 'new_xero_id',
+      invoice_number: order.order_number
+    }
+
+    VCR.use_cassette('sales_orders/query_not_found_create', erb: yaml_props) do
+      SalesOrdersSyncer.new.sync_local
+    end
+
+    refute Order.first.has_synced_with_xero?, 'Order has a xero id when it should not'
+    refute Order.first.synced?, 'order was marked as synced'
+  end
+
+  test "Should create xero record if order is draft but also 1 day old" do
+    order = create(:sales_order_with_items, delivery_date:1.day.ago.to_date)
+
+    yaml_props = {
+      response_invoice_id: 'new_xero_id',
+      invoice_number: order.order_number
+    }
+
+    VCR.use_cassette('sales_orders/query_not_found_create', erb: yaml_props) do
+      SalesOrdersSyncer.new.sync_local
+    end
+
+    assert_equal(Order.first.xero_id, yaml_props[:response_invoice_id], "Xero id didn't match")
     assert Order.first.synced?, 'order was not marked as synced'
   end
 
