@@ -16,8 +16,6 @@ class Location < ActiveRecord::Base
 	has_many :item_desires, :dependent => :destroy, autosave: true
 	has_many :item_credit_rates, :dependent => :destroy, autosave: true
 
-	scope :scheduled_for_delivery_on?, ->(day) { where(:visit_days => {:day => day-1, :enabled => true}).joins(:visit_days).distinct }
-
 	def has_sales_order_for_date? (delivery_date)
 		orders.where(delivery_date:delivery_date, order_type:'sales-order').present?
 	end
@@ -26,9 +24,14 @@ class Location < ActiveRecord::Base
 		address.present?
 	end
 
+	scope :scheduled_for_delivery_on?, ->(day) { where(:visit_days => {:day => day-1, :enabled => true}).joins(:visit_days).distinct }
 	scope :customer, -> { joins(:company).where(companies: {is_customer: true}) }
 	scope :with_valid_address, -> { where("address_id IS NOT NULL") }
-	scope :active, -> { joins(:company).where(companies: {active_state: Company.active_states[:active]}) }
+	scope :active, -> {
+		joins(:company)
+			.where(companies: {active_state: Company.active_states[:active]})
+			.where(active: true)
+	}
 
 	def full_name
 		"#{code} - #{name}"
