@@ -3,7 +3,7 @@ class BaseSyncer
   include RedisUtils
 
   def sync_local
-    process_local(find_models.take(30))
+    process_local(find_models.take(5))
   rescue => e
     error e
   end
