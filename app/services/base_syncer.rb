@@ -108,7 +108,7 @@ class BaseSyncer
   end
 
   def error(e)
-    logger.error { "[Syncer]: #{e.message} #{e.backtrace.join("\n")}" }
+    logger.error { "[Syncer]: #{Maybe(e).message.fetch(e)} #{e.backtrace.join("\n")}" }
   end
 
   private
