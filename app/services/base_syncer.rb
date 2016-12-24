@@ -100,15 +100,19 @@ class BaseSyncer
   end
 
   def log(message)
-    logger.info("[Syncer]: #{message}")
+    logger.info("[Syncer - Log]: #{message}")
   end
 
   def warn(message)
-    logger.warn("[Syncer]: #{message}")
+    logger.warn("[Syncer - Warning]: #{message}")
   end
 
   def error(e)
-    logger.error { "[Syncer]: #{Maybe(e).message.fetch(e)} #{e.backtrace.join("\n")}" }
+    if (e.respond_to? :message) && (e.respond_to? :backtrace)
+      logger.error { "[Syncer - Error]: #{e.message} #{e.backtrace.join("\n")}" }
+    else
+      logger.error { "[Syncer - Error]: #{e}" }
+    end
   end
 
   private
