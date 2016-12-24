@@ -22,7 +22,8 @@ class SalesOrdersSyncer < BaseSyncer
     is_remotely_unchangable = (record.status == 'VOIDED') ||
                           (record.status == 'DELETED') ||
                           (record.status == 'PAID') ||
-                          (record.status == 'BILLED')
+                          (record.status == 'BILLED') ||
+                          record.payments.present?
 
     !is_locally_invalid && !is_remotely_unchangable
   end

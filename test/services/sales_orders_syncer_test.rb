@@ -217,4 +217,22 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     assert Order.first.synced?, 'order was not marked as synced'
   end
 
+  test "Should not try to sync remote when remote has payments" do
+    order = create(:sales_order_with_items, :submitted, :with_xero_id)
+
+    yaml_props = {
+      invoice_id: order.xero_id,
+      invoice_number: order.order_number,
+      invoice_status: 'AUTHORISED'
+    }
+
+    VCR.use_cassette('sales_orders/query_by_id_and_match_with_payments', erb: yaml_props) do
+      SalesOrdersSyncer.new.sync_local
+    end
+
+    order.reload
+
+    assert order.synced?
+  end
+
 end
