@@ -235,4 +235,22 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     assert order.synced?
   end
 
+  test "Should not try to sync remote when remote has credits" do
+    order = create(:sales_order_with_items, :submitted, :with_xero_id)
+
+    yaml_props = {
+      invoice_id: order.xero_id,
+      invoice_number: order.order_number,
+      invoice_status: 'AUTHORISED'
+    }
+
+    VCR.use_cassette('sales_orders/query_by_id_and_match_with_credits', erb: yaml_props) do
+      SalesOrdersSyncer.new.sync_local
+    end
+
+    order.reload
+
+    assert order.synced?
+  end
+
 end

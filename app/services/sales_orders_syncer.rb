@@ -23,7 +23,8 @@ class SalesOrdersSyncer < BaseSyncer
                           (record.status == 'DELETED') ||
                           (record.status == 'PAID') ||
                           (record.status == 'BILLED') ||
-                          record.payments.present?
+                          record.payments.present? ||
+                          record.credit_notes.present?
 
     !is_locally_invalid && !is_remotely_unchangable
   end
