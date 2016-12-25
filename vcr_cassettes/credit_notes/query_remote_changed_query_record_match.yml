@@ -93,17 +93,12 @@ http_interactions:
               <Status>AUTHORISED</Status>
               <LineAmountTypes>Exclusive</LineAmountTypes>
               <LineItems>
-                <% credit_note_items do |cni| %>
+                <% credit_note_items.each do |cni| %>
                   <LineItem>
                     <ItemCode><%= cni.item.code %></ItemCode>
                     <Description><%= cni.item.description %></Description>
                     <UnitAmount><%= cni.unit_price %></UnitAmount>
-                    <TaxType>NONE</TaxType>
-                    <TaxAmount>0.00</TaxAmount>
-                    <LineAmount>30.00</LineAmount>
-                    <AccountCode>400</AccountCode>
-                    <Quantity><%= remote_quantity %></Quantity>
-                    <LineItemID>45027871-55df-4b25-b01a-ca26af4a9fff</LineItemID>
+                    <Quantity><%= cni.quantity %></Quantity>
                   </LineItem>
                   <% end %>
               </LineItems>

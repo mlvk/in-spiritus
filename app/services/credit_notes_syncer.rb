@@ -58,19 +58,23 @@ class CreditNotesSyncer < BaseSyncer
 
     def update_model(model, record)
       model.xero_id = record.credit_note_id
+      model.credit_note_number = record.credit_note_number
       model.save
 
       record.line_items.each do |line_item|
-        item = Item.find_by name: line_item.item_code
-        credit_note_item = model.credit_note_items.find_by(item:item) || create_model_credit_note_item(model, line_item)
-        credit_note_item.quantity = line_item.quantity
-        credit_note_item.unit_price = line_item.unit_amount
-        credit_note_item.save
+        item = Item.find_by(code:line_item.item_code)
+
+        if item.present?
+          credit_note_item = model.credit_note_items.find_by(item:item) || CreditNoteItem.create(credit_note:model, item:item)
+          credit_note_item.quantity = line_item.quantity
+          credit_note_item.unit_price = line_item.unit_amount
+          credit_note_item.save
+        end
       end
 
       # Clear missing credit_note_items
       model.credit_note_items.each do |credit_note_item|
-        has_match = record.line_items.any? {|line_item| line_item.item_code == credit_note_item.item.name}
+        has_match = record.line_items.any? {|line_item| line_item.item_code == credit_note_item.item.code}
         credit_note_item.destroy if !has_match
       end
 
@@ -96,27 +100,22 @@ class CreditNotesSyncer < BaseSyncer
       end
     end
 
-      def create_record_line_item(record, credit_note_item)
-        record.add_line_item(
-          item_code:credit_note_item.item.code,
-          description:"#{credit_note_item.item.name} - #{credit_note_item.item.description}",
-          quantity:credit_note_item.quantity,
-          unit_amount:credit_note_item.unit_price.round(2),
-          tax_type:'NONE',
-          account_code: ENV['SPOILAGE_ACCOUNT_CODE'] || '400')
-      end
+    def create_record_line_item(record, credit_note_item)
+      record.add_line_item(
+        item_code:credit_note_item.item.code,
+        description:"#{credit_note_item.item.name} - #{credit_note_item.item.description}",
+        quantity:credit_note_item.quantity,
+        unit_amount:credit_note_item.unit_price.round(2),
+        tax_type:'NONE',
+        account_code: ENV['SPOILAGE_ACCOUNT_CODE'] || '400')
+    end
 
-      def create_default_record_line_item(record)
-        record.add_line_item(
-          description:"Empty Credit",
-          quantity:0,
-          unit_amount:0,
-          tax_type:'NONE',
-          account_code: ENV['SPOILAGE_ACCOUNT_CODE'] || '400')
-      end
-
-      def create_model_credit_note_item(model, line_item)
-        item = Item.find_by code: line_item.item_code
-        CreditNoteItem.create(item:item, credit_note:model)
-      end
+    def create_default_record_line_item(record)
+      record.add_line_item(
+        description:"Empty Credit",
+        quantity:0,
+        unit_amount:0,
+        tax_type:'NONE',
+        account_code: ENV['SPOILAGE_ACCOUNT_CODE'] || '400')
+    end
 end

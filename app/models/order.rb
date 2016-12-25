@@ -78,9 +78,12 @@ class Order < ActiveRecord::Base
     shipping > 0
   end
 
+  def total_sale
+    order_items.inject(0) {|acc, cur| acc + cur.total }
+  end
+
   def total
-    order_items_total = order_items.inject(0) {|acc, cur| acc + cur.total }
-    order_items_total + shipping
+    total_sale + shipping
   end
 
   def due_date
@@ -93,7 +96,6 @@ class Order < ActiveRecord::Base
 
   private
   def pre_process_saving_data
-    # Generate order number
     self.order_number = trim_and_downcase order_number
     generate_order_number unless valid_order_number?
 
@@ -101,7 +103,7 @@ class Order < ActiveRecord::Base
   end
 
   def generate_order_number
-    prefix = sales_order? ? 'SO' : 'PO'
+    prefix = sales_order? ? 'so' : 'po'
     self.order_number = "#{prefix}-#{delivery_date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}".downcase
 
     generate_order_number unless valid_order_number?

@@ -37,4 +37,12 @@ class StockLevel < ActiveRecord::Base
 
     [starting + dropped - returns, 0].max
   end
+
+  def has_starting?
+    starting > 0.0
+  end
+
+  def has_returns?
+    returns > 0.0
+  end
 end

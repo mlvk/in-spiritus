@@ -51,6 +51,36 @@ class Location < ActiveRecord::Base
 			.first
 	end
 
+	def financial_data_for_date_range(start_date, end_date)
+		orders = Order
+			.where("delivery_date >= ?", start_date)
+			.where("delivery_date <= ?", end_date)
+			.where("location_id = ?", id)
+			.sales_order
+			.authorized
+			.select { |o| o.is_valid? }
+
+		raw_data = orders.map { |o|
+			{
+				stock: o.fulfillment.stock.returns_data,
+				credit: o.fulfillment.credit_note.credit_data
+			}
+		}
+
+		total_sales_revenue = orders.inject(0) { |acc, cur| acc = acc + cur.total_sale }
+		total_dist_revenue = orders.inject(0) { |acc, cur| acc = acc + cur.shipping }
+		total_spoilage = raw_data.inject(0) { |acc, cur| acc = acc + cur[:credit][:total_credit] }
+
+		{
+			id: id,
+			name: name,
+			total_sales_revenue: total_sales_revenue,
+			total_dist_revenue: total_dist_revenue,
+			total_spoilage: total_spoilage,
+			raw_data: raw_data
+		}
+	end
+
 	private
 	def pre_process_saving_data
 		# Generate location code

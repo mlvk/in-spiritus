@@ -23,6 +23,15 @@ class BaseSyncer
     set_last_remote_sync(self, start_timestamp)
   end
 
+  def sync_model_from_remote(model)
+    record = find_record_by_id(model)
+
+    if record.present?
+      update_model(model, record)
+      post_process_model(model)
+    end
+  end
+
   protected
   # Try to find a single xero record by its xero id
   def find_record(xero_id)

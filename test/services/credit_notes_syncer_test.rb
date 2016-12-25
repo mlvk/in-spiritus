@@ -82,7 +82,7 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
       updated_date_utc: 10.minutes.from_now
     }
 
-    VCR.use_cassette('credit_notes/004', erb: yaml_props) do
+    VCR.use_cassette('credit_notes/query_remote_changed_query_record_match_force_remote_quantity', erb: yaml_props) do
       CreditNotesSyncer.new.sync_remote(10.minutes.from_now)
     end
 
@@ -103,13 +103,34 @@ class CreditNotesSyncerTest < ActiveSupport::TestCase
       updated_date_utc: 10.minutes.from_now
     }
 
-    VCR.use_cassette('credit_notes/004', erb: yaml_props) do
+    VCR.use_cassette('credit_notes/query_remote_changed_query_record_match', erb: yaml_props) do
       CreditNotesSyncer.new.sync_remote(10.minutes.from_now)
     end
 
     credit_note.reload
 
     assert credit_note.credit_note_items.empty?, 'Credit note items found when expected none'
+  end
+
+  test "should not remove credit_note_item if present in remote record and local model is synced?" do
+    credit_note = create(:credit_note_with_credit_note_items, :with_xero_id)
+    count = credit_note.credit_note_items.count
+    credit_note.mark_synced!
+
+    yaml_props = {
+      remote_credit_note_id: credit_note.xero_id,
+      remote_credit_note_number: credit_note.credit_note_number,
+      credit_note_items: credit_note.credit_note_items,
+      updated_date_utc: 10.minutes.from_now
+    }
+
+    VCR.use_cassette('credit_notes/query_remote_changed_query_record_match', erb: yaml_props) do
+      CreditNotesSyncer.new.sync_remote(10.minutes.from_now)
+    end
+
+    credit_note.reload
+
+    assert_equal(count, credit_note.credit_note_items.count, 'Credit note items count was not correct')
   end
 
   test "should still create new credit note when credit total is 0" do

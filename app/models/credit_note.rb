@@ -1,9 +1,10 @@
 class CreditNote < ActiveRecord::Base
+  include StringUtils
   include SyncableModel
   include XeroRecord
   include XeroFinancialRecordModel
 
-  before_save :generate_credit_note_number
+  before_save :pre_process_saving_data
 
   belongs_to :location
 
@@ -37,22 +38,32 @@ class CreditNote < ActiveRecord::Base
     Pdf::CreditNote
   end
 
+  def credit_data
+    raw_data = credit_note_items
+      .select { |cni| cni.has_credit? }
+      .map { |cni| {item:"#{cni.item.code} - #{cni.item.name}", quantity: cni.quantity, unit_price: cni.unit_price} }
+
+    total_credit = raw_data.inject(0) { |acc, cur| acc + (cur[:quantity] * cur[:unit_price]) }
+    {
+      total_credit: total_credit,
+      raw_data: raw_data
+    }
+  end
+
   private
-    def generate_credit_note_number
-      if self.credit_note_number.nil?
-        self.credit_note_number = "CR-#{date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
-        save
-      end
-    end
+  def pre_process_saving_data
+    self.credit_note_number = trim_and_downcase credit_note_number
+    generate_credit_note_number unless valid_credit_note_number?
+  end
 
-    def generate_credit_note_number
-      self.credit_note_number = "CR-#{date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}"
+  def generate_credit_note_number
+    self.credit_note_number = "cr-#{date.strftime('%y%m%d')}-#{SecureRandom.hex(2)}".downcase
 
-      generate_credit_note_number unless valid_credit_note_number?
-    end
+    generate_credit_note_number unless valid_credit_note_number?
+  end
 
-    def valid_credit_note_number?
-      match = CreditNote.find_by(credit_note_number: credit_note_number)
-      (match.nil? || match == self) && credit_note_number.present?
-    end
+  def valid_credit_note_number?
+    match = CreditNote.find_by(credit_note_number: credit_note_number)
+    (match.nil? || match == self) && credit_note_number.present?
+  end
 end

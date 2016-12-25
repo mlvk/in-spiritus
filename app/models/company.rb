@@ -45,6 +45,25 @@ class Company < ActiveRecord::Base
 		match.present? ? match.price : 0.0
 	end
 
+  def financial_data_for_date_range(start_date, end_date)
+    location_data = locations
+      .select { |l| l.active }
+      .map { |l| l.financial_data_for_date_range(start_date, end_date) }
+
+  	total_sales_revenue = location_data.inject(0) { |acc, cur| acc = acc + cur[:total_sales_revenue] }
+		total_dist_revenue = location_data.inject(0) { |acc, cur| acc = acc + cur[:total_dist_revenue] }
+		total_spoilage = location_data.inject(0) { |acc, cur| acc = acc + cur[:total_spoilage] }
+
+    {
+      id: id,
+      name: name,
+      location_data: location_data,
+      total_sales_revenue: total_sales_revenue,
+      total_dist_revenue: total_dist_revenue,
+      total_spoilage: total_spoilage
+    }
+  end
+
   def initials
     name.split.map(&:first).join.downcase
   end
