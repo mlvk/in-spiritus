@@ -42,6 +42,8 @@ Rails.application.routes.draw do
 
   post 'custom/unique_check'
 
+  post 'reports/customer_financials_by_range'
+
   get 'testing/pdf'
 
   get '/routing/optimize_route/:id', to: 'routing#optimize_route'

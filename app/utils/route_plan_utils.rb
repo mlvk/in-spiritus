@@ -19,7 +19,7 @@ class RoutePlanUtils
 
 	def build_route_plan route_plan
 		[route_plan]
-			.concat route_plan.route_visits
+			.concat route_plan.route_visits.distinct
 			.sort {|x,y| y.position <=> x.position}
 			.flat_map(&:fulfillments)
 			.flat_map {|f| [f.order, f.credit_note]}

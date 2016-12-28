@@ -32,6 +32,7 @@ module Pdf
     def build_route_visit_rows(route_plan)
       route_plan
         .route_visits
+        .distinct
         .select(&:is_valid?)
         .sort {|x,y| x.position <=> y.position}
         .each_with_index
@@ -52,6 +53,7 @@ module Pdf
     def build_item_information_rows(route_plan)
       route_plan
         .route_visits
+        .distinct
         .sort {|x,y| x.position <=> y.position}
         .flat_map(&:fulfillments)
         .flat_map(&:order)
