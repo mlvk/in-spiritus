@@ -12,7 +12,7 @@ class ReportsController < ApplicationJsonApiResourcesController
 
     if data.nil?
       data = Company.customer.map{|c| c.financial_data_for_date_range(start_date, end_date)}.to_json
-      redis.set(key, data)
+      redis.setex(key, 1.day.to_i, data)
     end
 
     render json: {report_data: JSON.parse(data)}
