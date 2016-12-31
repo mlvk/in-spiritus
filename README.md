@@ -109,11 +109,11 @@ If you have trouble using the CLI tool, you can manage the docker-compose manual
 ![alt tag](https://github.com/brancusi/in-spiritus/blob/master/erd.png)
 
 ### Building docker images
-1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.app -t mlvk/in-spiritus:0.0.11 .`
+1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.app -t mlvk/in-spiritus:0.0.12 .`
 1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.python -t mlvk/in-spiritus-python:0.0.1 .`
 
 ### Publishing docker hub
-1. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.10`
+1. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.12`
 1. Push to dockerhub registry: `docker push mlvk/in-spiritus-python:0.0.1`
 
 ### Setup Atom for testing
