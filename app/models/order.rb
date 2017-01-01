@@ -134,7 +134,18 @@ class Order < ActiveRecord::Base
   end
 
   def generate_parent_route_visit
-    RouteVisit.find_or_create_by(date:delivery_date, address:address)
+    match = RouteVisit
+      .joins(:address)
+      .where("lat = ?", address.lat)
+      .where("lng = ?", address.lng)
+      .where("date = ?", delivery_date)
+      .first
+
+    if match.nil?
+      match = RouteVisit.create(date:delivery_date, address:address)
+    end
+
+    return match
   end
 
   def create_fulfillment_structure
