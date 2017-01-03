@@ -144,7 +144,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
       target.save
     end
 
-    credit_note.mark_submitted! unless credit_note.authorized?
+    credit_note.mark_submitted! unless credit_note.authorized? || credit_note.deleted?
     credit_note.mark_pending_sync!
   end
 
