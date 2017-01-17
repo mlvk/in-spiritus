@@ -23,11 +23,6 @@ class RouteVisit < ActiveRecord::Base
 	has_many 		:fulfillments, :dependent => :destroy, autosave: true
 	has_many 		:orders, through: :fulfillments
 
-	default_scope {
-		joins(:orders)
-			.where("xero_financial_record_state = any (array#{Order::VALID_STATES})")
-	}
-
 	def is_valid?
 		orders.any?(&:is_valid?)
 	end
