@@ -14,6 +14,8 @@ class ProcessRouteVisitWorker
   end
 
   def process_route_visit(route_visit)
+    driver = route_visit.route_plan.user
+
     route_visit
       .fulfillments
       .belongs_to_sales_order
@@ -21,7 +23,9 @@ class ProcessRouteVisitWorker
         build_notifications f
         publish_documents f
 
-        Log.notify_distribution_event "Delivered: #{f.to_string}"
+        msg = "#{driver.name} - #{f.to_string}"
+
+        Log.notify_distribution_event(msg)
     end
 
     route_visit.mark_processed!
