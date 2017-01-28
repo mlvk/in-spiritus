@@ -65,7 +65,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
 
     {success:true, id:route_visit_id}
   rescue => error
-    {success:false, error:error.message}
+    {success:false, error:"#{route_visit_id} - #{error.message}"}
   end
 
   def process_fulfillment(data, route_visit, completed_at)
@@ -111,7 +111,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
       target.save
     end
 
-    order.mark_authorized!
+    order.mark_authorized! if order.can_transition_to?(:authorized)
     order.mark_pending_sync!
   end
 
