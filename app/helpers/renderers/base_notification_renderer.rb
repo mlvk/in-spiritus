@@ -8,7 +8,7 @@ module Renderers
     end
 
     def build_erb(erb, context)
-      ERB.new(File.open("app/views/emails/#{erb}.erb").read).result(binding)
+      ERB.new(File.read("app/views/emails/#{erb}.erb")).result(binding)
     end
 
     def create_message(notification, options)

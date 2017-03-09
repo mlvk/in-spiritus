@@ -4,7 +4,7 @@ services:
   web:
     tty: true
     stdin_open: true
-    image: mlvk/in-spiritus:0.0.12
+    image: mlvk/in-spiritus:0.0.13
     command: bash -c "rm -f tmp/pids/* && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
       - "3000:3000"
@@ -19,7 +19,7 @@ services:
   python:
     tty: true
     stdin_open: true
-    image: mlvk/in-spiritus-python:0.0.1
+    image: mlvk/in-spiritus-python:0.0.2
     command: tail -f /dev/null
     networks:
       - backend
@@ -45,7 +45,7 @@ services:
     restart: always
 
   sidekiq:
-    image: mlvk/in-spiritus:0.0.12
+    image: mlvk/in-spiritus:0.0.13
     command: bundle exec sidekiq
     networks:
       - backend
@@ -56,7 +56,7 @@ services:
       - redis
 
   zeus:
-    image: mlvk/in-spiritus:0.0.12
+    image: mlvk/in-spiritus:0.0.13
     command: bash -c "rm -f /zeus/.zeus.sock && zeus start"
     networks:
       - backend
@@ -70,7 +70,7 @@ services:
       - redis
 
   scheduler:
-    image: mlvk/in-spiritus:0.0.12
+    image: mlvk/in-spiritus:0.0.13
     command: bundle exec clockwork clock.rb
     networks:
       - backend

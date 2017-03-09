@@ -113,8 +113,8 @@ If you have trouble using the CLI tool, you can manage the docker-compose manual
 1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.python -t mlvk/in-spiritus-python:0.0.1 .`
 
 ### Publishing docker hub
-1. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.12`
-1. Push to dockerhub registry: `docker push mlvk/in-spiritus-python:0.0.1`
+1. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.13`
+1. Push to dockerhub registry: `docker push mlvk/in-spiritus-python:0.0.2`
 
 ### Setup Atom for testing
 1. You can install the [ruby-test](https://atom.io/packages/ruby-test) Atom plugin
