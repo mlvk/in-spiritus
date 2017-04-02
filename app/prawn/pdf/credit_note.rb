@@ -1,6 +1,7 @@
 module Pdf
   class CreditNote
     include Pdf::Elements
+    include ActionView::Helpers::NumberHelper
 
     def initialize(credit_note, pdf)
       logo(pdf)
@@ -61,8 +62,8 @@ module Pdf
             {x:60,    label:"CODE",   width:75,  align: :left,  content:{ text: cni.item.code, size: 9, styles: [:italic]}},
             {x:140,   label:"NAME",   width:120, align: :left,  content:{ text: cni.item.name, size: 9}},
             {x:270,   label:"DESC",   width:200, align: :left,  content:{ text: Maybe(cni.item.description).fetch("").truncate(121), size: 7}},
-            {x:450,   label:"CREDIT",  width:35,  align: :right, content:{ text: cni.unit_price.to_s, size: 9}},
-            {x:500,   label:"TOTAL",  width:35,  align: :right, content:{ text: cni.total.to_s, size: 9}}
+            {x:450,   label:"CREDIT",  width:35,  align: :right, content:{ text: number_with_precision(cni.unit_price, precision:2), size: 9}},
+            {x:500,   label:"TOTAL",  width:35,  align: :right, content:{ text: number_with_precision(cni.total, precision:2), size: 9}}
           ]
         }
     end

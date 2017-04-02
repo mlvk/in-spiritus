@@ -26,4 +26,14 @@ class StringUtilsTest < ActiveSupport::TestCase
   test "returns nil when passed a nil to trim_and_downcase function" do
     assert_equal(nil, trim_and_downcase(nil))
   end
+
+  test "counts lines correctly" do
+    assert_equal(1, count_lines("Hello World"))
+    assert_equal(2, count_lines("Hello \n World"))
+    assert_equal(6, count_lines("Hello \n \n\n\n\nWorld"))
+    assert_equal(9, count_lines("123456789", 1))
+    assert_equal(0, count_lines(""))
+    assert_equal(0, count_lines(nil))
+    assert_equal(0, count_lines)
+  end
 end

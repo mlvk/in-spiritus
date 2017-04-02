@@ -2,6 +2,14 @@ require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
 
+  test "multiple order with same location should share route_visit" do
+    location = create(:location)
+    order1 = create(:sales_order_with_items, :submitted, location:location)
+    order2 = create(:sales_order_with_items, :submitted, location:location)
+
+    assert_equal(order1.fulfillment.route_visit, order2.fulfillment.route_visit, "The route_visit should have been the same for both orders")
+  end
+
   test "creates correct fulfillment structure on save" do
     order = build(:sales_order_with_items, :submitted)
 
@@ -18,6 +26,23 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal(1, CreditNote.all.count, "Should have created a credit note on save")
     assert_equal(1, Stock.all.count, "Should have created a credit note on save")
     assert_equal(1, Pod.all.count, "Should have created a credit note on save")
+  end
+
+  test "clears old fulfillment structure on destroy" do
+    order = create(:sales_order_with_items, :submitted)
+
+    assert order.fulfillment.present?, "Fulfillment was not present after create"
+    assert_equal(1, Fulfillment.all.count, "Created the wrong number of fulfillments")
+    assert_equal(1, CreditNote.all.count, "Should have created a credit note on save")
+    assert_equal(1, Stock.all.count, "Should have created a credit note on save")
+    assert_equal(1, Pod.all.count, "Should have created a credit note on save")
+
+    order.destroy
+
+    assert_equal(0, Fulfillment.all.count, "There was a fulfillment when there shouldn't have been")
+    assert_equal(0, CreditNote.all.count, "There was a credit note when there shouldn't have been")
+    assert_equal(0, Stock.all.count, "There was a stock when there shouldn't have been")
+    assert_equal(0, Pod.all.count, "There was a pod note when there shouldn't have been")
   end
 
   test "should not create credit note for purchase orders" do

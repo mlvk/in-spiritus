@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161125193918) do
+ActiveRecord::Schema.define(version: 20170330185331) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -230,10 +230,11 @@ ActiveRecord::Schema.define(version: 20161125193918) do
     t.datetime "updated_at"
     t.datetime "submitted_at"
     t.decimal  "shipping",                                default: 0.0
-    t.text     "note"
+    t.text     "internal_note"
     t.integer  "published_state",                         default: 0,             null: false
     t.integer  "sync_state",                              default: 0,             null: false
     t.integer  "xero_financial_record_state",             default: 0,             null: false
+    t.string   "comment"
   end
 
   add_index "orders", ["location_id"], name: "index_orders_on_location_id", using: :btree

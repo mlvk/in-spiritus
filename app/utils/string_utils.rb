@@ -7,4 +7,14 @@ module StringUtils
 		result = trim value
     result.downcase unless result.nil?
 	end
+
+	def count_lines(str = "", force_break_after = 120)
+		str ||= ""
+		str
+			.split("\n")
+			.map{|str| str.split("")
+				.each_slice(force_break_after)
+				.map{|slice| slice.join}}
+			.map{|i| i.empty? ? [nil] : i}.flatten.count
+	end
 end

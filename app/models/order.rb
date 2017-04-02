@@ -12,6 +12,7 @@ class Order < ActiveRecord::Base
 
   before_save :pre_process_saving_data
   after_save :update_fulfillment_structure
+  after_destroy :handle_empty_route_visit
 
   belongs_to :location
   has_one :address, through: :location
@@ -170,5 +171,9 @@ class Order < ActiveRecord::Base
       )
     end
 
+  end
+
+  def handle_empty_route_visit
+    fulfillment.route_visit.destroy if !fulfillment.route_visit.has_fulfillments?
   end
 end

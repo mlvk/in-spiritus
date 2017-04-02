@@ -9,7 +9,8 @@ class OrderResource < JSONAPI::Resource
              :order_type,
              :submitted_at,
              :shipping,
-             :note
+             :internal_note,
+             :comment
 
   filter     :delivery_date
   filter     :order_type

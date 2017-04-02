@@ -27,6 +27,10 @@ class RouteVisit < ActiveRecord::Base
 		orders.any?(&:is_valid?)
 	end
 
+	def has_fulfillments?
+		fulfillments.size > 0
+	end
+
 	def has_multiple_fulfillments?
 		fulfillments.size > 1
 	end
