@@ -1,0 +1,2 @@
+class OrderTemplateDayPolicy < StandardPolicy
+end

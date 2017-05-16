@@ -1,0 +1,2 @@
+class OrderTemplateItemPolicy < StandardPolicy
+end

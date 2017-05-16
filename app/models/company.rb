@@ -27,7 +27,7 @@ class Company < ActiveRecord::Base
 
   enum active_state: [ :active, :archived ]
 
-  validates :name, uniqueness: { case_sensitive: false }
+  validates :name, uniqueness: { case_sensitive: false, message: "Company name was duplicated" }
 
   has_many :locations, :dependent => :destroy, autosave: true
 

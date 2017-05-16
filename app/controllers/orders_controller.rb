@@ -11,7 +11,7 @@ class OrdersController < ApplicationJsonApiResourcesController
       .active
       .customer
       .with_valid_address
-      .scheduled_for_delivery_on?(delivery_date.cwday)
+      .scheduled_for_delivery_on?(delivery_date)
 
     missingLocations = allLocations.select {|location| !location.has_sales_order_for_date?(delivery_date)}
 
@@ -19,17 +19,44 @@ class OrdersController < ApplicationJsonApiResourcesController
     serializer = JSONAPI::ResourceSerializer.new(OrderResource, include: include_resources)
 
     resources = missingLocations.map { |location|
-      order = Order.new(location:location, delivery_date:delivery_date, shipping:location.delivery_rate)
-      location.item_desires.where(enabled:true).each do |item_desire|
-        item_price = location.company.price_for_item(item_desire.item)
-        order.order_items << OrderItem.new(item:item_desire.item, quantity:0, unit_price:item_price)
-      end
+      orders = build_orders_from_template(location, delivery_date)
 
-      order.save
-      OrderResource.new(order, nil)
+      if orders.empty?
+        order = Order.new(location:location, delivery_date:delivery_date, shipping:location.delivery_rate)
+        location.item_desires.where(enabled:true).each do |item_desire|
+          item_price = location.company.price_for_item(item_desire.item)
+          order.order_items << OrderItem.new(item:item_desire.item, quantity:0, unit_price:item_price)
+        end
+
+        order.save
+        OrderResource.new(order, nil)
+      else
+        orders.map {|order| OrderResource.new(order, nil)}
+      end
     }
 
-    render json: serializer.serialize_to_hash(resources)
+    render json: serializer.serialize_to_hash(resources.flatten)
+  end
+
+  def build_orders_from_template(location, delivery_date)
+    location
+      .order_templates
+      .select {|order_template| order_template.valid_for_date?(delivery_date)}
+      .map {|order_template| build_order_from_template(order_template, delivery_date)}
+  end
+
+  def build_order_from_template(order_template, delivery_date)
+    location = order_template.location
+    order = Order.new(location:location, delivery_date:delivery_date, shipping:location.delivery_rate)
+
+    order_template.order_template_items.each do |oti|
+      item_price = location.company.price_for_item(oti.item)
+      order.order_items << OrderItem.new(item:oti.item, quantity:oti.quantity, unit_price:item_price)
+    end
+
+    order.save
+    order.mark_published!
+    order
   end
 
   def duplicate_sales_orders

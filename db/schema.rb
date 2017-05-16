@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170330185331) do
+ActiveRecord::Schema.define(version: 20170506194637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -220,6 +220,40 @@ ActiveRecord::Schema.define(version: 20170330185331) do
   add_index "order_items", ["item_id"], name: "index_order_items_on_item_id", using: :btree
   add_index "order_items", ["order_id"], name: "index_order_items_on_order_id", using: :btree
 
+  create_table "order_template_days", force: :cascade do |t|
+    t.integer  "order_template_id",                 null: false
+    t.integer  "day",                               null: false
+    t.boolean  "enabled",           default: false, null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+  end
+
+  add_index "order_template_days", ["day"], name: "index_order_template_days_on_day", using: :btree
+  add_index "order_template_days", ["enabled"], name: "index_order_template_days_on_enabled", using: :btree
+  add_index "order_template_days", ["order_template_id"], name: "index_order_template_days_on_order_template_id", using: :btree
+
+  create_table "order_template_items", force: :cascade do |t|
+    t.integer  "order_template_id",               null: false
+    t.integer  "item_id",                         null: false
+    t.decimal  "quantity",          default: 0.0, null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+  end
+
+  add_index "order_template_items", ["item_id"], name: "index_order_template_items_on_item_id", using: :btree
+  add_index "order_template_items", ["order_template_id"], name: "index_order_template_items_on_order_template_id", using: :btree
+
+  create_table "order_templates", force: :cascade do |t|
+    t.date     "start_date",              null: false
+    t.integer  "frequency",   default: 1, null: false
+    t.integer  "location_id",             null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "order_templates", ["frequency"], name: "index_order_templates_on_frequency", using: :btree
+  add_index "order_templates", ["location_id"], name: "index_order_templates_on_location_id", using: :btree
+
   create_table "orders", force: :cascade do |t|
     t.string   "xero_id",                     limit: 255
     t.string   "order_number",                limit: 255
@@ -416,6 +450,10 @@ ActiveRecord::Schema.define(version: 20170330185331) do
   add_foreign_key "notifications", "orders"
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
+  add_foreign_key "order_template_days", "order_templates"
+  add_foreign_key "order_template_items", "items"
+  add_foreign_key "order_template_items", "order_templates"
+  add_foreign_key "order_templates", "locations"
   add_foreign_key "orders", "locations"
   add_foreign_key "pods", "users"
   add_foreign_key "route_plan_blueprint_slots", "addresses"

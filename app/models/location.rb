@@ -7,6 +7,7 @@ class Location < ActiveRecord::Base
 	belongs_to :address
 
 	has_many :orders, :dependent => :destroy, autosave: true
+	has_many :order_templates, :dependent => :destroy, autosave: true
 	has_many :credit_notes, :dependent => :destroy, autosave: true
 	has_many :stocks, :dependent => :destroy, autosave: true
 
@@ -24,7 +25,12 @@ class Location < ActiveRecord::Base
 		address.present?
 	end
 
-	scope :scheduled_for_delivery_on?, ->(day) { where(:visit_days => {:day => day-1, :enabled => true}).joins(:visit_days).distinct }
+	scope :scheduled_for_delivery_on?, ->(delivery_date) {
+		day = delivery_date.cwday - 1
+
+		find_by_sql "SELECT DISTINCT \"locations\".* FROM \"locations\" LEFT OUTER JOIN \"visit_days\" ON \"visit_days\".\"location_id\" = \"locations\".\"id\" LEFT OUTER JOIN \"order_templates\" ON \"order_templates\".\"location_id\" = \"locations\".\"id\" LEFT OUTER JOIN \"order_template_days\" ON \"order_template_days\".\"order_template_id\" = \"order_templates\".\"id\" WHERE ((visit_days.day = #{day} AND visit_days.enabled = true) OR (order_template_days.day = #{day} AND order_template_days.enabled = true))"
+	}
+
 	scope :customer, -> { joins(:company).where(companies: {is_customer: true}) }
 	scope :with_valid_address, -> { where("address_id IS NOT NULL") }
 	scope :active, -> {

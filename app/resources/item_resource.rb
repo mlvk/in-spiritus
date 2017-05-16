@@ -14,6 +14,7 @@ class ItemResource < JSONAPI::Resource
              :active
 
   has_many :order_items
+  has_many :order_template_items
   has_many :credit_note_items
   has_many :item_desires
   has_many :item_prices

@@ -13,6 +13,7 @@ class Item < ActiveRecord::Base
 	belongs_to	:company
 
 	has_many 		:order_items, :dependent => :destroy, autosave: true
+	has_many 		:order_template_items, :dependent => :destroy, autosave: true
 	has_many 		:credit_note_items, :dependent => :destroy, autosave: true
 	has_many 		:item_prices, :dependent => :destroy, autosave: true
 	has_many 		:item_credit_rates, :dependent => :destroy, autosave: true
