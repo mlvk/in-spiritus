@@ -95,4 +95,55 @@ class LocationTest < ActiveSupport::TestCase
       location.previous_stock_level(before_yesterday_stock_level),
       "match previous stock level of the day before yesterday stock level")
   end
+
+  test "scheduled_for_delivery_on? should not include locations without any visit or order template days" do
+    active_customer = create(:company)
+    location1 = create(:location, company:active_customer)
+
+    query = Location.scheduled_for_delivery_on?(Date.parse("2017-01-01"))
+
+    assert_empty(query, "This should have been empty")
+  end
+
+  test "scheduled_for_delivery_on? should include locations with matching visit day enabled" do
+    active_customer = create(:company)
+    location = create(:location, company:active_customer)
+    create(:visit_day, day:6, enabled:true, location:location)
+
+    query = Location.scheduled_for_delivery_on?(Date.parse("2017-01-01"))
+
+    assert_equal(query[0], location, "The location was not equal")
+  end
+
+  test "scheduled_for_delivery_on? should not include locations with inactive customers" do
+    inactive_customer = create(:company, :inactive)
+    location = create(:location, company:inactive_customer)
+    create(:visit_day, day:6, enabled:true, location:location)
+
+    query = Location.scheduled_for_delivery_on?(Date.parse("2017-01-01"))
+
+    assert_empty(query, "This should have been empty")
+  end
+
+  test "scheduled_for_delivery_on? should not include locations of vendors" do
+    vendor = create(:company, :vendor)
+    location = create(:location, company:vendor)
+    create(:visit_day, day:6, enabled:true, location:location)
+
+    query = Location.scheduled_for_delivery_on?(Date.parse("2017-01-01"))
+
+    assert_empty(query, "This should have been empty")
+  end
+
+  test "scheduled_for_delivery_on? should include locations with matching enabled order_template_day" do
+    customer = create(:company)
+    location = create(:location, company:customer)
+    order_template = create(:order_template, start_date:"2017-01-01", location:location)
+    create(:order_template_day, day:6, enabled:true, order_template:order_template)
+
+    query = Location.scheduled_for_delivery_on?(Date.parse("2017-01-01"))
+
+    assert_equal(query[0], location, "Location did not match")
+  end
+
 end

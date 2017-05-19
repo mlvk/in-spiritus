@@ -8,6 +8,7 @@ class Location < ActiveRecord::Base
 
 	has_many :orders, :dependent => :destroy, autosave: true
 	has_many :order_templates, :dependent => :destroy, autosave: true
+	has_many :order_template_days, through: :order_templates
 	has_many :credit_notes, :dependent => :destroy, autosave: true
 	has_many :stocks, :dependent => :destroy, autosave: true
 
@@ -28,7 +29,40 @@ class Location < ActiveRecord::Base
 	scope :scheduled_for_delivery_on?, ->(delivery_date) {
 		day = delivery_date.cwday - 1
 
-		find_by_sql "SELECT DISTINCT \"locations\".* FROM \"locations\" LEFT OUTER JOIN \"visit_days\" ON \"visit_days\".\"location_id\" = \"locations\".\"id\" LEFT OUTER JOIN \"order_templates\" ON \"order_templates\".\"location_id\" = \"locations\".\"id\" LEFT OUTER JOIN \"order_template_days\" ON \"order_template_days\".\"order_template_id\" = \"order_templates\".\"id\" WHERE ((visit_days.day = #{day} AND visit_days.enabled = true) OR (order_template_days.day = #{day} AND order_template_days.enabled = true))"
+		find_by_sql " SELECT DISTINCT locations.* FROM locations
+			INNER JOIN companies ON companies.id = locations.company_id
+			LEFT OUTER JOIN order_templates ON order_templates.location_id = locations.id
+			LEFT OUTER JOIN order_template_days ON order_template_days.order_template_id = order_templates.id
+			LEFT OUTER JOIN visit_days ON visit_days.location_id = locations.id
+				WHERE (
+					(
+						visit_days.day = #{day}
+						AND
+						visit_days.enabled = true
+						AND
+						locations.active = true
+						AND
+						companies.active_state = #{Company.active_states[:active]}
+						AND
+						companies.is_customer = true
+						AND
+						locations.address_id IS NOT NULL
+					)
+					OR
+					(
+						order_template_days.day = #{day}
+						AND
+						order_template_days.enabled = true
+						AND
+						locations.active = true
+						AND
+						companies.active_state = #{Company.active_states[:active]}
+						AND
+						companies.is_customer = true
+						AND
+						locations.address_id IS NOT NULL
+					)
+				)"
 	}
 
 	scope :customer, -> { joins(:company).where(companies: {is_customer: true}) }

@@ -4,7 +4,12 @@ FactoryGirl.define do
     is_vendor false
     name { Faker::Company.name }
     terms 7
+    active_state 0
     price_tier
+
+    trait :inactive do
+      active_state 1
+    end
 
     trait :synced do
       sync_state { Company.sync_states[:synced] }
