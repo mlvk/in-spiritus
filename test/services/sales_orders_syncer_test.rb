@@ -253,4 +253,33 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     assert order.synced?
   end
 
+  test "Can create multiple line items with same item" do
+    order = create(:order, :sales_order, :submitted)
+
+    product = create(:item, :product)
+
+    order_item_1 = create(:order_item, item:product, order:order)
+    order_item_2 = create(:order_item, item:product, order:order)
+
+    order.mark_submitted!
+
+    yaml_props = {
+      order_number: order.order_number,
+      order_status: 'AUTHORISED',
+      order_total: order.total,
+      order_items: order.order_items
+    }
+
+    VCR.use_cassette('sales_orders/query_not_found_create_with_items', erb: yaml_props) do
+      SalesOrdersSyncer.new.sync_local
+    end
+
+    order.reload
+
+    assert_equal(order.order_items[0].item, product, 'Should have matched the product')
+    assert_equal(order.order_items[1].item, product, 'Should have matched the product')
+
+    assert order.synced?
+  end
+
 end

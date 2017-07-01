@@ -1,0 +1,103 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.xero.com/api.xro/2.0/Invoices/<%= order_number %>
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+          <Id>8735153c-2fe8-4acb-ad41-ee4b53e71d0f</Id>
+          <Status>OK</Status>
+        </Response>"
+    http_version:
+  recorded_at: Fri, 11 Mar 2016 23:10:50 GMT
+- request:
+    method: put
+    uri: https://api.xero.com/api.xro/2.0/Invoices?summarizeErrors=false
+    body:
+      encoding: US-ASCII
+      string: xml=%3CInvoices%3E%0A%20%20%3CInvoice%3E%0A%20%20%20%20%3CInvoiceNumber%3Evalid-new-invoice%3C%2FInvoiceNumber%3E%0A%20%20%20%20%3CDate%3E2016-03-01%3C%2FDate%3E%0A%20%20%20%20%3CDueDate%3E2016-03-15%3C%2FDueDate%3E%0A%20%20%20%20%3CStatus%3EAUTHORISED%3C%2FStatus%3E%0A%20%20%20%20%3CSentToContact%3Etrue%3C%2FSentToContact%3E%0A%20%20%20%20%3CType%3EACCREC%3C%2FType%3E%0A%20%20%20%20%3CContact%3E%0A%20%20%20%20%20%20%3CName%3ENW001%20-%20Nature%20Well%20-%20Silverlake%3C%2FName%3E%0A%20%20%20%20%3C%2FContact%3E%0A%20%20%20%20%3CLineItems%3E%0A%20%20%20%20%20%20%3CLineItem%3E%0A%20%20%20%20%20%20%20%20%3CItemCode%3ESunseed%20Chorizo%3C%2FItemCode%3E%0A%20%20%20%20%20%20%20%20%3CDescription%3ENo%20description%3C%2FDescription%3E%0A%20%20%20%20%20%20%20%20%3CQuantity%3E5%3C%2FQuantity%3E%0A%20%20%20%20%20%20%20%20%3CUnitAmount%3E5.0%3C%2FUnitAmount%3E%0A%20%20%20%20%20%20%20%20%3CTaxType%3ENONE%3C%2FTaxType%3E%0A%20%20%20%20%20%20%20%20%3CAccountCode%3E400%3C%2FAccountCode%3E%0A%20%20%20%20%20%20%3C%2FLineItem%3E%0A%20%20%20%20%3C%2FLineItems%3E%0A%20%20%3C%2FInvoice%3E%0A%3C%2FInvoices%3E%0A
+  response:
+    status:
+      code: 200
+    body:
+      encoding: UTF-8
+      string:
+        "<Response xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+          <Id>99fb9e75-b42b-496f-a20b-e6281cad2d75</Id>
+          <Status>OK</Status>
+          <ProviderName>MLVK - Staging</ProviderName>
+          <DateTimeUTC>2016-03-11T23:10:53.6215473Z</DateTimeUTC>
+          <Invoices>
+            <Invoice status=\"OK\">
+              <Contact>
+                <ContactID>f53c0137-9ff7-46a9-b7a5-2c079e1017ad</ContactID>
+                <ContactStatus>ACTIVE</ContactStatus>
+                <Name>NW001 - Nature Well - Silverlake</Name>
+                <Addresses>
+                  <Address>
+                    <AddressType>POBOX</AddressType>
+                  </Address>
+                  <Address>
+                    <AddressType>STREET</AddressType>
+                  </Address>
+                </Addresses>
+                <Phones>
+                  <Phone>
+                    <PhoneType>DEFAULT</PhoneType>
+                  </Phone>
+                  <Phone>
+                    <PhoneType>MOBILE</PhoneType>
+                  </Phone>
+                  <Phone>
+                    <PhoneType>FAX</PhoneType>
+                  </Phone>
+                  <Phone>
+                    <PhoneType>DDI</PhoneType>
+                  </Phone>
+                </Phones>
+                <UpdatedDateUTC>2016-03-10T18:24:53.993</UpdatedDateUTC>
+                <IsSupplier>false</IsSupplier>
+                <IsCustomer>true</IsCustomer>
+              </Contact>
+              <Date>2016-03-01T00:00:00</Date>
+              <DueDate>2016-03-15T00:00:00</DueDate>
+              <Status><%= order_status %></Status>
+              <LineAmountTypes>Exclusive</LineAmountTypes>
+              <LineItems>
+                <% order_items.each do |order_item|%>
+                  <LineItem>
+                    <ItemCode><%= order_item.item.code %></ItemCode>
+                    <Description>No description</Description>
+                    <UnitAmount><%= order_item.unit_price %></UnitAmount>
+                    <TaxType>NONE</TaxType>
+                    <TaxAmount>0.00</TaxAmount>
+                    <LineAmount><%= order_item.total %></LineAmount>
+                    <AccountCode>400</AccountCode>
+                    <Quantity><%= order_item.quantity %></Quantity>
+                    <LineItemID>na</LineItemID>
+                  </LineItem>
+                <% end %>
+              </LineItems>
+              <SubTotal><%= order_total %></SubTotal>
+              <TotalTax>0.00</TotalTax>
+              <Total><%= order_total %></Total>
+              <UpdatedDateUTC>2016-03-11T23:10:51.14</UpdatedDateUTC>
+              <CurrencyCode>USD</CurrencyCode>
+              <Type>ACCREC</Type>
+              <InvoiceID>FROM_XERO_ID</InvoiceID>
+              <InvoiceNumber><%= order_number %></InvoiceNumber>
+              <AmountDue>25.00</AmountDue>
+              <AmountPaid>0.00</AmountPaid>
+              <SentToContact>true</SentToContact>
+              <CurrencyRate>1.000000</CurrencyRate>
+            </Invoice>
+          </Invoices>
+        </Response>"
+    http_version:
+  recorded_at: Fri, 11 Mar 2016 23:10:53 GMT
+recorded_with: VCR 3.0.1

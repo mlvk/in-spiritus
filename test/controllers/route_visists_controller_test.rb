@@ -112,12 +112,14 @@ class RouteVisitsControllerTest < ActionController::TestCase
     end
   end
 
-  test "missing items are zeroed out" do
+  test "missing items are left as is" do
     sign_in_as_driver
 
     order = create(:sales_order_with_items)
     fulfillment = create(:fulfillment, order:order)
     route_visit = create(:route_visit, fulfillments:[fulfillment])
+
+    start_payload = build_submit_payload(route_visit)
 
     payload = build_submit_payload(route_visit)
 
@@ -129,21 +131,9 @@ class RouteVisitsControllerTest < ActionController::TestCase
 
     route_visit.reload
 
-    route_visit.fulfillments.each do |f|
-      f.order.order_items.each do |oi|
-        assert_equal(0, oi.unit_price)
-        assert_equal(0, oi.quantity)
-      end
+    end_payload = build_submit_payload(route_visit)
 
-      f.credit_note.credit_note_items.each do |cni|
-        assert_equal(0, cni.unit_price)
-        assert_equal(0, cni.quantity)
-      end
-
-      f.stock.stock_levels.each do |sl|
-        assert_equal(0, sl.starting)
-        assert_equal(0, sl.returns)
-      end
-    end
+    assert_equal(start_payload, end_payload, "payload should not have changed")
   end
+
 end

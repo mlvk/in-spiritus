@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.8'
-gem 'rake', '10.4.2'
+gem 'rake'
 gem 'devise'
 gem 'pg', '0.18.4'
 gem 'pundit'

@@ -48,7 +48,7 @@ Add in the following env vars to the stack
 
 1. `XERO_API_KEY=APP_KEY`
 1. `XERO_SECRET=APP_SECRET`
-1. `XERO_PRIVATE_KEY=rsa_private_key`
+1. `XERO_PRIVATE_KEY=rsa_private_key` - This should be concated with `\n`
 1. `SPOILAGE_ACCOUNT_CODE=400`
 1. `COGS_ACCOUNT_CODE=500`
 1. `SALES_ACCOUNT_CODE=400`
@@ -109,11 +109,11 @@ If you have trouble using the CLI tool, you can manage the docker-compose manual
 ![alt tag](https://github.com/brancusi/in-spiritus/blob/master/erd.png)
 
 ### Building docker images
-1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.app -t mlvk/in-spiritus:0.0.12 .`
+1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.app -t mlvk/in-spiritus:0.0.16 .`
 1. Build a new base web container (When Gemfile changes): `docker build -f docker/Dockerfile.python -t mlvk/in-spiritus-python:0.0.1 .`
 
 ### Publishing docker hub
-1. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.13`
+1. Push to dockerhub registry: `docker push mlvk/in-spiritus:0.0.16`
 1. Push to dockerhub registry: `docker push mlvk/in-spiritus-python:0.0.2`
 
 ### Setup Atom for testing
@@ -122,3 +122,7 @@ If you have trouble using the CLI tool, you can manage the docker-compose manual
   1. Minitest command: run all tests: `is zeus test`
   1. Minitest command: run test file: `is zeus test {relative_path}`
   1. Minitest command: run current test: `is zeus test {relative_path}:{line_number}`
+
+
+### Import db
+1. psql -h localhost -U postgres in_spiritus < PATH_TO_SQL_DUMP

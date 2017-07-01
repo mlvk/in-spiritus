@@ -7,8 +7,8 @@ services:
 - postgresql
 - redis
 script:
-- rake db:test:prepare
-- rake
+- bundle exec rake db:test:prepare
+- bundle exec rake test
 deploy:
   - provider: cloud66
     redeployment_hook: $CLOUD66_PRODUCTION_REDEPLOYMENT_HOOK

@@ -87,28 +87,21 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
 
     order = Order.find(data[:id])
 
-    order.order_items.each do |oi|
-      oi.quantity = 0
-      oi.unit_price = 0
-      oi.save
-    end
-
     order_items_data = Maybe(data[:order_items]).fetch([])
 
     order_items_data.each do |oid|
       item = Item.find(oid[:item_id])
+
       match = order.order_items.select {|oi|
-        oi.id == oid[:id].to_s || oi.item.id.to_s == oid[:item_id]
+        oi.id.to_s == oid[:id]
       }.first
 
-      target = match || OrderItem.create(
-        order:order,
-        item:item)
+      if match.present?
+        match.unit_price = oid[:unit_price] || match.unit_price
+        match.quantity = oid[:quantity] || match.quantity
 
-      target.unit_price = oid[:unit_price] || 0
-      target.quantity = oid[:quantity] || 0
-
-      target.save
+        match.save
+      end
     end
 
     order.mark_authorized! if order.can_transition_to?(:authorized)
