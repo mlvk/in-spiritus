@@ -10,7 +10,7 @@ class PurchaseOrdersSyncer < BaseSyncer
   end
 
   def find_records(timestamp)
-    xero.PurchaseOrder.all({:modified_since => timestamp})
+    xero.PurchaseOrder.all({modified_since:timestamp, page:1})
   end
 
   def sync_local_model_status(model, record)
@@ -64,22 +64,6 @@ class PurchaseOrdersSyncer < BaseSyncer
   def update_model(model, record)
     model.xero_id = record.purchase_order_id
     model.save
-
-    record.line_items.each do |line_item|
-      item = Item.find_by(code: line_item.item_code)
-      if item.present?
-        order_item = model.order_items.find_by(item:item) || create_model_order_item(model, item)
-        order_item.quantity = line_item.quantity
-        order_item.unit_price = line_item.unit_amount
-        order_item.save
-      end
-    end
-
-    # Clear missing order_items
-    model.order_items.each do |order_item|
-      has_match = record.line_items.any? {|line_item| line_item.item_code == order_item.item.code}
-      order_item.destroy if !has_match
-    end
 
     model.sync_with_xero_status(record.status)
   end

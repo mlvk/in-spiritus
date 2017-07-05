@@ -19,7 +19,9 @@ module Clockwork
 
   every(1.hour, SyncRemoteItemsWorker)
   every(1.hour, SyncRemoteCompaniesWorker)
-  every(1.hour, SyncRemoteSalesOrdersWorker)
-  every(1.hour, SyncRemotePurchaseOrdersWorker)
-  every(1.hour, SyncRemoteCreditNotesWorker)
+
+  # Not using due to xero lineitemid issue
+  # every(1.hour, SyncRemoteSalesOrdersWorker)
+  # every(1.hour, SyncRemotePurchaseOrdersWorker)
+  # every(1.hour, SyncRemoteCreditNotesWorker)
 end

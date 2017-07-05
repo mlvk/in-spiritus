@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.xero.com/api.xro/2.0/Invoices
+    uri: https://api.xero.com/api.xro/2.0/Invoices?page=1
   response:
     status:
       code: 200

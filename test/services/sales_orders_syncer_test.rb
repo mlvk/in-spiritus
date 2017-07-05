@@ -64,101 +64,105 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
     assert Order.all.empty?
   end
 
-  test "should update a local order when remote and local are out of sync, and local model is in state synced" do
-    order = create(:sales_order_with_items, :synced, :with_xero_id, order_items_count: 1)
+  # Not using due to xero lineitemid issue
+  # test "should update a local order when remote and local are out of sync, and local model is in state synced" do
+  #   order = create(:sales_order_with_items, :synced, :with_xero_id, order_items_count: 1)
+  #
+  #   yaml_props = {
+  #     invoice_id: order.xero_id,
+  #     invoice_number: order.order_number,
+  #     item_code: order.order_items.first.item.code,
+  #     item_quantity: 4,
+  #     updated_date_utc: 10.minutes.from_now
+  #   }
+  #
+  #   VCR.use_cassette('sales_orders/006', erb: yaml_props) do
+  #     SalesOrdersSyncer.new.sync_remote
+  #   end
+  #
+  #   assert order.order_items.all? {|order_item| order_item.quantity == 4}, 'Order item quantities did not match'
+  # end
 
-    yaml_props = {
-      invoice_id: order.xero_id,
-      invoice_number: order.order_number,
-      item_code: order.order_items.first.item.code,
-      item_quantity: 4,
-      updated_date_utc: 10.minutes.from_now
-    }
+  # Not using due to xero lineitemid issue
+  # test "should not 0 out quantity of local orderitems if missing from remote record and local model is synced?" do
+  #   order = create(:sales_order_with_items, :synced, order_items_count: 5)
+  #   order.order_items.each {|oi|
+  #     oi.quantity = 15
+  #     oi.save
+  #   }
+  #
+  #   yaml_props = {
+  #     record_id: order.xero_id,
+  #     record_number: order.order_number,
+  #     record_status: 'AUTHORISED',
+  #     updated_date_utc: 10.minutes.from_now
+  #   }
+  #
+  #   assert_equal(order.order_items.count, 5, "Wrong number of order items created")
+  #
+  #   VCR.use_cassette('sales_orders/query_changed_query_record', :erb => yaml_props) do
+  #     SalesOrdersSyncer.new.sync_remote(10.minutes.from_now)
+  #   end
+  #
+  #   assert_equal order.order_items.count, 5, 'Wrong number of order items found'
+  #
+  #   order.reload
+  #   assert order.order_items.all? {|oi| oi.quantity == 0}, "orderitem quantities should have become 0"
+  # end
 
-    VCR.use_cassette('sales_orders/006', erb: yaml_props) do
-      SalesOrdersSyncer.new.sync_remote
-    end
+  # Not using due to xero lineitemid issue
+  # test "should not update local model if local has been updated since sooner than remote record" do
+  #   order = create(:sales_order_with_items, :synced, order_items_count: 5)
+  #   order.order_items.each {|oi|
+  #     oi.quantity = 15
+  #     oi.save
+  #   }
+  #
+  #   yaml_props = {
+  #     record_id: order.xero_id,
+  #     record_number: order.order_number,
+  #     record_status: 'AUTHORISED',
+  #     updated_date_utc: 10.minutes.ago
+  #   }
+  #
+  #   assert_equal(order.order_items.count, 5, "Wrong number of order items created")
+  #
+  #   VCR.use_cassette('sales_orders/query_changed_query_record', :erb => yaml_props) do
+  #     SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
+  #   end
+  #
+  #   assert_equal order.order_items.count, 5, 'Wrong number of order items found'
+  #
+  #   order.reload
+  #   assert order.order_items.all? {|oi| oi.quantity == 15}, "orderitem quantities should not have become 0"
+  # end
 
-    assert order.order_items.all? {|order_item| order_item.quantity == 4}, 'Order item quantities did not match'
-  end
-
-  test "should not 0 out quantity of local orderitems if missing from remote record and local model is synced?" do
-    order = create(:sales_order_with_items, :synced, order_items_count: 5)
-    order.order_items.each {|oi|
-      oi.quantity = 15
-      oi.save
-    }
-
-    yaml_props = {
-      record_id: order.xero_id,
-      record_number: order.order_number,
-      record_status: 'AUTHORISED',
-      updated_date_utc: 10.minutes.from_now
-    }
-
-    assert_equal(order.order_items.count, 5, "Wrong number of order items created")
-
-    VCR.use_cassette('sales_orders/query_changed_query_record', :erb => yaml_props) do
-      SalesOrdersSyncer.new.sync_remote(10.minutes.from_now)
-    end
-
-    assert_equal order.order_items.count, 5, 'Wrong number of order items found'
-
-    order.reload
-    assert order.order_items.all? {|oi| oi.quantity == 0}, "orderitem quantities should have become 0"
-  end
-
-  test "should not update local model if local has been updated since sooner than remote record" do
-    order = create(:sales_order_with_items, :synced, order_items_count: 5)
-    order.order_items.each {|oi|
-      oi.quantity = 15
-      oi.save
-    }
-
-    yaml_props = {
-      record_id: order.xero_id,
-      record_number: order.order_number,
-      record_status: 'AUTHORISED',
-      updated_date_utc: 10.minutes.ago
-    }
-
-    assert_equal(order.order_items.count, 5, "Wrong number of order items created")
-
-    VCR.use_cassette('sales_orders/query_changed_query_record', :erb => yaml_props) do
-      SalesOrdersSyncer.new.sync_remote(10.minutes.ago)
-    end
-
-    assert_equal order.order_items.count, 5, 'Wrong number of order items found'
-
-    order.reload
-    assert order.order_items.all? {|oi| oi.quantity == 15}, "orderitem quantities should not have become 0"
-  end
-
-  test "should always honor xero's order_item attrs even when creating new record remotely" do
-    order = create(:sales_order_with_items, :with_xero_id, order_items_count: 1)
-
-    order.order_items.each do |oi|
-      oi.quantity = 10
-      oi.save
-    end
-
-    order.mark_submitted!
-
-    yaml_props = {
-      invoice_id: order.xero_id,
-      invoice_number: order.order_number,
-      order_items: order.order_items,
-      forced_xero_quantity: 15
-    }
-
-    VCR.use_cassette('sales_orders/008', :erb => yaml_props) do
-      SalesOrdersSyncer.new.sync_local
-    end
-
-    order.reload
-
-    assert order.order_items.all? {|oi| oi.quantity == yaml_props[:forced_xero_quantity]}, 'Order item quantities did not match'
-  end
+  # Not using due to xero lineitemid issue
+  # test "should always honor xero's order_item attrs even when creating new record remotely" do
+  #   order = create(:sales_order_with_items, :with_xero_id, order_items_count: 1)
+  #
+  #   order.order_items.each do |oi|
+  #     oi.quantity = 10
+  #     oi.save
+  #   end
+  #
+  #   order.mark_submitted!
+  #
+  #   yaml_props = {
+  #     invoice_id: order.xero_id,
+  #     invoice_number: order.order_number,
+  #     order_items: order.order_items,
+  #     forced_xero_quantity: 15
+  #   }
+  #
+  #   VCR.use_cassette('sales_orders/008', :erb => yaml_props) do
+  #     SalesOrdersSyncer.new.sync_local
+  #   end
+  #
+  #   order.reload
+  #
+  #   assert order.order_items.all? {|oi| oi.quantity == yaml_props[:forced_xero_quantity]}, 'Order item quantities did not match'
+  # end
 
   test "Should create xero record if order_items quantities are 0" do
     order = create(:sales_order_with_items, :submitted)
@@ -278,6 +282,45 @@ class SalesOrdersSyncerTest < ActiveSupport::TestCase
 
     assert_equal(order.order_items[0].item, product, 'Should have matched the product')
     assert_equal(order.order_items[1].item, product, 'Should have matched the product')
+
+    assert order.synced?
+  end
+
+  # This is because xero doesn't allow us to set the lineitemID. There is no way for us to map local state
+  test "Updated remote qty should not change local state" do
+    order = create(:order, :sales_order, :submitted, :with_xero_id)
+
+    product = create(:item, :product)
+
+    order_item_1 = create(:order_item, item:product, order:order, quantity: 5)
+    order_item_2 = create(:order_item, item:product, order:order, quantity: 10)
+    order_item_3 = create(:order_item, item:product, order:order, quantity: 6)
+    order_item_4 = create(:order_item, item:product, order:order, quantity: 7)
+
+    order.mark_submitted!
+
+    yaml_props = {
+      invoice_id: order.xero_id,
+      invoice_number: order.order_number,
+      order_items: order.order_items,
+      updated_date_utc: Time.now + 1.minute,
+      increase_all_qty: 1
+    }
+
+    VCR.use_cassette('sales_orders/query_invoice_since_with_items', erb: yaml_props) do
+      SalesOrdersSyncer.new.sync_remote
+    end
+
+    order.reload
+    order_item_1.reload
+    order_item_2.reload
+    order_item_3.reload
+    order_item_4.reload
+
+    assert_equal(order_item_1.quantity.to_s, "5.0", 'Quantity was wrong')
+    assert_equal(order_item_2.quantity.to_s, "10.0", 'Quantity was wrong')
+    assert_equal(order_item_3.quantity.to_s, "6.0", 'Quantity was wrong')
+    assert_equal(order_item_4.quantity.to_s, "7.0", 'Quantity was wrong')
 
     assert order.synced?
   end

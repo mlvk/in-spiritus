@@ -10,7 +10,7 @@ class CreditNotesSyncer < BaseSyncer
     end
 
     def find_records(timestamp)
-      xero.CreditNote.all({:modified_since => timestamp})
+      xero.CreditNote.all({modified_since:timestamp, page:1})
     end
 
     def sync_local_model_status(model, record)
@@ -61,22 +61,22 @@ class CreditNotesSyncer < BaseSyncer
       model.credit_note_number = record.credit_note_number
       model.save
 
-      record.line_items.each do |line_item|
-        item = Item.find_by(code:line_item.item_code)
-
-        if item.present?
-          credit_note_item = model.credit_note_items.find_by(item:item) || CreditNoteItem.create(credit_note:model, item:item)
-          credit_note_item.quantity = line_item.quantity
-          credit_note_item.unit_price = line_item.unit_amount
-          credit_note_item.save
-        end
-      end
-
-      # Clear missing credit_note_items
-      model.credit_note_items.each do |credit_note_item|
-        has_match = record.line_items.any? {|line_item| line_item.item_code == credit_note_item.item.code}
-        credit_note_item.destroy if !has_match
-      end
+      # record.line_items.each do |line_item|
+      #   item = Item.find_by(code:line_item.item_code)
+      #
+      #   if item.present?
+      #     credit_note_item = model.credit_note_items.find_by(item:item) || CreditNoteItem.create(credit_note:model, item:item)
+      #     credit_note_item.quantity = line_item.quantity
+      #     credit_note_item.unit_price = line_item.unit_amount
+      #     credit_note_item.save
+      #   end
+      # end
+      #
+      # # Clear missing credit_note_items
+      # model.credit_note_items.each do |credit_note_item|
+      #   has_match = record.line_items.any? {|line_item| line_item.item_code == credit_note_item.item.code}
+      #   credit_note_item.destroy if !has_match
+      # end
 
       model.sync_with_xero_status(record.status)
     end
