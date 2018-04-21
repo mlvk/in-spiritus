@@ -3,6 +3,7 @@ class TestingController < ActionController::Base
   include PdfUtils
 
   def pdf
-    @url = generate_pdfs RoutePlan.find(45)
+    order = Order.find(16120)
+    @url = generate_pdfs [order.packing_slip]
   end
 end

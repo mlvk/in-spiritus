@@ -128,3 +128,8 @@ If you have trouble using the CLI tool, you can manage the docker-compose manual
 1. merge multipart tar: cat part1.tar-aa part2.tar-ab >> output.tar
 1. unpack the tar
 1. psql -h localhost -U postgres in_spiritus < PATH_TO_SQL_DUMP
+
+### To build test PDFs
+1. Toggle the testing flag inside app/utils/pdf_utils.rb
+1. Target what to test in app/controllers/testing_controller.rb
+1. Visit the testing url in the browser to trigger a render http://localhost:3000/testing/pdf

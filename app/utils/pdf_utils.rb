@@ -27,6 +27,8 @@ module PdfUtils
 
 	def build_pdf(records)
 		collection = (records.respond_to? :each) ? records : [records]
-		Pdf::ContainerPdf.new :conversions => collection.map {|r| {data:r, renderer:r.renderer}}
+		Pdf::ContainerPdf.new :conversions => collection.map {|r|
+			{data:r, renderer:r.renderer}
+		}
 	end
 end

@@ -82,3 +82,4 @@ pickle-email-*.html
 #### Custom
 .drone.sec.yml
 config/log_config.yml
+public/testing.pdf

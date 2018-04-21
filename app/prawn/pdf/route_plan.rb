@@ -6,10 +6,10 @@ module Pdf
       header(route_plan, pdf)
       line_item_table(build_route_visit_rows(route_plan), pdf)
 
-      pdf.start_new_page
+      # pdf.start_new_page
 
-      header(route_plan, pdf)
-      line_item_table(build_item_information_rows(route_plan), pdf)
+      # header(route_plan, pdf)
+      # line_item_table(build_item_information_rows(route_plan), pdf)
     end
 
     def header(route_plan, pdf)

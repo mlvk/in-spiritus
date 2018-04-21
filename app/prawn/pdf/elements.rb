@@ -15,8 +15,8 @@ module Pdf
       pdf.stroke_axis(:at => [pdf.cursor, 0], :height => 0, :step_length => 20, :negative_axes_length => 5, :color => '0000FF')
     end
 
-    def logo(pdf)
-      pdf.image "app/assets/images/logo.png", :width => 100, :at => [ 440, 730]
+    def logo(pdf, x = 440, y = 730, size = 100)
+      pdf.image "app/assets/images/logo.png", :width => size, :at => [ x, y ]
     end
 
     def pod(pod, pdf)
@@ -96,7 +96,8 @@ module Pdf
       pdf.transparent(0.5) { pdf.stroke_horizontal_line 0, 540, :at => y + 2 }
 
       row.each do |col|
-        pdf.bounding_box([col[:x], y], width: col[:width], height: height) do
+        new_height = col[:height] ? col[:height] : height
+        pdf.bounding_box([col[:x], y], width: col[:width], height: new_height) do
           pdf.formatted_text_box [col[:content]], align: col[:align], valign: :center
         end
       end

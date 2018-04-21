@@ -44,18 +44,26 @@ module Pdf
          pdf.formatted_text_box [{ text: "Ship to:", size: 10}], :valign => :bottom
         end
 
+        pdf.bounding_box([col2, y], :width => 300, :height => 22) do
+         name = "#{order.location.code.upcase}"
+         pdf.formatted_text_box [{ text: name, size: 14, styles: [:bold, :italic] }], :valign => :bottom
+        end
+
+        y = pdf.cursor + 5
+
         pdf.bounding_box([col2, y], :width => 300, :height => 20) do
-         name = "#{order.location.company.name} - #{order.location.name} - #{order.location.code.upcase}"
+         name = "#{order.location.company.name} - #{order.location.name}"
          pdf.formatted_text_box [{ text: name, size: 12, styles: [:bold, :italic] }], :valign => :bottom
         end
 
-        y = pdf.cursor - 5
+        y = pdf.cursor - 2
+        
         pdf.bounding_box([col2, y], :width => 300, :height => 30) do
           pdf.formatted_text_box [{ text: order.location.address.to_s, size: 10 }]
         end
       end
 
-      pdf.move_cursor_to start_y - 110
+      pdf.move_cursor_to start_y - 120
     end
 
     def build_line_items(order)
@@ -67,7 +75,7 @@ module Pdf
           [
             {x:5,     label:"#",      width:30,  align: :left,  content:{ text: "#{index + 1}.", size: 8, styles: [:italic]}},
             {x:10,    label:"QTY",    width:30,  align: :right, content:{ text: oi.quantity.to_i.to_s, size: 11}},
-            {x:60,    label:"CODE",   width:75,  align: :left,  content:{ text: oi.item.code, size: 9, styles: [:italic]}},
+            {x:60,    label:"CODE",   width:75,  align: :left,  content:{ text: oi.item.code.upcase, size: 9, styles: [:italic]}},
             {x:140,   label:"NAME",   width:110, align: :left,  content:{ text: oi.item.name, size: 9}},
             {x:270,   label:"DESC",   width:190, align: :left,  content:{ text: Maybe(oi.item.description).fetch("").truncate(121), size: 7}},
             {x:450,   label:"PRICE",  width:35,  align: :right, content:{ text: number_with_precision(oi.unit_price, precision:2), size: 9}},

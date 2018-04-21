@@ -59,7 +59,7 @@ module Pdf
           [
             {x:5,     label:"#",      width:30,  align: :left, content:{ text: "#{index + 1}.", size: 8, styles: [:italic]}},
             {x:10,    label:"QTY",    width:30,  align: :right, content:{ text: cni.quantity.to_i.to_s, size: 11}},
-            {x:60,    label:"CODE",   width:75,  align: :left,  content:{ text: cni.item.code, size: 9, styles: [:italic]}},
+            {x:60,    label:"CODE",   width:75,  align: :left,  content:{ text: cni.item.code.upcase, size: 9, styles: [:italic]}},
             {x:140,   label:"NAME",   width:120, align: :left,  content:{ text: cni.item.name, size: 9}},
             {x:270,   label:"DESC",   width:200, align: :left,  content:{ text: Maybe(cni.item.description).fetch("").truncate(121), size: 7}},
             {x:450,   label:"CREDIT",  width:35,  align: :right, content:{ text: number_with_precision(cni.unit_price, precision:2), size: 9}},

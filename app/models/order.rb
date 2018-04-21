@@ -10,6 +10,16 @@ class Order < ActiveRecord::Base
 
   VALID_STATES = [0, 1, 2, 3, 4]
 
+  PACKING_SLIP = Struct.new(:order) do
+    def renderer
+      Pdf::PackingSlip
+    end
+
+    def has_quantity?
+      order.has_quantity?
+    end
+  end
+
   before_save :pre_process_saving_data
   after_save :update_fulfillment_structure
   after_destroy :handle_empty_route_visit
@@ -93,6 +103,10 @@ class Order < ActiveRecord::Base
 
   def to_string
     "#{location.company.name} - #{location.code} - #{location.name}"
+  end
+
+  def packing_slip
+    PACKING_SLIP.new(self)
   end
 
   private
