@@ -3,7 +3,8 @@ class LocationResource < JSONAPI::Resource
               :delivery_rate,
               :active,
               :code,
-              :note
+              :note,
+              :delivery_note
 
   has_one  :company
   has_one  :address
