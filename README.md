@@ -125,4 +125,6 @@ If you have trouble using the CLI tool, you can manage the docker-compose manual
 
 
 ### Import db
+1. merge multipart tar: cat part1.tar-aa part2.tar-ab >> output.tar
+1. unpack the tar
 1. psql -h localhost -U postgres in_spiritus < PATH_TO_SQL_DUMP

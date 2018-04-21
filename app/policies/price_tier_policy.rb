@@ -1,2 +1,2 @@
-class PriceTierPolicy < StandardPolicy
+class PriceTierPolicy < DriverPolicy
 end

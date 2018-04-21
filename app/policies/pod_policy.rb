@@ -1,4 +1,4 @@
-class PodPolicy < StandardPolicy
+class PodPolicy < DriverPolicy
 
   def create?
   	is_standard?

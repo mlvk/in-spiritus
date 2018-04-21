@@ -1,4 +1,4 @@
-class StockPolicy < StandardPolicy
+class StockPolicy < DriverPolicy
 
   def create?
   	is_standard?

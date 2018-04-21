@@ -1,10 +1,6 @@
-class CreditNotePolicy < StandardPolicy
+class CreditNotePolicy < DriverPolicy
 
   def create?
-  	is_standard?
-  end
-
-  def update?
   	is_standard?
   end
   

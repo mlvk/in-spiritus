@@ -1,2 +1,2 @@
-class VisitWindowPolicy < StandardPolicy
+class VisitWindowPolicy < DriverPolicy
 end

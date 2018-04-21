@@ -1,2 +1,2 @@
-class AddressPolicy < StandardPolicy
+class AddressPolicy < DriverPolicy
 end

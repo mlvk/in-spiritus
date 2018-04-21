@@ -1,2 +1,2 @@
-class ItemCreditRatePolicy < StandardPolicy
+class ItemCreditRatePolicy < DriverPolicy
 end

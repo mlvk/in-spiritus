@@ -1,2 +1,2 @@
-class OrderItemPolicy < StandardPolicy
+class OrderItemPolicy < DriverPolicy
 end

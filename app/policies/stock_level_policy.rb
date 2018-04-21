@@ -1,4 +1,4 @@
-class StockLevelPolicy < StandardPolicy
+class StockLevelPolicy < DriverPolicy
 
   def create?
   	is_admin_or_driver?

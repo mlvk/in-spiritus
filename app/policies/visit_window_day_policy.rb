@@ -1,2 +1,2 @@
-class VisitWindowDayPolicy < StandardPolicy
+class VisitWindowDayPolicy < DriverPolicy
 end

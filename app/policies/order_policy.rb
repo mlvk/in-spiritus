@@ -1,4 +1,4 @@
-class OrderPolicy < StandardPolicy
+class OrderPolicy < DriverPolicy
   def stub_orders?
     @current_user.admin?
   end
@@ -14,5 +14,5 @@ class OrderPolicy < StandardPolicy
   def update?
   	is_admin_or_driver?
   end
-  
+
 end

@@ -1,2 +1,2 @@
-class ItemPricePolicy < StandardPolicy
+class ItemPricePolicy < DriverPolicy
 end

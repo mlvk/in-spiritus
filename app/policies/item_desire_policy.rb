@@ -1,2 +1,2 @@
-class ItemDesirePolicy < StandardPolicy
+class ItemDesirePolicy < DriverPolicy
 end

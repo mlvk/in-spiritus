@@ -1,2 +1,2 @@
-class VisitDayPolicy < StandardPolicy
+class VisitDayPolicy < DriverPolicy
 end
