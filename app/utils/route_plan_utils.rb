@@ -24,7 +24,7 @@ class RoutePlanUtils
 			.flat_map(&:fulfillments)
 			.flat_map {|f|
         if f.order.sales_order?
-          [f.order.packing_slip, f.order, f.credit_note]
+          [f.order, f.credit_note]
         else
           [f.order, f.credit_note]
         end
