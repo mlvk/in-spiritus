@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :order do
     delivery_date { Date.tomorrow }
     location
@@ -28,17 +28,17 @@ FactoryGirl.define do
     end
 
     trait :purchase_order do
-      order_type Order::PURCHASE_ORDER_TYPE
+      order_type {Order::PURCHASE_ORDER_TYPE}
     end
 
     trait :sales_order do
-      order_type Order::SALES_ORDER_TYPE
+      order_type {Order::SALES_ORDER_TYPE}
     end
 
     factory :order_with_items do
       transient do
-        items nil
-        order_items_count 5
+        items {nil}
+        order_items_count {5}
       end
 
       after(:create) do |order, evaluator|
@@ -53,11 +53,11 @@ FactoryGirl.define do
     end
 
     factory :sales_order_with_items do
-      order_type Order::SALES_ORDER_TYPE
+      order_type {Order::SALES_ORDER_TYPE}
 
       transient do
-        items nil
-        order_items_count 5
+        items {nil}
+        order_items_count {5}
       end
 
       after(:create) do |order, evaluator|
@@ -72,10 +72,10 @@ FactoryGirl.define do
     end
 
     factory :purchase_order_with_items do
-      order_type Order::PURCHASE_ORDER_TYPE
+      order_type {Order::PURCHASE_ORDER_TYPE}
 
       transient do
-        order_items_count 5
+        order_items_count {5}
       end
 
       after(:create) do |order, evaluator|

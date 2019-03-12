@@ -1,5 +1,5 @@
 class VisitWindow < ActiveRecord::Base
-  belongs_to :address
+  belongs_to :address, optional: true
   has_many :visit_window_days, :dependent => :destroy, autosave: true
 
   def min_formated

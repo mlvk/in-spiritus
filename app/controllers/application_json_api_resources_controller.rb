@@ -4,7 +4,7 @@ class ApplicationJsonApiResourcesController < JSONAPI::ResourceController
   prepend_before_action :authenticate_user_from_token!
   after_action :verify_authorized
 
-  protect_from_forgery with: :null_session
+  protect_from_forgery with: :null_session, prepend: true
 
   rescue_from Pundit::NotAuthorizedError, with: :pundit_authorization_failed
 

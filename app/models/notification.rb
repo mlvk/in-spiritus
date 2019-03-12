@@ -17,10 +17,10 @@ class Notification < ActiveRecord::Base
   # State machine
   enum notification_state: [ :pending, :processed ]
 
-  belongs_to :order
-  belongs_to :credit_note
-  belongs_to :fulfillment
-  belongs_to :notification_rule
+  belongs_to :order, optional: true
+  belongs_to :credit_note, optional: true
+  belongs_to :fulfillment, optional: true
+  belongs_to :notification_rule, optional: true
 
   def has_order?
     !order.nil?

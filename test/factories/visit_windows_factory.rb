@@ -1,8 +1,8 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :visit_window do
-    service 10
-    min 10
-    max 20
+    service {10}
+    min {10}
+    max {20}
     location
   end
 end

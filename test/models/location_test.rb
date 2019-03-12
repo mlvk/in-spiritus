@@ -91,8 +91,7 @@ class LocationTest < ActiveSupport::TestCase
       .stock_levels
       .first
 
-    assert_equal(nil,
-      location.previous_stock_level(before_yesterday_stock_level),
+      assert_nil(location.previous_stock_level(before_yesterday_stock_level),
       "match previous stock level of the day before yesterday stock level")
   end
 

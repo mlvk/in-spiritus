@@ -24,8 +24,8 @@ class StockLevel < ActiveRecord::Base
 
   enum tracking_state: [ :pending, :tracked, :processed ]
 
-  belongs_to :stock
-  belongs_to :item
+  belongs_to :stock, optional: true
+  belongs_to :item, optional: true
   has_one :fulfillment, through: :stock
 
   scope :fulfillment_fulfilled, -> { joins(:fulfillment).where(fulfillments: {delivery_state: Fulfillment.delivery_states[:fulfilled]}) }

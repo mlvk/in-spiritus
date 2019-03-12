@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
 	postgresql-client \
 	graphviz \
 	--no-install-recommends \
-  && rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/*
 
 ENV APP_PATH /app/in-spiritus
 RUN mkdir -p $APP_PATH

@@ -6,7 +6,7 @@ class CreditNote < ActiveRecord::Base
 
   before_save :pre_process_saving_data
 
-  belongs_to :location
+  belongs_to :location, optional: true
 
   has_one :fulfillment
   has_many :credit_note_items, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true

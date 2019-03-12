@@ -1,8 +1,8 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :price_tier do
     sequence(:name) { |n| "Price List - #{n}" }
     transient do
-      items []
+      items {[]}
     end
 
     after(:create) do |price_tier, evaluator|

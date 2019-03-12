@@ -22,7 +22,7 @@ ADDRESSES = [
   [34.021701,-118.5039461]
 ]
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :address do
     street { Faker::Address.street_address }
     city { Faker::Address.city }

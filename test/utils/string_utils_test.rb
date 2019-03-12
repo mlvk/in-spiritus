@@ -12,7 +12,7 @@ class StringUtilsTest < ActiveSupport::TestCase
   end
 
   test "returns nil when passed a nil" do
-    assert_equal(nil, trim(nil))
+    assert_nil(trim(nil))
   end
 
   test "trims and downcases when passed a string" do
@@ -24,7 +24,7 @@ class StringUtilsTest < ActiveSupport::TestCase
   end
 
   test "returns nil when passed a nil to trim_and_downcase function" do
-    assert_equal(nil, trim_and_downcase(nil))
+    assert_nil(trim_and_downcase(nil))
   end
 
   test "counts lines correctly" do

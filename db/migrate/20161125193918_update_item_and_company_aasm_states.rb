@@ -1,4 +1,4 @@
-class UpdateItemAndCompanyAasmStates < ActiveRecord::Migration
+class UpdateItemAndCompanyAasmStates < ActiveRecord::Migration[4.2]
   def up
     add_column :items, :sync_state, :integer, default: 0, null: false
     add_index :items, :sync_state

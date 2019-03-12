@@ -3,7 +3,7 @@ class Stock < ActiveRecord::Base
   validates :location, presence: true
 
   has_one :fulfillment
-  belongs_to :location
+  belongs_to :location, optional: true
 
   has_many :stock_levels, -> { joins(:item).order('position') }, :dependent => :destroy, autosave: true
 

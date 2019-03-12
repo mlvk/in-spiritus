@@ -1,7 +1,7 @@
 class NotificationRule < ActiveRecord::Base
   validates :first_name, :email, :location, presence: true
 
-  belongs_to :location
+  belongs_to :location, optional: true
   has_many :notifications, dependent: :destroy
 
   def full_name

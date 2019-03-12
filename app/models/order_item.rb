@@ -1,7 +1,7 @@
 class OrderItem < ActiveRecord::Base
 
-  belongs_to :order, touch: true
-  belongs_to :item
+  belongs_to :order, touch: true, optional: true
+  belongs_to :item, optional: true
 
   def self.find_by_date_location_item(date, location, item)
     OrderItem.joins(:order)

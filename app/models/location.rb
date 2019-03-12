@@ -3,8 +3,8 @@ class Location < ActiveRecord::Base
 
 	before_save :pre_process_saving_data
 
-	belongs_to :company
-	belongs_to :address
+	belongs_to :company, optional: true
+	belongs_to :address, optional: true
 
 	has_many :orders, :dependent => :destroy, autosave: true
 	has_many :order_templates, :dependent => :destroy, autosave: true

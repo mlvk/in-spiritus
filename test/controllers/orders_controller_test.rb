@@ -13,7 +13,7 @@ class OrdersControllerTest < ActionController::TestCase
 
     assert_equal(Order.sales_order.count, 1)
 
-    post(:duplicate_sales_orders, {fromDate:Date.today, toDate:Date.today + 1})
+    post(:duplicate_sales_orders, params: {fromDate: Date.today.strftime("%Y-%m-%d"), toDate: (Date.today + 1).strftime("%Y-%m-%d")})
 
     assert_equal(Order.sales_order.count, 2)
   end
@@ -36,7 +36,7 @@ class OrdersControllerTest < ActionController::TestCase
 
     assert_equal(Order.sales_order.count, 2)
 
-    post(:duplicate_sales_orders, {fromDate:Date.today, toDate:Date.today + 1})
+    post :duplicate_sales_orders, params: { fromDate: Date.today.strftime("%Y-%m-%d"), toDate: (Date.today + 1).strftime("%Y-%m-%d")}
 
     assert_equal(Order.sales_order.count, 3)
   end
@@ -52,7 +52,7 @@ class OrdersControllerTest < ActionController::TestCase
     assert_equal Pod.count, 1, "Should have a Pod"
     assert_equal CreditNote.count, 1, "Should have a CreditNote"
 
-    delete(:destroy, {id:order.id})
+    delete(:destroy, params: {id:order.id})
 
     assert_equal Fulfillment.count, 0, "Should have deleted the Fulfillment"
     assert_equal Stock.count, 0, "Should have deleted the Stock"

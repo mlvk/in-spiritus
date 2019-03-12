@@ -1,4 +1,4 @@
-class StandingOrders < ActiveRecord::Migration
+class StandingOrders < ActiveRecord::Migration[4.2]
   def up
     create_table :order_templates do |t|
       t.date :start_date, null: false

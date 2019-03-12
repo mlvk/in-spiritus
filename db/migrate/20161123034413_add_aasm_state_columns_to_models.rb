@@ -1,4 +1,4 @@
-class AddAasmStateColumnsToModels < ActiveRecord::Migration
+class AddAasmStateColumnsToModels < ActiveRecord::Migration[4.2]
   def up
     add_column :orders, :published_state, :integer, default: 0, null: false
     add_index :orders, :published_state

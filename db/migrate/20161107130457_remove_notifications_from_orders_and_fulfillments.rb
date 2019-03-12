@@ -1,4 +1,4 @@
-class RemoveNotificationsFromOrdersAndFulfillments < ActiveRecord::Migration
+class RemoveNotificationsFromOrdersAndFulfillments < ActiveRecord::Migration[4.2]
   def up
     remove_column :orders, :notification_state
     remove_column :fulfillments, :notification_state

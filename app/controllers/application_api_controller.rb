@@ -1,10 +1,10 @@
 class ApplicationApiController < ActionController::Base
   include Pundit
 
-  before_filter :authenticate_user_from_token!
+  before_action :authenticate_user_from_token!
   after_action :verify_authorized
 
-  protect_from_forgery with: :null_session
+  protect_from_forgery with: :null_session, prepend: true
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 

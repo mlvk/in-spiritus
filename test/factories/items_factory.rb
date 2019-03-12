@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :item do
     code { SecureRandom.hex(3) }
     name { Faker::Commerce.product_name }
@@ -15,7 +15,7 @@ FactoryGirl.define do
     end
 
     trait :product do
-      tag Item::PRODUCT_TYPE
+      tag {Item::PRODUCT_TYPE}
     end
   end
 end

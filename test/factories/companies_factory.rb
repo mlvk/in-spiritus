@@ -1,14 +1,14 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :company do
-    is_customer true
-    is_vendor false
+    is_customer {true}
+    is_vendor {false}
     name { Faker::Company.name }
-    terms 7
-    active_state 0
+    terms {7}
+    active_state {0}
     price_tier
 
     trait :inactive do
-      active_state 1
+      active_state {1}
     end
 
     trait :synced do
@@ -20,13 +20,13 @@ FactoryGirl.define do
     end
 
     trait :vendor do
-      is_customer false
-      is_vendor true
+      is_customer {false}
+      is_vendor {true}
     end
 
     factory :company_with_locations do
       transient do
-        location_count 3
+        location_count {3}
       end
 
       after(:create) do |company, evaluator|

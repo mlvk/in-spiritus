@@ -26,7 +26,7 @@ class LocationsControllerTest < ActionController::TestCase
       ['VisitDay.count', -2],
       ['ItemDesire.count', -2],
       ['ItemCreditRate.count', -2]]) do
-     delete :destroy, id: location
+     delete :destroy, params: { id: location }
     end
   end
 end

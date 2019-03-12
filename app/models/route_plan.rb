@@ -17,7 +17,7 @@ class RoutePlan < ActiveRecord::Base
   # State machine settings
   enum published_state: [ :pending, :completed ]
 
-	belongs_to :user
+	belongs_to :user, optional: true
 	has_many :route_visits, -> { order('position') }, :dependent => :nullify, autosave: true
 
 	def renderer

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :credit_note do
     date { Date.tomorrow }
     location
@@ -29,9 +29,9 @@ FactoryGirl.define do
 
     factory :credit_note_with_credit_note_items do
       transient do
-        credit_note_items_count 5
-        quantity 5
-        unit_price 5
+        credit_note_items_count {5}
+        quantity {5}
+        unit_price {5}
       end
 
       after(:create) do |credit_note, evaluator|

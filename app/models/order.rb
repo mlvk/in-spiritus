@@ -24,7 +24,7 @@ class Order < ActiveRecord::Base
   after_save :update_fulfillment_structure
   after_destroy :handle_empty_route_visit
 
-  belongs_to :location
+  belongs_to :location, optional: true
   has_one :address, through: :location
   has_one :fulfillment, dependent: :destroy, autosave: true
   has_one :route_visit, through: :fulfillment

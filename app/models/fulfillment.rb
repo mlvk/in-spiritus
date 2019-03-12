@@ -17,11 +17,11 @@ class Fulfillment < ActiveRecord::Base
 
   enum delivery_state: [ :pending, :fulfilled, :processed ]
 
-  belongs_to :route_visit
-  belongs_to :order
-  belongs_to :stock, dependent: :destroy, autosave: true
-  belongs_to :pod, dependent: :destroy, autosave: true
-  belongs_to :credit_note, dependent: :destroy, autosave: true
+  belongs_to :route_visit, optional: true
+  belongs_to :order, optional: true
+  belongs_to :stock, dependent: :destroy, autosave: true, optional: true
+  belongs_to :pod, dependent: :destroy, autosave: true, optional: true
+  belongs_to :credit_note, dependent: :destroy, autosave: true, optional: true
   has_many   :notifications, dependent: :nullify, autosave: true
 
   has_one :location, through: :order

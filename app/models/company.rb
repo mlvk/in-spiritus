@@ -31,7 +31,7 @@ class Company < ActiveRecord::Base
 
   has_many :locations, :dependent => :destroy, autosave: true
 
-  belongs_to :price_tier
+  belongs_to :price_tier, optional: true
 
   has_many :items
 

@@ -10,7 +10,7 @@ class Item < ActiveRecord::Base
 
 	validates :name, presence: true
 
-	belongs_to	:company
+	belongs_to	:company, optional: true
 
 	has_many 		:order_items, :dependent => :destroy, autosave: true
 	has_many 		:order_template_items, :dependent => :destroy, autosave: true

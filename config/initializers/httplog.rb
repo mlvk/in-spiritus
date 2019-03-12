@@ -1,4 +1,6 @@
 if Rails.env.development?
-  HttpLog.options[:logger] = Logger.new('log/http.log', 'daily')
-  HttpLog.options[:log_headers]   = true
+  HttpLog.configure do |config|
+    config.logger = Logger.new('log/http.log', 'daily')
+    config.log_headers = true
+  end
 end

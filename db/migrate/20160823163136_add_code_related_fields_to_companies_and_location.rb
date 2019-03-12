@@ -1,4 +1,4 @@
-class AddCodeRelatedFieldsToCompaniesAndLocation < ActiveRecord::Migration
+class AddCodeRelatedFieldsToCompaniesAndLocation < ActiveRecord::Migration[4.2]
   def up
     add_column :companies, :location_code_prefix, :string, limit: 10
     add_column :locations, :code, :string, limit: 10

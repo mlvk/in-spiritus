@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :route_visit do
-    position 1
+    position {1}
     route_plan
     address
     date { Date.today}
@@ -19,7 +19,7 @@ FactoryGirl.define do
 
     factory :route_visit_with_unfulfilled_fulfillments do
       transient do
-        fulfillment_count 5
+        fulfillment_count {5}
       end
 
       after(:create) do |route_visit, evaluator|
@@ -29,7 +29,7 @@ FactoryGirl.define do
 
     factory :route_visit_with_fulfilled_fulfillments do
       transient do
-        fulfillment_count 1
+        fulfillment_count {1}
       end
 
       after(:create) do |route_visit, evaluator|

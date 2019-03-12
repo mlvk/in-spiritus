@@ -1,7 +1,7 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :stock_level do
-    starting 3
-    returns 1
+    starting {3}
+    returns {1}
     item
   end
 end

@@ -1,17 +1,17 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :location do
     name { Faker::Address.city }
     company
     address
 
     transient do
-      order_count 0
-      credit_note_count 0
-      stock_count 0
-      notification_rule_count 0
-      visit_day_count 0
-      item_desire_count 0
-      item_credit_rate_count 0
+      order_count {0}
+      credit_note_count {0}
+      stock_count {0}
+      notification_rule_count {0}
+      visit_day_count {0}
+      item_desire_count {0}
+      item_credit_rate_count {0}
     end
 
     trait :synced do

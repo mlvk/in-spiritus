@@ -93,7 +93,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
       item = Item.find(oid[:item_id])
 
       match = order.order_items.select {|oi|
-        oi.id.to_s == oid[:id]
+        oi.id.to_s == oid[:id].to_s
       }.first
 
       if match.present?
@@ -124,7 +124,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
     credit_note_items_data.each do |cnid|
       item = Item.find(cnid[:item_id])
       match = credit_note.credit_note_items.select {|cni|
-        cni.id == cnid[:id].to_s || cni.item.id.to_s == cnid[:item_id]
+        cni.id.to_s == cnid[:id].to_s || cni.item.id.to_s == cnid[:item_id]
       }.first
 
       target = match || CreditNoteItem.create(
@@ -160,7 +160,7 @@ class RouteVisitsController < ApplicationJsonApiResourcesController
     stock_levels_data.each do |sld|
       item = Item.find(sld[:item_id])
       match = stock.stock_levels.select {|sl|
-        sl.id == sld[:id].to_s || sl.item.id.to_s == sld[:item_id]
+        sl.id.to_s == sld[:id].to_s || sl.item.id.to_s == sld[:item_id]
       }.first
 
       target = match || StockLevel.create(

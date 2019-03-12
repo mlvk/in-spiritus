@@ -1,6 +1,6 @@
 class CreditNoteItem < ActiveRecord::Base
-  belongs_to :credit_note, touch: true
-  belongs_to :item
+  belongs_to :credit_note, touch: true, optional: true
+  belongs_to :item, optional: true
 
   def has_quantity?
     quantity > 0.0

@@ -1,13 +1,13 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :stock do
-    day_of_week 1
-    taken_at Date.tomorrow
+    day_of_week {1}
+    taken_at {Date.tomorrow}
     location
 
     factory :stock_with_stock_levels do
       transient do
-        items nil
-        stock_level_count 5
+        items {nil}
+        stock_level_count {5}
       end
 
       after(:create) do |stock, evaluator|

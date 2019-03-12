@@ -1,5 +1,5 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :item_desire do
-    enabled true
+    enabled {true}
   end
 end

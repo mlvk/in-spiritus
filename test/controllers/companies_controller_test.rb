@@ -39,7 +39,7 @@ class CompaniesControllerTest < ActionController::TestCase
 
     sign_in_as_admin
 
-    get(:show, {id:company.id})
+    get(:show, params: {id:company.id})
 
     assert_response :success
   end
@@ -49,7 +49,7 @@ class CompaniesControllerTest < ActionController::TestCase
 
     sign_in_as_driver
 
-    get(:show, {id:Company.first.id})
+    get(:show, params: {id:Company.first.id})
     assert_response :success
   end
 
@@ -58,14 +58,14 @@ class CompaniesControllerTest < ActionController::TestCase
 
     sign_in_as_accountant
 
-    get(:show, {id:Company.first.id})
+    get(:show, params: {id:Company.first.id})
     assert_response :success
   end
 
   test "anonymous users can not view a company" do
     company = create(:company)
 
-    get(:show, {id:Company.first.id})
+    get(:show, params: {id:Company.first.id})
     assert_response :unauthorized
   end
 
@@ -73,28 +73,28 @@ class CompaniesControllerTest < ActionController::TestCase
   test "admin can create companies" do
     sign_in_as_admin
 
-    post :create, build_jr_hash(:company, :vendor)
+    post :create, params: build_jr_hash(:company, :vendor)
     assert_response :created
   end
 
   test "drivers can not create companies" do
     sign_in_as_driver
 
-    post :create, build_jr_hash(:company)
+    post :create, params: build_jr_hash(:company)
     assert_response :unauthorized
   end
 
   test "accountants can not create companies" do
     sign_in_as_accountant
 
-    post :create, build_jr_hash(:company)
+    post :create, params: build_jr_hash(:company)
     assert_response :unauthorized
   end
 
   test "pending users can not create companies" do
     sign_in_as_accountant
 
-    post :create, build_jr_hash(:company)
+    post :create, params: build_jr_hash(:company)
     assert_response :unauthorized
   end
 

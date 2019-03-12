@@ -1,13 +1,13 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :order_template do
     start_date { Date.today }
-    frequency 1
+    frequency {1}
     location
 
     factory :order_template_with_items do
       transient do
-        items nil
-        order_template_items_count 5
+        items {nil}
+        order_template_items_count {5}
       end
 
       after(:create) do |order_template, evaluator|

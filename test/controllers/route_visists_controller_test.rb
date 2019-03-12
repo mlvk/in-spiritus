@@ -81,7 +81,7 @@ class RouteVisitsControllerTest < ActionController::TestCase
 
     route_visit = create(:route_visit_with_unfulfilled_fulfillments)
 
-    post :submit, build_submit_payload(route_visit)
+    post :submit, params: build_submit_payload(route_visit)
 
     route_visit.reload
 
@@ -127,7 +127,7 @@ class RouteVisitsControllerTest < ActionController::TestCase
     payload[:data][:fulfillments].first[:credit_note].delete(:credit_note_items)
     payload[:data][:fulfillments].first[:stock].delete(:stock_levels)
 
-    post :submit, payload
+    post :submit, params: payload
 
     route_visit.reload
 

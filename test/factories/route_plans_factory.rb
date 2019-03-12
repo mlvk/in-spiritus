@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :route_plan do
     date { Date.tomorrow }
     user
