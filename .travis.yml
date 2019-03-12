@@ -17,7 +17,7 @@ deploy:
       condition: -n $TRAVIS_TAG
   - provider: cloud66
     redeployment_hook: $CLOUD66_STAGING_REDEPLOYMENT_HOOK
-    on: master
+    on: staging
 addons:
   hosts:
     - db
