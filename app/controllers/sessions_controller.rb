@@ -1,7 +1,4 @@
 class SessionsController < Devise::SessionsController
-
-  skip_before_action :authenticate_user_from_token!, :only => :create
-
   def create
     self.resource = warden.authenticate!(auth_options)
 
