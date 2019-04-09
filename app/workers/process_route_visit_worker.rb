@@ -57,6 +57,6 @@ class ProcessRouteVisitWorker
     records = [f.order, f.credit_note].select {|r| r.is_valid?}
     url = generate_and_upload_pdfs(records)
 
-    publish_fulfillment_documents(f, shorten_url(url))
+    publish_fulfillment_documents(f, url)
   end
 end
